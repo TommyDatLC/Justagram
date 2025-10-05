@@ -1,3 +1,8 @@
+/*
+    Nam Anh
+*/
+
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -39,8 +44,8 @@ public class InstagramAuth {
     // dùng facebook vì instagram basic display api đã ngừng hoạt động
     public static void openInstagramLogin(Context context, String appId, String redirectUri) {
         String authUrl = "https://www.facebook.com/v21.0/dialog/oauth" +
-            "?client_id=" + appId +
-            "&redirect_uri=" + redirectUri +
+            "?client_id=" + appId + // THAY VÀO ĐÂY FACEBOOK ID
+            "&redirect_uri=" + redirectUri + // THAY VÀO ĐÂY REDIRECT URI
             "&scope=instagram_basic,pages_show_list,pages_read_engagement" + 
             "&response_type=code";
         context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(authUrl)));
