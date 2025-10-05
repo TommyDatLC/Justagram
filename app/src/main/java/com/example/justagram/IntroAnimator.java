@@ -5,6 +5,9 @@ import android.animation.ValueAnimator;
 import android.content.res.Resources;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.PathInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -28,8 +31,8 @@ public class IntroAnimator {
                 // == BƯỚC 0: THIẾT LẬP TRẠNG THÁI BAN ĐẦU ==
                 logo.setAlpha(0f);
                 contentLayout.setAlpha(0f);
-                logo.setScaleX(1.25f);
-                logo.setScaleY(1.25f);
+                logo.setScaleX(2);
+                logo.setScaleY(2);
 
                 // --- THAY ĐỔI 1: Cập nhật vị trí ban đầu cho 2 ảnh nền ---
                 image1.setTranslationX(-500f);
@@ -71,9 +74,12 @@ public class IntroAnimator {
                                         .scaleX(1f)
                                         .scaleY(1f)
                                         .setDuration(1000)
+                                        .setInterpolator(new DecelerateInterpolator(2f))
                                         .withEndAction(new Runnable() {
+
                                             @Override
                                             public void run() {
+
                                                 // == BƯỚC 4: DI CHUYỂN LOGO VỀ VỊ TRÍ CŨ ==
                                                 animateMargins(logo, 0, 0, new AnimationEndListener() {
                                                     @Override
@@ -126,7 +132,8 @@ public class IntroAnimator {
         int startTop = params.topMargin;
 
         ValueAnimator animator = ValueAnimator.ofFloat(1f, 0f);
-        animator.setDuration(700);
+        animator.setInterpolator(new PathInterpolator(0.7f, 0f, 0.3f, 1)); //https://cubic-bezier.com/#0,.73,.22,.94
+        animator.setDuration(1000);
 
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
