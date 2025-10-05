@@ -36,8 +36,8 @@ import okhttp3.Response;
 public class InstagramAccountFragment extends Fragment {
 
     // TODO: điền vào đây
-    private static final String ACCESS_TOKEN = "YOUR_ACCESS_TOKEN_HERE";
-    private static final String IG_USER_ID = "YOUR_IG_USER_ID_HERE";
+    private static final String ACCESS_TOKEN = "IGAAS2qCIE595BZAFJ0SmVNaHBUbFFCM0NqOFBOYkdNOHhBdC1PR1hNTHV6ZAEtLZAm5RVTNZAa3lweFdqM0xxNVcwY2xLVlBadFdDUm54QkFBd0Jvdl8zRkJEMFFBNEtMZAkhyX2hfQUtIZAzNnVGdSa2pVYmtoX1I2bkZAxOFZAuOGp6VQZDZD";
+    private static final String IG_USER_ID = "17841474853201686";
 
     private ImageView ivProfile;
     private TextView tvName, tvUsername, tvFollowers, tvFollows, tvMediaCount, tvBiography, tvWebsite, tvStatus;
@@ -139,12 +139,14 @@ public class InstagramAccountFragment extends Fragment {
         tvStatus.setText("Loaded");
 
         if (!TextUtils.isEmpty(user.profilePictureUrl)) {
+            // Allocate glide with the require context in this case is this fragment
             Glide.with(requireContext())
                     .load(user.profilePictureUrl)
-                    .centerCrop()
-                    .into(ivProfile);
+                    .centerCrop() // Fill the image view, crop the unnecessary
+                    .into(ivProfile);// put in the image view
         } else {
-            ivProfile.setImageResource(android.R.drawable.sym_def_app_icon);
+            // If can't find any profile image set the imageContainer with the castorice image
+            ivProfile.setImageResource(R.mipmap.unknow_user);
         }
     }
 
