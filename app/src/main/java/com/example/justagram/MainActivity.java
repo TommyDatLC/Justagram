@@ -10,9 +10,10 @@ import android.transition.TransitionInflater;
 import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ui_design);
 
