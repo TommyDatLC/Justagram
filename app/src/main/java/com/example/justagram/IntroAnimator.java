@@ -3,6 +3,8 @@ package com.example.justagram;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.res.Resources;
+import android.os.Debug;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -11,12 +13,10 @@ import android.view.animation.PathInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import androidx.core.view.animation.PathInterpolatorCompat;
+
 public class IntroAnimator {
 
-    // Interface để xử lý callback khi animation kết thúc
-    interface AnimationEndListener {
-        void onAnimationEnd();
-    }
 
     public static void start(
             final ImageView logo,
@@ -34,29 +34,46 @@ public class IntroAnimator {
                 logo.setScaleX(1.25f);
                 logo.setScaleY(1.25f);
 
-                // --- THAY ĐỔI 1: Cập nhật vị trí ban đầu cho 2 ảnh nền ---
+                // --- THAY ĐỔI 1: Lưu lại vị trí ban đầu của logo ---
+                final float originalTranslationX = logo.getTranslationX();
+                final float originalTranslationY = logo.getTranslationY();
+
+                // --- Vị trí ban đầu cho 2 ảnh nền ---
                 image1.setTranslationX(-500f);
-                image1.setTranslationY(-500f); // Sửa từ 500f -> -500f
-                image2.setTranslationX(500f);  // Sửa từ -500f -> 500f
+                image1.setTranslationY(-500f);
+                image2.setTranslationX(500f);
                 image2.setTranslationY(-500f);
 
-                // == BƯỚC 1: ĐƯA LOGO VÀO GIỮA MÀN HÌNH ==
-                centerViewOnScreen(logo);
-
-                // --- THAY ĐỔI 2: Tính toán vị trí cuối cùng dựa trên kích thước màn hình ---
-                // getSystem() : get the system info
-                // getDisplayMetric() : get screen info
-                float screenWidth = Resources.getSystem() .getDisplayMetrics().widthPixels;
+                // --- THAY ĐỔI 2: Căn giữa logo bằng TRANSLATION thay vì MARGIN ---
+                // get the system info then get the screen info
+                float screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
                 float screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
-                
-                float image1FinalX = screenWidth - 750;
-                float image1FinalY = screenHeight - 750;
-                float image2FinalX = -750 ;
-                float image2FinalY = screenHeight - 750;
+
+                // Lấy vị trí tuyệt đối (trên màn hình) của logo
+                int[] logoLocation = new int[2];
+                logo.getLocationOnScreen(logoLocation);
+                float logoX = logoLocation[0];
+                float logoY = logoLocation[1];
+
+                // Tính toán khoảng cách cần di chuyển (translation)
+                // để tâm của logo trùng với tâm của màn hình
+               // float targetTranslationX = (screenWidth / 2f) - (logoX + logo.getWidth() / 2f);
+                // Because of the pivot of image is on the top left change the pivot to the center by using (logoY + logoH / 2)
+                float targetTranslationY = (screenHeight / 2f) - (logoY + logo.getHeight() / 2f);
+
+                // Đặt vị trí translation mới cho logo (chưa animate)
+                //logo.setTranslationX(targetTranslationX);
+                logo.setTranslationY(targetTranslationY);
+
+
+                // --- Vị trí cuối cùng của 2 ảnh nền ---
+                float image1FinalX = screenWidth - image1.getWidth() / 2f;
+                float image1FinalY = screenHeight - image1.getHeight() / 2f;
+                float image2FinalX = -image2.getWidth() / 2f;
+                float image2FinalY = screenHeight - image2.getHeight() / 2f;
 
 
                 // == BƯỚC 2: ANIMATE 2 ẢNH NỀN VỚI VỊ TRÍ MỚI ==
-                // --- THAY ĐỔI 3: Cập nhật animation ---
                 image1.animate()
                         .translationX(image1FinalX)
                         .translationY(image1FinalY)
@@ -78,21 +95,24 @@ public class IntroAnimator {
                                         .setDuration(1000)
                                         .setInterpolator(new DecelerateInterpolator(2f))
                                         .withEndAction(new Runnable() {
-
                                             @Override
                                             public void run() {
-
-                                                // == BƯỚC 4: DI CHUYỂN LOGO VỀ VỊ TRÍ CŨ ==
-                                                animateMargins(logo, 0, 0, new AnimationEndListener() {
-                                                    @Override
-                                                    public void onAnimationEnd() {
-                                                        // == BƯỚC 5: HIỆN LAYOUT NỘI DUNG ==
-                                                        contentLayout.animate()
-                                                                .alpha(1f)
-                                                                .setDuration(1000)
-                                                                .start();
-                                                    }
-                                                });
+                                                // --- THAY ĐỔI 3: Di chuyển logo về vị trí cũ bằng TRANSLATION ---
+                                                logo.animate()
+                                                        .translationX(originalTranslationX)
+                                                        .translationY(originalTranslationY)
+                                                        .setDuration(1000) // Thời gian quay về
+                                                        .setInterpolator(PathInterpolatorCompat.create(0.7f, 0f, 0.3f, 1f))
+                                                        .withEndAction(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                // == BƯỚC 5: HIỆN LAYOUT NỘI DUNG ==
+                                                                contentLayout.animate()
+                                                                        .alpha(1f)
+                                                                        .setDuration(1000)
+                                                                        .start();
+                                                            }
+                                                        }).start();
                                             }
                                         }).start();
                             }
@@ -101,68 +121,4 @@ public class IntroAnimator {
         });
     }
 
-    /**
-     * Hàm này tính toán và đặt margin để một view bất kỳ nằm chính giữa màn hình.
-     */
-    private static void centerViewOnScreen(View view) {
-        int screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
-        int screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
-
-        int viewWidth = view.getWidth();
-        int viewHeight = view.getHeight();
-
-        View parent = (View) view.getParent();
-        int[] parentLocation = new int[2];
-        parent.getLocationOnScreen(parentLocation);
-        int parentLeft = parentLocation[0];
-        int parentTop = parentLocation[1];
-
-        int marginLeft = (screenWidth / 2) - (viewWidth / 2) - parentLeft;
-        int marginTop = (screenHeight / 2) - (viewHeight / 2) - parentTop;
-
-        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
-        params.setMargins(marginLeft, marginTop, params.rightMargin, params.bottomMargin);
-        view.setLayoutParams(params);
-    }
-
-    /**
-     * Hàm này tạo animation cho thuộc tính margin.
-     */
-    private static void animateMargins(final View view, int toLeft, int toTop, final AnimationEndListener listener) {
-        final ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
-        int startLeft = params.leftMargin;
-        int startTop = params.topMargin;
-
-        ValueAnimator animator = ValueAnimator.ofFloat(1f, 0f);
-        animator.setInterpolator(new PathInterpolator(0.7f, 0f, 0.3f, 1)); //https://cubic-bezier.com/#0,.73,.22,.94
-        animator.setDuration(1000);
-
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                float fraction = (float) valueAnimator.getAnimatedValue();
-                int currentLeft = (int) (startLeft * fraction + toLeft * (1 - fraction));
-                int currentTop = (int) (startTop * fraction + toTop * (1 - fraction));
-                params.setMargins(currentLeft, currentTop, params.rightMargin, params.bottomMargin);
-                view.requestLayout();
-            }
-        });
-
-        animator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                if (listener != null) {
-                    listener.onAnimationEnd();
-                }
-            }
-            @Override
-            public void onAnimationStart(Animator animation) {}
-            @Override
-            public void onAnimationCancel(Animator animation) {}
-            @Override
-            public void onAnimationRepeat(Animator animation) {}
-        });
-
-        animator.start();
-    }
 }
