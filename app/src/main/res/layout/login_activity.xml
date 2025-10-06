@@ -25,7 +25,7 @@
             android:layout_height="750dp"
             android:src="@mipmap/glow2"
             android:scaleType="centerCrop"
-            android:alpha="0.3"
+            android:alpha="0.8"
             ></ImageView>
     </FrameLayout>
 <!--    <TextView-->
@@ -209,7 +209,12 @@
             android:textColor="#1877F2"
             android:textSize="14sp"
             android:gravity="end"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="8dp"
+
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/btnLogin"
@@ -238,6 +243,8 @@
                     android:textColor="@android:color/white"
                     android:textSize="16sp"
                     android:textStyle="bold"
+
+                    android:fontFamily="@font/sf_text_bold"
                     >
 
                 </TextView>
@@ -266,9 +273,14 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:textColor="#1877F2"
-                android:text=" sign up"
+                android:text=" Sign up"
                 android:fontFamily="@font/sf_text_bold"
-                android:textSize="14sp"/>
+                android:textSize="14sp"
+
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                />
 
         </LinearLayout>
 
