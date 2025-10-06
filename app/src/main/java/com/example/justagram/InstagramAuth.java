@@ -75,7 +75,7 @@ public class InstagramAuth {
 
     private static LoginResult checkBusinessAccount(String fbToken) {
         try {
-            // Bước 1: Lấy danh sách Facebook Pages
+            // Lấy danh sách Facebook Pages
             String url = "https://graph.facebook.com/v21.0/me/accounts?access_token=" + fbToken;
 
             Request request = new Request.Builder()
@@ -101,7 +101,7 @@ public class InstagramAuth {
                 String pageId = page.getString("id");
                 String pageToken = page.getString("access_token");
 
-                // Bước 2: Kiểm tra Instagram Business Account
+                // Kiểm tra Instagram Business Account
                 url = "https://graph.facebook.com/v21.0/" + pageId +
                         "?fields=instagram_business_account&access_token=" + pageToken;
 
@@ -143,16 +143,24 @@ public class InstagramAuth {
                         JSONObject igData = new JSONObject(igResponseBody);
                         String accountType = igData.optString("account_type", "UNKNOWN");
 
-                        // so sánh account type có phải business không
-                        boolean isBusiness = "BUSINESS".equalsIgnoreCase(accountType) ||
+                        // so sánh account type có phải business/professional không
+                        boolean isProfessional = "BUSINESS".equalsIgnoreCase(accountType) ||
                                 "MEDIA_CREATOR".equalsIgnoreCase(accountType);
 
-                        if (!isBusiness) {
-                            return new LoginResult(false, "Account type: " + accountType +
-                                    ", not business nor media creator", pageToken, false, accountType, igUserId);
+                        // Nếu không phải professional account -> KHÔNG cho đăng nhập
+                        if (!isProfessional) {
+                            return new LoginResult(
+                                    false,  // success = false để không cho đăng nhập
+                                    "Không phải tài khoản professional. Vui lòng chuyển sang Business hoặc Creator account để sử dụng.",
+                                    pageToken,
+                                    false,  // isBusiness = false
+                                    accountType,
+                                    igUserId
+                            );
                         }
 
-                        return new LoginResult(true, "login successfully", pageToken, true, accountType, igUserId);
+                        // Nếu là professional account -> đăng nhập thành công
+                        return new LoginResult(true, "Đăng nhập thành công", pageToken, true, accountType, igUserId);
                     }
                 }
             }

@@ -12,10 +12,16 @@ public class signUpButton implements View.OnClickListener {
 
     @Override
     public void onClick(View v){
-        String url = "https://www.facebook.com/r.php?entry_point=login";
+        String url = "https://www.instagram.com/accounts/emailsignup/";
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         context.startActivity(intent);
     }
-
-
 }
+/**
+ Onclick function để handle việc redirect đến official web của facebook
+
+ dùng trong main activity:
+ Button signUp = findViewById(ID NUT SIGN UP O XML);
+ signUp.setOnClickListener(new SignUpButton(this));
+ */
+
