@@ -31,8 +31,8 @@ public class IntroAnimator {
                 // == BƯỚC 0: THIẾT LẬP TRẠNG THÁI BAN ĐẦU ==
                 logo.setAlpha(0f);
                 contentLayout.setAlpha(0f);
-                logo.setScaleX(2);
-                logo.setScaleY(2);
+                logo.setScaleX(1.25f);
+                logo.setScaleY(1.25f);
 
                 // --- THAY ĐỔI 1: Cập nhật vị trí ban đầu cho 2 ảnh nền ---
                 image1.setTranslationX(-500f);
@@ -44,10 +44,12 @@ public class IntroAnimator {
                 centerViewOnScreen(logo);
 
                 // --- THAY ĐỔI 2: Tính toán vị trí cuối cùng dựa trên kích thước màn hình ---
-                float screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
+                // getSystem() : get the system info
+                // getDisplayMetric() : get screen info
+                float screenWidth = Resources.getSystem() .getDisplayMetrics().widthPixels;
                 float screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
-
-                float image1FinalX = screenWidth - 750 ;
+                
+                float image1FinalX = screenWidth - 750;
                 float image1FinalY = screenHeight - 750;
                 float image2FinalX = -750 ;
                 float image2FinalY = screenHeight - 750;

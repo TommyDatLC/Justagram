@@ -16,7 +16,7 @@
             android:layout_height="750dp"
             android:src="@mipmap/glow1"
             android:scaleType="centerCrop"
-            android:alpha="10"
+            android:alpha="0.5"
             ></ImageView>
 
         <ImageView
@@ -25,7 +25,7 @@
             android:layout_height="750dp"
             android:src="@mipmap/glow2"
             android:scaleType="centerCrop"
-            android:alpha="10"
+            android:alpha="0.5"
             ></ImageView>
     </FrameLayout>
 <!--    <TextView-->
