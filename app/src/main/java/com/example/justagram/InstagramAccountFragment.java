@@ -41,7 +41,7 @@ public class InstagramAccountFragment extends Fragment {
 
     private ImageView ivProfile;
     private TextView tvName, tvUsername, tvFollowers, tvFollows, tvMediaCount, tvBiography, tvWebsite, tvStatus;
-
+    // Create a new http client
     private OkHttpClient httpClient = new OkHttpClient();
     private Gson gson = new Gson();
 
@@ -73,11 +73,11 @@ public class InstagramAccountFragment extends Fragment {
 
     private void fetchInstagramAccount() {
         if (TextUtils.isEmpty(ACCESS_TOKEN) || ACCESS_TOKEN.contains("YOUR_ACCESS_TOKEN")) {
-            tvStatus.setText("ERROR: ACCESS_TOKEN not provided");
+            showMessageBox("ERROR: ACCESS_TOKEN not provided");
             return;
         }
         if (TextUtils.isEmpty(IG_USER_ID) || IG_USER_ID.contains("YOUR_IG_USER_ID")) {
-            tvStatus.setText("ERROR: IG_USER_ID not provided");
+            showMessageBox("ERROR: IG_USER_ID not provided");
             return;
         }
 
@@ -92,7 +92,7 @@ public class InstagramAccountFragment extends Fragment {
                 .addQueryParameter("fields", "id,username,name,profile_picture_url,biography,website,followers_count,follows_count,media_count")
                 .addQueryParameter("access_token", ACCESS_TOKEN)
                 .build();
-
+        // https://graph.instagram.com/{IG_USER_ID}?feilds=id,username,name,profile_picture_url,biography,website,followers_count,follows_count,media_count,access_token = {ACCESS_TOKEN}
         Request request = new Request.Builder()
                 .url(url)
                 .get()
@@ -101,7 +101,7 @@ public class InstagramAccountFragment extends Fragment {
         httpClient.newCall(request).enqueue(new Callback() {
             @Override public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 if (getActivity() == null) return;
-                getActivity().runOnUiThread(() -> tvStatus.setText("Network error: " + e.getMessage()));
+                getActivity().runOnUiThread(() -> showMessageBox("Network error: " + e.getMessage()));
             }
 
             @Override public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
@@ -109,7 +109,7 @@ public class InstagramAccountFragment extends Fragment {
 
                 final String body = response.body() != null ? response.body().string() : "";
                 if (!response.isSuccessful()) {
-                    getActivity().runOnUiThread(() -> tvStatus.setText("API error: " + response.code() + " — " + body));
+                    getActivity().runOnUiThread(() -> showMessageBox("API error: " + response.code() + " — " + body));
                     return;
                 }
 
@@ -117,7 +117,7 @@ public class InstagramAccountFragment extends Fragment {
                     final IGUser user = gson.fromJson(body, IGUser.class);
                     getActivity().runOnUiThread(() -> applyUserToUI(user));
                 } catch (Exception ex) {
-                    getActivity().runOnUiThread(() -> tvStatus.setText("Parse error: " + ex.getMessage()));
+                    getActivity().runOnUiThread(() -> showMessageBox("Parse error: " + ex.getMessage()));
                 }
             }
         });
@@ -125,7 +125,7 @@ public class InstagramAccountFragment extends Fragment {
 
     private void applyUserToUI(IGUser user) {
         if (user == null) {
-            tvStatus.setText("No data");
+            showMessageBox("No data");
             return;
         }
 
@@ -149,12 +149,14 @@ public class InstagramAccountFragment extends Fragment {
             ivProfile.setImageResource(R.mipmap.unknow_user);
         }
     }
-
+    // check if s is null or only white space return
     private String nonEmptyOrDash(String s) {
         return (s == null || s.trim().isEmpty()) ? "—" : s;
     }
 
     // Model for partial fields returned by IG Graph API
+
+    // Sync the request data into this class
     private static class IGUser {
         @SerializedName("id")
         String id;
@@ -183,5 +185,9 @@ public class InstagramAccountFragment extends Fragment {
 
         @SerializedName("media_count")
         Integer mediaCount;
+    }
+    void showMessageBox(String content)
+    {
+        Utility.showMessageBox(content,getContext());
     }
 }
