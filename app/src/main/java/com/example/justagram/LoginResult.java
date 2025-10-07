@@ -16,4 +16,3 @@ class LoginResult {
         this.igUserId = igUserId;
     }
 }
-
