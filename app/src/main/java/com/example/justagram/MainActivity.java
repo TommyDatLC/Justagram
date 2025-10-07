@@ -32,7 +32,10 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout content = findViewById(R.id.content);
 
         IntroAnimator.start(logo,glow1,glow2,content);
-
+        var forget = findViewById(R.id.tvForgot);
+        forget.setOnClickListener(new forgetPassword(this));
+        var signUp = findViewById(R.id.signUp);
+        signUp.setOnClickListener(new SignUpButton(this));
     }
     void TestInstagramAccountFragment()
     {

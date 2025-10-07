@@ -47,7 +47,7 @@
         android:id="@+id/justagram"
         android:layout_width="300dp"
         android:layout_height="160dp"
-        android:layout_below="@id/header"
+
         android:layout_centerHorizontal="true"
         android:layout_marginTop="32dp"
         android:src="@mipmap/justagram_logo"
@@ -276,7 +276,7 @@
                 android:text=" Sign up"
                 android:fontFamily="@font/sf_text_bold"
                 android:textSize="14sp"
-
+                android:id="@+id/signUp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
