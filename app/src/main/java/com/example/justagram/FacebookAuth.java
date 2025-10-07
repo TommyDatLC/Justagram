@@ -13,7 +13,14 @@ import java.io.IOException;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-
+/**
+ * dùng trong main activity
+ * button onclick -> openfacebookLogin 
+ * callback về main activity
+ * coed -> access token
+ * trả về LoginResult
+ *   
+ * */ 
 public class FacebookAuth {
     private static final String TAG = "FacebookAuth";
     private static final String PREF_NAME = "facebook_prefs";
@@ -21,27 +28,28 @@ public class FacebookAuth {
     private static final OkHttpClient client = new OkHttpClient();
 
     /**
-     * Mở giao diện đăng nhập Facebook.
-     * Sau khi người dùng đăng nhập xong, Facebook sẽ redirect về redirectUri với ?code=...
+     * Mở màn hình đăng nhập Facebook để xin quyền truy cập
      */
     public static void openFacebookLogin(Context context, String appId, String redirectUri) {
         String authUrl = "https://www.facebook.com/v21.0/dialog/oauth" +
                 "?client_id=" + appId +
                 "&redirect_uri=" + redirectUri +
-                "&scope=email,public_profile" +   // quyền cơ bản
+                "&scope=email,public_profile" +   // Quyền cơ bản: email và thông tin public profile
                 "&response_type=code";
         context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(authUrl)));
     }
 
-    /**
-     * Lấy "code" trả về từ Facebook sau khi người dùng login thành công.
-     */
+    /*
+     * Lấy authorization code từ callback URL sau khi đăng nhập Facebook*/
     public static String getCodeFromCallback(Uri uri) {
         return uri != null ? uri.getQueryParameter("code") : null;
     }
 
     /**
-     * Đổi "code" sang "access_token"
+     * Đổi authorization code thành Facebook access token
+     
+     * login facebook graph api -> đổi code thành access token -> trả về LoginResult
+
      */
     public static LoginResult exchangeCodeForToken(
             String code,
@@ -50,6 +58,7 @@ public class FacebookAuth {
             String redirectUri
     ) {
         try {
+            // Facebook Graph API 
             String url = "https://graph.facebook.com/v21.0/oauth/access_token" +
                     "?client_id=" + appId +
                     "&client_secret=" + appSecret +
@@ -67,8 +76,10 @@ public class FacebookAuth {
                     JSONObject json = new JSONObject(responseBody);
                     String token = json.getString("access_token");
 
+                    // success
                     return new LoginResult(true, "Facebook login successful", token, true, null, null);
                 } else {
+                    // Request failed
                     return new LoginResult(false, "HTTP " + response.code(), null, false, null, null);
                 }
             }
