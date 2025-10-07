@@ -1,24 +1,14 @@
 package com.example.justagram;
 
-import android.app.AlarmManager;
-import android.app.DatePickerDialog;
-import android.app.PendingIntent;
-import android.app.Service;
-import android.app.TimePickerDialog;
-import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
-import android.provider.Settings;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,13 +16,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.widget.DatePicker;
-import android.widget.TimePicker;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,14 +30,10 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
@@ -65,66 +46,39 @@ import okhttp3.Response;
 /**
  * IgPublisherFragment (single-file)
  *
- * Key behaviors:
- * - Post tab: upload images to SERVER_URL, create containers now, publish (supports carousel).
- * - Reel tab: only accept video (single). Upload video to SERVER_URL, receive video_url, create REELS container and publish.
- * - Schedule: upload local files to server now (to guarantee public URLs exist), but DO NOT create IG containers until the scheduled time.
- *   The scheduled job stores media_urls + is_reel flag; when alarm fires PublishService will create containers and publish.
+ * Changes:
+ * - removed scheduling functionality entirely
+ * - publish buttons are disabled while corresponding publish flows run and re-enabled after success/failure
  *
- * Important: resumable direct upload to Meta (rupload.facebook.com) for large videos is not implemented here.
+ * Note: Replace SERVER_URL, ACCESS_TOKEN, IG_USER_ID with real values.
  */
 public class IgPublisherFragment extends Fragment {
 
     private static final int REQUEST_PICK_MEDIA = 4001;
     private static final int MAX_IMAGES = 10;
-    private static final String PREFS = "ig_publisher_prefs";
-    private static final String PREF_SCHEDULED = "scheduled_posts";
 
     // >>> CONFIG CONSTANTS (not user input)
     private static final String SERVER_URL = "https://catechistical-questingly-na.ngrok-free.dev"; // your upload server
-    private static final String ACCESS_TOKEN = "IGAAS2qCIE595BZAFJ0SmVNaHBUbFFCM0NqOFBOYkdNOHhBdC1PR1hNTHV6ZAEtLZAm5RVTNZAa3lweFdqM0xxNVcwY2xLVlBadFdDUm54QkFBd0Jvdl8zRkJEMFFBNEtMZAkhyX2hfQUtIZAzNnVGdSa2pVYmtoX1I2bkZAxOFZAuOGp6VQZDZD"; // replace
-    private static final String IG_USER_ID = "17841474853201686"; // replace
+    private static final String ACCESS_TOKEN = "IGAAS2qCIE595BZAFJ0SmVNaHBUbFFCM0NqOFBOYkdNOHhBdC1PR1hNTHV6ZAEtLZAm5RVTNZAa3lweFdqM0xxNVcwY2xLVlBadFdDUm54QkFBd0Jvdl8zRkJEMFFBNEtMZAkhyX2hfQUtIZAzNnVGdSa2pVYmtoX1I2bkZAxOFZAuOGp6VQZDZD";
+    private static final String IG_USER_ID = "17841474853201686";
     private static final String API_VERSION = "v23.0";
     // <<<
 
     // UI
     private TabLayout tabLayout;
-    private Button btnPickMedia_reel, btnPublishNow_reel, btnSchedule_reel;
-    private Button btnPickMedia_post, btnPublishNow_post, btnSchedule_post;
+    private Button btnPickMedia_reel, btnPublishNow_reel;
+    private Button btnPickMedia_post, btnPublishNow_post;
     private EditText etCaption_reel, etCaption_post;
-    private RecyclerView rvPreview_reel, rvPreview_post, rvScheduled;
+    private RecyclerView rvPreview_reel, rvPreview_post;
 
     // data
     private final List<Uri> selectedUris = new ArrayList<>();
     private final List<String> selectedNames = new ArrayList<>();
     private final OkHttpClient http = new OkHttpClient();
 
-    // request code constant for exact alarm request (optional)
-    private static final int REQ_CODE_REQUEST_EXACT_ALARM = 12345;
-
-    /** ensure permission to set exact alarms on Android S+ */
-    private boolean ensureCanScheduleExactAlarms() {
-        AlarmManager am = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
-        if (am != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (am.canScheduleExactAlarms()) return true;
-            try {
-                Intent i = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
-                i.setData(Uri.parse("package:" + getContext().getPackageName()));
-                startActivityForResult(i, REQ_CODE_REQUEST_EXACT_ALARM);
-            } catch (ActivityNotFoundException ex) {
-                showMsg("Please enable 'Alarms & reminders' for this app in system settings.");
-            }
-            return false;
-        }
-        return true;
-    }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup parent, Bundle saved) {
         View v = inflater.inflate(R.layout.fragment_ig_publisher_tabs, parent, false);
-
-        // check exact alarm permission early (non-blocking)
-        ensureCanScheduleExactAlarms();
 
         tabLayout = v.findViewById(R.id.tabLayout);
         tabLayout.addTab(tabLayout.newTab().setText("Reel"));
@@ -133,28 +87,21 @@ public class IgPublisherFragment extends Fragment {
         // Reel views
         btnPickMedia_reel = v.findViewById(R.id.btnPickMedia_reel);
         btnPublishNow_reel = v.findViewById(R.id.btnPublishNow_reel);
-        btnSchedule_reel = v.findViewById(R.id.btnSchedule_reel);
         etCaption_reel = v.findViewById(R.id.etCaption_reel);
         rvPreview_reel = v.findViewById(R.id.rvPreview_reel);
 
         // Post views
         btnPickMedia_post = v.findViewById(R.id.btnPickMedia_post);
         btnPublishNow_post = v.findViewById(R.id.btnPublishNow_post);
-        btnSchedule_post = v.findViewById(R.id.btnSchedule_post);
         etCaption_post = v.findViewById(R.id.etCaption_post);
         rvPreview_post = v.findViewById(R.id.rvPreview_post);
 
-        rvScheduled = v.findViewById(R.id.rvScheduled);
-
-        // Common adapter for preview (same list)
+        // set up preview recyclers
         rvPreview_reel.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         rvPreview_post.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         PreviewAdapter previewAdapter = new PreviewAdapter();
         rvPreview_reel.setAdapter(previewAdapter);
         rvPreview_post.setAdapter(previewAdapter);
-
-        rvScheduled.setLayoutManager(new LinearLayoutManager(getContext()));
-        rvScheduled.setAdapter(new ScheduledAdapter(loadScheduled()));
 
         // pick handlers (each respects current tab)
         btnPickMedia_reel.setOnClickListener(ch -> pickMedia(true));
@@ -163,19 +110,6 @@ public class IgPublisherFragment extends Fragment {
         // publish now
         btnPublishNow_reel.setOnClickListener(ch -> publishNow(true));
         btnPublishNow_post.setOnClickListener(ch -> publishNow(false));
-
-        // schedule
-        btnSchedule_reel.setOnClickListener(ch -> scheduleFlow(true));
-        btnSchedule_post.setOnClickListener(ch -> scheduleFlow(false));
-
-        // register in-app receiver for Alarm (optional)
-        if (getContext() != null) {
-            try {
-                ContextCompat.registerReceiver(getContext(), new InAppAlarmReceiver(),
-                        new IntentFilter(AlarmReceiver.ACTION_PERFORM_POST),
-                        ContextCompat.RECEIVER_NOT_EXPORTED);
-            } catch (Exception ignored) {}
-        }
 
         return v;
     }
@@ -206,7 +140,7 @@ public class IgPublisherFragment extends Fragment {
             } else if (data.getData() != null) {
                 addPersistUri(data.getData());
             }
-            // refresh both previews
+            // refresh previews
             if (rvPreview_reel.getAdapter() != null) rvPreview_reel.getAdapter().notifyDataSetChanged();
             if (rvPreview_post.getAdapter() != null) rvPreview_post.getAdapter().notifyDataSetChanged();
         }
@@ -239,80 +173,59 @@ public class IgPublisherFragment extends Fragment {
         String caption = asReel ? etCaption_reel.getText().toString() : etCaption_post.getText().toString();
         if (selectedUris.isEmpty()) { showMsg("Pick at least one media"); return; }
 
+        // disable both publish buttons while any publish is in progress
+        setAllPublishButtonsEnabled(false);
+
         if (asReel) {
             // only one video allowed
-            if (selectedUris.size() > 1) { showMsg("Reel accepts only one video. Please pick a single video."); return; }
+            if (selectedUris.size() > 1) {
+                showMsg("Reel accepts only one video. Please pick a single video.");
+                setAllPublishButtonsEnabled(true);
+                return;
+            }
             Uri videoUri = selectedUris.get(0);
             uploadVideoToServer(SERVER_URL, videoUri, (videoUrl, err) -> {
-                if (err != null) { showMsg("Video upload error: " + err); return; }
-                // create reel container using video_url
-                createVideoContainerThenPublish(IG_USER_ID, ACCESS_TOKEN, videoUrl, caption, true);
+                if (err != null) {
+                    showMsg("Video upload error: " + err);
+                    setAllPublishButtonsEnabled(true);
+                    return;
+                }
+                // create reel container using video_url and publish
+                createVideoContainerThenPublish(IG_USER_ID, ACCESS_TOKEN, videoUrl, caption, true, new TerminalCallback() {
+                    @Override public void onDone(String error) {
+                        if (error != null) showMsg("Reel publish error: " + error);
+                        setAllPublishButtonsEnabled(true);
+                    }
+                });
             });
         } else {
             // images (one or many)
             uploadAllImagesToServer(SERVER_URL, selectedUris, (urls, err) -> {
-                if (err != null) { showMsg("Upload server error: " + err); return; }
-                if (urls == null || urls.isEmpty()) { showMsg("No URLs returned by server"); return; }
-                createContainersForUrlsThenPublish(IG_USER_ID, ACCESS_TOKEN, urls, caption, false);
+                if (err != null) {
+                    showMsg("Upload server error: " + err);
+                    setAllPublishButtonsEnabled(true);
+                    return;
+                }
+                if (urls == null || urls.isEmpty()) {
+                    showMsg("No URLs returned by server");
+                    setAllPublishButtonsEnabled(true);
+                    return;
+                }
+                createContainersForUrlsThenPublish(IG_USER_ID, ACCESS_TOKEN, urls, caption, false, new TerminalCallback() {
+                    @Override public void onDone(String error) {
+                        if (error != null) showMsg("Post publish error: " + error);
+                        setAllPublishButtonsEnabled(true);
+                    }
+                });
             });
         }
     }
 
-    // ---------------- schedule flow ----------------
-    private void scheduleFlow(boolean asReel) {
-        if (selectedUris.isEmpty()) { showMsg("Pick media before scheduling"); return; }
-
-        final Calendar now = Calendar.getInstance();
-        DatePickerDialog dp = new DatePickerDialog(getContext(), (DatePicker view, int year, int month, int dayOfMonth) -> {
-            Calendar cal = Calendar.getInstance();
-            cal.set(year, month, dayOfMonth);
-            // after date, pick time (hour + minute)
-            TimePickerDialog tp = new TimePickerDialog(getContext(), (TimePicker timePicker, int hourOfDay, int minute) -> {
-                cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                cal.set(Calendar.MINUTE, minute);
-                cal.set(Calendar.SECOND, 0);
-                cal.set(Calendar.MILLISECOND, 0);
-
-                long chosen = cal.getTimeInMillis();
-                long nowMs = System.currentTimeMillis();
-                long minAllowed = nowMs + 60_000; // 1 minute
-                long maxAllowed = nowMs + 5L * 365 * 24 * 60 * 60 * 1000; // ~5 years
-
-                if (chosen < minAllowed) {
-                    showMsg("Chosen time invalid: scheduling must be at least 1 minute from now.");
-                    return;
-                }
-                if (chosen > maxAllowed) {
-                    showMsg("Chosen time invalid: scheduling too far in the future.");
-                    return;
-                }
-
-                String caption = asReel ? etCaption_reel.getText().toString() : etCaption_post.getText().toString();
-
-                // For scheduling: first upload media to server now to ensure public urls exist, but DO NOT create IG containers yet.
-                if (asReel) {
-                    // upload single video now -> get video_url and schedule with media_urls + is_reel=true
-                    if (selectedUris.size() > 1) { showMsg("Reel accepts only one video. Please pick a single video."); return; }
-                    uploadVideoToServer(SERVER_URL, selectedUris.get(0), (videoUrl, err) -> {
-                        if (err != null) { showMsg("Upload server error: " + err); return; }
-                        List<String> mediaUrls = new ArrayList<>(); mediaUrls.add(videoUrl);
-                        schedulePublishJobWithMediaUrls(IG_USER_ID, ACCESS_TOKEN, mediaUrls, caption, true, chosen);
-                    });
-                } else {
-                    // upload images, schedule with media_urls
-                    uploadAllImagesToServer(SERVER_URL, selectedUris, (urls, err) -> {
-                        if (err != null) { showMsg("Upload server error: " + err); return; }
-                        if (urls == null || urls.isEmpty()) { showMsg("No URLs returned by server"); return; }
-                        schedulePublishJobWithMediaUrls(IG_USER_ID, ACCESS_TOKEN, urls, caption, false, chosen);
-                    });
-                }
-
-            }, now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), true);
-            tp.setTitle("Pick hour and minute");
-            tp.show();
-        }, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
-        dp.setTitle("Pick date");
-        dp.show();
+    private void setAllPublishButtonsEnabled(boolean enabled) {
+        runOnMain(() -> {
+            if (btnPublishNow_post != null) btnPublishNow_post.setEnabled(enabled);
+            if (btnPublishNow_reel != null) btnPublishNow_reel.setEnabled(enabled);
+        });
     }
 
     // ---------------- upload helpers (images) ----------------
@@ -321,6 +234,7 @@ public class IgPublisherFragment extends Fragment {
     private void uploadAllImagesToServer(String serverUrl, List<Uri> uris, UploadAllCallback cb) {
         List<String> resultUrls = new ArrayList<>();
         AtomicInteger remaining = new AtomicInteger(uris.size());
+        if (uris.isEmpty()) { runOnMain(() -> cb.onDone(null, "No URIs")); return; }
         if (serverUrl.endsWith("/")) serverUrl = serverUrl.substring(0, serverUrl.length() - 1);
 
         for (Uri u : uris) {
@@ -343,10 +257,10 @@ public class IgPublisherFragment extends Fragment {
                 String finalServerUrl = serverUrl;
                 String finalName = name;
                 http.newCall(req).enqueue(new Callback() {
-                    @Override public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    @Override public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
                         runOnMain(() -> cb.onDone(null, e.getMessage()));
                     }
-                    @Override public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    @Override public void onResponse(@NonNull okhttp3.Call call, @NonNull Response response) throws IOException {
                         if (!response.isSuccessful()) {
                             runOnMain(() -> cb.onDone(null, "HTTP " + response.code()));
                             return;
@@ -398,10 +312,10 @@ public class IgPublisherFragment extends Fragment {
             String finalServerUrl = serverUrl;
             String finalName = name;
             http.newCall(req).enqueue(new Callback() {
-                @Override public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                @Override public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
                     runOnMain(() -> cb.onDone(null, e.getMessage()));
                 }
-                @Override public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                @Override public void onResponse(@NonNull okhttp3.Call call, @NonNull Response response) throws IOException {
                     if (!response.isSuccessful()) {
                         runOnMain(() -> cb.onDone(null, "HTTP " + response.code()));
                         return;
@@ -434,9 +348,14 @@ public class IgPublisherFragment extends Fragment {
     }
 
     // ---------------- create containers & publish (immediate, images) ----------------
-    private void createContainersForUrlsThenPublish(String igId, String token, List<String> urls, String caption, boolean asReel) {
+    // TerminalCallback invoked when entire publish flow completes (null error = success, non-null = error message)
+    private interface TerminalCallback { void onDone(String error); }
+
+    private void createContainersForUrlsThenPublish(String igId, String token, List<String> urls, String caption, boolean asReel, TerminalCallback terminal) {
         List<String> creationIds = new ArrayList<>();
         AtomicInteger remaining = new AtomicInteger(urls.size());
+        if (urls.isEmpty()) { if (terminal != null) terminal.onDone("No urls to create containers"); return; }
+
         for (String u : urls) {
             FormBody.Builder fb = new FormBody.Builder()
                     .add("image_url", u)
@@ -445,27 +364,43 @@ public class IgPublisherFragment extends Fragment {
             if (urls.size() > 1) fb.add("is_carousel_item", "true");
             Request req = new Request.Builder().url("https://graph.instagram.com/" + API_VERSION + "/" + igId + "/media").post(fb.build()).build();
             http.newCall(req).enqueue(new Callback() {
-                @Override public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                    runOnMain(() -> showMsg("Create container failed: " + e.getMessage()));
-                    if (remaining.decrementAndGet() == 0) { /* nothing */ }
+                @Override public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
+                    // one of the container creations failed -> we treat whole publish as failed
+                    runOnMain(() -> {
+                        if (terminal != null) terminal.onDone("Create container failed: " + e.getMessage());
+                    });
                 }
-                @Override public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                @Override public void onResponse(@NonNull okhttp3.Call call, @NonNull Response response) throws IOException {
                     try {
                         if (!response.isSuccessful()) {
                             String body = response.body() != null ? response.body().string() : "";
-                            runOnMain(() -> showMsg("Create container HTTP error: " + response.code() + " " + body));
+                            runOnMain(() -> { if (terminal != null) terminal.onDone("Create container HTTP error: " + response.code() + " " + body); });
                         } else {
                             JSONObject jo = new JSONObject(response.body().string());
                             String id = jo.optString("id", null);
                             if (!TextUtils.isEmpty(id)) synchronized (creationIds) { creationIds.add(id); }
                         }
                     } catch (Exception ex) {
-                        runOnMain(() -> showMsg("Parse error: " + ex.getMessage()));
+                        runOnMain(() -> { if (terminal != null) terminal.onDone("Parse error: " + ex.getMessage()); });
                     } finally {
                         if (remaining.decrementAndGet() == 0) {
-                            if (creationIds.isEmpty()) { runOnMain(() -> showMsg("No containers created.")); return; }
-                            if (creationIds.size() == 1) publishContainer(igId, token, creationIds.get(0));
-                            else createCarouselAndPublish(igId, token, creationIds, caption);
+                            // all container calls finished successfully (or added ids). Proceed.
+                            runOnMain(() -> {
+                                if (creationIds.isEmpty()) {
+                                    if (terminal != null) terminal.onDone("No containers created.");
+                                    return;
+                                }
+                                // publish
+                                if (creationIds.size() == 1) {
+                                    publishContainer(igId, token, creationIds.get(0), (err) -> {
+                                        if (terminal != null) terminal.onDone(err);
+                                    });
+                                } else {
+                                    createCarouselAndPublish(igId, token, creationIds, caption, (err) -> {
+                                        if (terminal != null) terminal.onDone(err);
+                                    });
+                                }
+                            });
                         }
                     }
                 }
@@ -474,8 +409,7 @@ public class IgPublisherFragment extends Fragment {
     }
 
     // ---------------- create video container (reel) and publish immediately ----------------
-    private void createVideoContainerThenPublish(String igId, String token, String videoUrl, String caption, boolean asReel) {
-        // media_type=REELS for reel, or MEDIA_TYPE other for plain video if needed
+    private void createVideoContainerThenPublish(String igId, String token, String videoUrl, String caption, boolean asReel, TerminalCallback terminal) {
         FormBody.Builder fb = new FormBody.Builder()
                 .add("video_url", videoUrl)
                 .add("caption", caption)
@@ -483,25 +417,35 @@ public class IgPublisherFragment extends Fragment {
         if (asReel) fb.add("media_type", "REELS");
         Request req = new Request.Builder().url("https://graph.instagram.com/" + API_VERSION + "/" + igId + "/media").post(fb.build()).build();
         http.newCall(req).enqueue(new Callback() {
-            @Override public void onFailure(@NonNull Call call, @NonNull IOException e) { runOnMain(() -> showMsg("Create video container failed: " + e.getMessage())); }
-            @Override public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+            @Override public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
+                runOnMain(() -> { if (terminal != null) terminal.onDone("Create video container failed: " + e.getMessage()); });
+            }
+            @Override public void onResponse(@NonNull okhttp3.Call call, @NonNull Response response) throws IOException {
                 try {
                     if (!response.isSuccessful()) {
                         String body = response.body() != null ? response.body().string() : "";
-                        runOnMain(() -> showMsg("Create video container HTTP error: " + response.code() + " " + body));
+                        runOnMain(() -> { if (terminal != null) terminal.onDone("Create video container HTTP error: " + response.code() + " " + body); });
                         return;
                     }
                     JSONObject jo = new JSONObject(response.body().string());
                     String id = jo.optString("id", null);
-                    if (!TextUtils.isEmpty(id)) publishContainer(igId, token, id);
-                    else runOnMain(() -> showMsg("Video container returned no id"));
-                } catch (Exception ex) { runOnMain(() -> showMsg("Parse error video container: " + ex.getMessage())); }
+                    if (!TextUtils.isEmpty(id)) {
+                        // publish container
+                        publishContainer(igId, token, id, (err) -> {
+                            if (terminal != null) terminal.onDone(err);
+                        });
+                    } else {
+                        runOnMain(() -> { if (terminal != null) terminal.onDone("Video container returned no id"); });
+                    }
+                } catch (Exception ex) {
+                    runOnMain(() -> { if (terminal != null) terminal.onDone("Parse error video container: " + ex.getMessage()); });
+                }
             }
         });
     }
 
     // ---------------- create carousel & publish helper ----------------
-    private void createCarouselAndPublish(String igId, String token, List<String> children, String caption) {
+    private void createCarouselAndPublish(String igId, String token, List<String> children, String caption, TerminalCallback terminal) {
         String childrenCsv = TextUtils.join(",", children);
         FormBody fb = new FormBody.Builder()
                 .add("caption", caption)
@@ -511,206 +455,50 @@ public class IgPublisherFragment extends Fragment {
                 .build();
         Request req = new Request.Builder().url("https://graph.instagram.com/" + API_VERSION + "/" + igId + "/media").post(fb).build();
         http.newCall(req).enqueue(new Callback() {
-            @Override public void onFailure(@NonNull Call call, @NonNull IOException e) { runOnMain(() -> showMsg("Create carousel failed: " + e.getMessage())); }
-            @Override public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+            @Override public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
+                runOnMain(() -> { if (terminal != null) terminal.onDone("Create carousel failed: " + e.getMessage()); });
+            }
+            @Override public void onResponse(@NonNull okhttp3.Call call, @NonNull Response response) throws IOException {
                 try {
-                    if (!response.isSuccessful()) { runOnMain(() -> showMsg("Create carousel HTTP error: " + response.code())); return; }
+                    if (!response.isSuccessful()) {
+                        runOnMain(() -> { if (terminal != null) terminal.onDone("Create carousel HTTP error: " + response.code()); });
+                        return;
+                    }
                     JSONObject jo = new JSONObject(response.body().string());
                     String id = jo.optString("id", null);
-                    if (!TextUtils.isEmpty(id)) publishContainer(igId, token, id);
-                    else runOnMain(() -> showMsg("Carousel creation returned no id"));
-                } catch (Exception ex) { runOnMain(() -> showMsg("Parse error: " + ex.getMessage())); }
+                    if (!TextUtils.isEmpty(id)) {
+                        // publish the carousel container
+                        publishContainer(igId, token, id, (err) -> {
+                            if (terminal != null) terminal.onDone(err);
+                        });
+                    } else {
+                        runOnMain(() -> { if (terminal != null) terminal.onDone("Carousel creation returned no id"); });
+                    }
+                } catch (Exception ex) {
+                    runOnMain(() -> { if (terminal != null) terminal.onDone("Parse error: " + ex.getMessage()); });
+                }
             }
         });
     }
 
-    private void publishContainer(String igId, String token, String creationId) {
-        FormBody fb = new FormBody.Builder().add("creation_id", creationId).add("access_token", token).build();
+    // publish a single container and call terminal when done
+    private void publishContainer(String igId, String token, String creationId, TerminalCallback terminal) {
+        RequestBody fb = new FormBody.Builder().add("creation_id", creationId).add("access_token", token).build();
         Request req = new Request.Builder().url("https://graph.instagram.com/" + API_VERSION + "/" + igId + "/media_publish").post(fb).build();
         http.newCall(req).enqueue(new Callback() {
-            @Override public void onFailure(@NonNull Call call, @NonNull IOException e) { runOnMain(() -> showMsg("Publish failed: " + e.getMessage())); }
-            @Override public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+            @Override public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
+                runOnMain(() -> { if (terminal != null) terminal.onDone("Publish failed: " + e.getMessage()); });
+            }
+            @Override public void onResponse(@NonNull okhttp3.Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     String body = response.body() != null ? response.body().string() : "";
-                    runOnMain(() -> showMsg("Publish HTTP error: " + response.code() + " " + body));
+                    runOnMain(() -> { if (terminal != null) terminal.onDone("Publish HTTP error: " + response.code() + " " + body); });
                     return;
                 }
-                String s = response.body().string();
-                runOnMain(() -> showMsg("Published: " + s));
+                // success
+                runOnMain(() -> { if (terminal != null) terminal.onDone(null); });
             }
         });
-    }
-
-    // ---------------- schedule storing function (store media_urls NOT creation_ids) ----------------
-    private void schedulePublishJobWithMediaUrls(String igId, String token, List<String> mediaUrls, String caption, boolean isReel, long whenMillis) {
-        try {
-            JSONObject job = new JSONObject();
-            job.put("igId", igId);
-            job.put("token", token);
-            job.put("timeMillis", whenMillis);
-            job.put("is_reel", isReel);
-            job.put("caption", caption == null ? "" : caption);
-            JSONArray ja = new JSONArray();
-            for (String s : mediaUrls) ja.put(s);
-            job.put("media_urls", ja);
-            String uid = "sched_" + System.currentTimeMillis();
-            job.put("id", uid);
-
-            JSONArray saved = loadScheduledRaw();
-            saved.put(job);
-            saveScheduledRaw(saved);
-            runOnMain(() -> rvScheduled.setAdapter(new ScheduledAdapter(jsonArrayToList(saved))));
-
-            Intent i = new Intent(getContext(), AlarmReceiver.class);
-            i.setAction(AlarmReceiver.ACTION_PERFORM_POST);
-            i.putExtra("payload", job.toString());
-            PendingIntent pi = PendingIntent.getBroadcast(getContext(), uid.hashCode(), i, PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT>=23?PendingIntent.FLAG_IMMUTABLE:0));
-            AlarmManager am = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
-
-            // prefer exact alarm if available
-            if (am != null) {
-                if (ensureCanScheduleExactAlarms()) {
-                    am.setExact(AlarmManager.RTC_WAKEUP, whenMillis, pi);
-                } else {
-                    am.set(AlarmManager.RTC_WAKEUP, whenMillis, pi);
-                }
-            }
-            runOnMain(() -> showMsg("Scheduled publish at " + whenMillis));
-        } catch (Exception ex) {
-            runOnMain(() -> showMsg("Schedule error: " + ex.getMessage()));
-        }
-    }
-
-    // ---------------- scheduled storage ----------------
-    private JSONArray loadScheduledRaw() {
-        SharedPreferences p = getContext().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
-        String s = p.getString(PREF_SCHEDULED, "[]");
-        try { return new JSONArray(s); } catch (JSONException e) { return new JSONArray(); }
-    }
-    private void saveScheduledRaw(JSONArray a) {
-        SharedPreferences p = getContext().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
-        p.edit().putString(PREF_SCHEDULED, a.toString()).apply();
-    }
-    private List<JSONObject> loadScheduled() { return jsonArrayToList(loadScheduledRaw()); }
-    private List<JSONObject> jsonArrayToList(JSONArray arr) {
-        List<JSONObject> list = new ArrayList<>();
-        for (int i = 0; i < arr.length(); ++i) try { list.add(arr.getJSONObject(i)); } catch (JSONException ignored) {}
-        return list;
-    }
-
-    // ---------------- AlarmReceiver -> starts PublishService ----------------
-    public static class AlarmReceiver extends android.content.BroadcastReceiver {
-        public static final String ACTION_PERFORM_POST = "com.example.justagram.ACTION_PERFORM_POST";
-        @Override public void onReceive(Context context, Intent intent) {
-            if (!ACTION_PERFORM_POST.equals(intent.getAction())) return;
-            String payload = intent.getStringExtra("payload");
-            if (payload == null) return;
-            Intent svc = new Intent(context, PublishService.class);
-            svc.putExtra("payload", payload);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(svc);
-            } else {
-                context.startService(svc);
-            }
-        }
-    }
-
-    // ---------------- PublishService: creates containers at runtime and publishes ----------------
-    public static class PublishService extends Service {
-        private OkHttpClient client = new OkHttpClient();
-        @Override public int onStartCommand(Intent intent, int flags, int startId) {
-            final String payload = intent.getStringExtra("payload");
-            new Thread(() -> {
-                try {
-                    JSONObject job = new JSONObject(payload);
-                    String igId = job.optString("igId");
-                    String token = job.optString("token");
-                    boolean isReel = job.optBoolean("is_reel", false);
-                    String caption = job.optString("caption", "");
-                    JSONArray mediaUrls = job.optJSONArray("media_urls");
-                    if (mediaUrls == null || mediaUrls.length() == 0) return;
-
-                    List<String> mediaList = new ArrayList<>();
-                    for (int i = 0; i < mediaUrls.length(); ++i) mediaList.add(mediaUrls.getString(i));
-
-                    // Create containers for each media url (image_url or video_url depending on isReel)
-                    List<String> creationIds = new ArrayList<>();
-                    for (String mediaUrl : mediaList) {
-                        FormBody.Builder fb = new FormBody.Builder().add("access_token", token).add("caption", caption);
-                        Request.Builder reqBuilder;
-                        if (isReel) {
-                            fb.add("video_url", mediaUrl);
-                            fb.add("media_type", "REELS");
-                        } else {
-                            fb.add("image_url", mediaUrl);
-                            if (mediaList.size() > 1) fb.add("is_carousel_item", "true");
-                        }
-                        Request req = new Request.Builder()
-                                .url("https://graph.instagram.com/" + API_VERSION + "/" + igId + "/media")
-                                .post(fb.build())
-                                .build();
-                        Response resp = client.newCall(req).execute();
-                        if (!resp.isSuccessful()) {
-                            // log and continue
-                            // you could notify via Notification; here we just skip
-                            continue;
-                        }
-                        JSONObject jo = new JSONObject(resp.body().string());
-                        String id = jo.optString("id", null);
-                        if (id != null) creationIds.add(id);
-                    }
-
-                    if (creationIds.isEmpty()) return;
-
-                    if (!isReel) {
-                        if (creationIds.size() == 1) {
-                            // publish single
-                            RequestBody pb = new FormBody.Builder().add("creation_id", creationIds.get(0)).add("access_token", token).build();
-                            Request pr = new Request.Builder().url("https://graph.instagram.com/" + API_VERSION + "/" + igId + "/media_publish").post(pb).build();
-                            client.newCall(pr).execute();
-                        } else {
-                            // create carousel
-                            String childrenCsv = TextUtils.join(",", creationIds);
-                            RequestBody fb2 = new FormBody.Builder()
-                                    .add("caption", caption)
-                                    .add("media_type", "CAROUSEL")
-                                    .add("children", childrenCsv)
-                                    .add("access_token", token)
-                                    .build();
-                            Request req2 = new Request.Builder().url("https://graph.instagram.com/" + API_VERSION + "/" + igId + "/media").post(fb2).build();
-                            Response r2 = client.newCall(req2).execute();
-                            if (!r2.isSuccessful()) return;
-                            JSONObject jo2 = new JSONObject(r2.body().string());
-                            String carouselId = jo2.optString("id", null);
-                            if (carouselId != null) {
-                                RequestBody pb = new FormBody.Builder().add("creation_id", carouselId).add("access_token", token).build();
-                                Request pr = new Request.Builder().url("https://graph.instagram.com/" + API_VERSION + "/" + igId + "/media_publish").post(pb).build();
-                                client.newCall(pr).execute();
-                            }
-                        }
-                    } else {
-                        // Reels: assume single video container or multiple video containers (rare). Publish each container (Meta expects publish on container)
-                        for (String cid : creationIds) {
-                            RequestBody pb = new FormBody.Builder().add("creation_id", cid).add("access_token", token).build();
-                            Request pr = new Request.Builder().url("https://graph.instagram.com/" + API_VERSION + "/" + igId + "/media_publish").post(pb).build();
-                            client.newCall(pr).execute();
-                        }
-                    }
-
-                } catch (Exception ignored) {}
-                stopSelf();
-            }).start();
-            return START_NOT_STICKY;
-        }
-        @Override public android.os.IBinder onBind(Intent intent) { return null; }
-    }
-
-    // In-app receiver to forward when running
-    private class InAppAlarmReceiver extends android.content.BroadcastReceiver {
-        @Override public void onReceive(Context context, Intent intent) {
-            AlarmReceiver ar = new AlarmReceiver();
-            ar.onReceive(context, intent);
-        }
     }
 
     // ---------------- preview adapter ----------------
@@ -726,87 +514,6 @@ public class IgPublisherFragment extends Fragment {
         @Override public int getItemCount() { return selectedUris.size(); }
     }
     private static class PreviewVH extends RecyclerView.ViewHolder { ImageView img; PreviewVH(@NonNull View v){ super(v); img=(ImageView)v; } }
-
-    // ---------------- scheduled adapter (with delete X) ----------------
-    private class ScheduledAdapter extends RecyclerView.Adapter<ScheduledVH> {
-        private final List<JSONObject> items;
-        ScheduledAdapter(List<JSONObject> items){ this.items = items; }
-        @NonNull @Override public ScheduledVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            LinearLayout container = new LinearLayout(parent.getContext());
-            container.setOrientation(LinearLayout.HORIZONTAL);
-            container.setPadding(12,12,12,12);
-            container.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            TextView tv = new TextView(parent.getContext());
-            LinearLayout.LayoutParams tvLp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
-            tv.setLayoutParams(tvLp);
-            tv.setTextSize(14);
-            Button btn = new Button(parent.getContext());
-            btn.setText("X");
-            LinearLayout.LayoutParams btnLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            btnLp.gravity = Gravity.CENTER_VERTICAL;
-            btn.setLayoutParams(btnLp);
-            container.addView(tv);
-            container.addView(btn);
-            return new ScheduledVH(container, tv, btn);
-        }
-        @Override public void onBindViewHolder(@NonNull ScheduledVH holder, int position) { holder.bind(items.get(position), position); }
-        @Override public int getItemCount() { return items.size(); }
-    }
-    private class ScheduledVH extends RecyclerView.ViewHolder {
-        TextView tv;
-        Button del;
-        ScheduledVH(@NonNull View v, TextView tv, Button del){ super(v); this.tv = tv; this.del = del; }
-        void bind(JSONObject jobObj, int position) {
-            try {
-                long t = jobObj.optLong("timeMillis");
-                String caption = jobObj.optString("caption", "");
-                JSONArray urls = jobObj.optJSONArray("media_urls");
-                boolean isReel = jobObj.optBoolean("is_reel", false);
-                String urlsStr = urls == null ? "[]" : urls.toString();
-
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-                String when = sdf.format(t);
-                String info = when + " — " + (isReel ? "Reel" : "Post") + " — Caption: " + (caption.isEmpty() ? "(no caption)" : caption) + "\nURLs: " + urlsStr;
-                tv.setText(info);
-
-                del.setOnClickListener(ch -> {
-                    String uid = jobObj.optString("id", null);
-                    if (uid != null) {
-                        try {
-                            Intent i = new Intent(getContext(), AlarmReceiver.class);
-                            i.setAction(AlarmReceiver.ACTION_PERFORM_POST);
-                            i.putExtra("payload", jobObj.toString());
-                            PendingIntent pi = PendingIntent.getBroadcast(getContext(), uid.hashCode(), i, PendingIntent.FLAG_NO_CREATE | (Build.VERSION.SDK_INT>=23?PendingIntent.FLAG_IMMUTABLE:0));
-                            AlarmManager am = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
-                            if (pi != null && am != null) {
-                                am.cancel(pi);
-                                pi.cancel();
-                            }
-                        } catch (Exception e) {
-                            // ignore cancel errors
-                        }
-                    }
-                    try {
-                        JSONArray arr = loadScheduledRaw();
-                        JSONArray newArr = new JSONArray();
-                        for (int i = 0; i < arr.length(); ++i) {
-                            JSONObject o = arr.getJSONObject(i);
-                            String id = o.optString("id", null);
-                            if (id == null || !id.equals(jobObj.optString("id"))) newArr.put(o);
-                        }
-                        saveScheduledRaw(newArr);
-                        runOnMain(() -> rvScheduled.setAdapter(new ScheduledAdapter(jsonArrayToList(newArr))));
-                        showMsg("Schedule removed");
-                    } catch (Exception ex) {
-                        showMsg("Failed to remove schedule: " + ex.getMessage());
-                    }
-                });
-            } catch (Exception e) {
-                tv.setText("Invalid job");
-                del.setOnClickListener(null);
-            }
-        }
-    }
 
     // ---------------- util ----------------
     private void runOnMain(Runnable r) { if (getActivity()!=null) getActivity().runOnUiThread(r); else r.run(); }
