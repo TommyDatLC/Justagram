@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog;
 
 public class Utility {
     public static void showMessageBox(String content,Context t) {
+        
         // 1. Instantiate an AlertDialog.Builder
         AlertDialog.Builder builder = new AlertDialog.Builder(t);
 
@@ -31,4 +32,5 @@ public class Utility {
         // 4. Show the dialog
         dialog.show();
     }
+
 }
