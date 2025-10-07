@@ -4,9 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
-public class signUpButton implements View.OnClickListener {
+public class SignUpButton implements View.OnClickListener {
     private final Context context;
-    public signUpButton(Context context){
+
+    public SignUpButton(Context context){
         this.context = context;
     }
 
