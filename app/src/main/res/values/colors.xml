@@ -10,6 +10,7 @@
     <color name="hint_gray">#8A8A8A</color>
     <color name="hint_text">#424242</color>
     <color name="facebook_blue">#1877F2</color>
+    <color name="instagram_main">#FD1D1D</color>
     <color name="light_cyan">#20F0FF</color>
     <color name="sunset_orange">#ffae00</color>
 </resources>

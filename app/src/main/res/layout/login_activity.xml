@@ -66,44 +66,44 @@
 
         >
 
-<!--        <androidx.cardview.widget.CardView-->
-<!--            android:id="@+id/btnFacebook"-->
-<!--            android:layout_width="300dp"-->
-<!--            android:layout_height="50dp"-->
-<!--            app:cardBackgroundColor="@color/facebook_blue"-->
-<!--            app:cardCornerRadius="40px"-->
-<!--            app:cardElevation="9dp"-->
-<!--            android:clickable="true"-->
-<!--            android:focusable="true"-->
-<!--            android:foreground="?attr/selectableItemBackground"-->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/btn_loginWInstagram"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            app:cardBackgroundColor="@color/instagram_main"
+            app:cardCornerRadius="40px"
+            app:cardElevation="9dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
 
-<!--          >-->
-<!--            <LinearLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:orientation="horizontal"-->
-<!--                android:gravity="center"-->
-<!--                android:padding="8dp"-->
-<!--                >-->
-<!--                <ImageView-->
-<!--                    android:layout_width="32dp"-->
-<!--                    android:layout_height="32dp"-->
-<!--                    android:src="@drawable/facebook_social_icon"-->
-<!--                    android:layout_marginEnd="0dp"-->
-<!--                    app:tint="@android:color/white"/>-->
+          >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:padding="8dp"
+                >
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/instagram_logo"
+                    android:layout_marginEnd="0dp"
+                   />
 
-<!--                <TextView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="Continue with Fakebook"-->
-<!--                    android:fontFamily="@font/sf_text_bold"-->
-<!--                    android:textColor="@android:color/white"-->
-<!--                    android:textSize="16sp"-->
-<!--                    android:textStyle="bold"-->
-<!--                    android:paddingBottom="4dp"/>-->
-<!--            </LinearLayout>-->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Continue with Instagram"
+                    android:fontFamily="@font/sf_text_bold"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:paddingBottom="4dp"/>
+            </LinearLayout>
 
-<!--        </androidx.cardview.widget.CardView>-->
+        </androidx.cardview.widget.CardView>
 
 
         <LinearLayout

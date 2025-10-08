@@ -19,7 +19,6 @@
                 <data android:scheme="justagram" android:host="auth" />
 
 
-
             </intent-filter>
         </activity>
 
