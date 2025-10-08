@@ -22,11 +22,12 @@
 
             </intent-filter>
         </activity>
+        <activity android:name=".IgPublisherActivity" android:exported="false"/>
+
+        <receiver android:name=".AlarmReceiver" android:exported="false"/>
 
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM">
-
-    </uses-permission>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
 
 </manifest>
