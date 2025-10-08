@@ -100,6 +100,7 @@ public class IgPublisherFragment extends Fragment {
         rvPreview_reel.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         rvPreview_post.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         PreviewAdapter previewAdapter = new PreviewAdapter();
+
         rvPreview_reel.setAdapter(previewAdapter);
         rvPreview_post.setAdapter(previewAdapter);
 

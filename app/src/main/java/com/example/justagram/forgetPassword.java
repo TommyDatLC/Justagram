@@ -21,7 +21,6 @@ public class forgetPassword implements View.OnClickListener {
 }
 /**
  Onclick function để handle việc redirect đến official web của facebook
-
  dùng trong main activity:
  Button forget = findViewById(ID NUT SIGN UP O XML);
  forget.setOnClickListener(new forgetPassword(this));
