@@ -171,6 +171,8 @@ public class IgPublisherActivity extends AppCompatActivity {
                         if (error != null) showMsg("Reel publish error: " + error);
                         setAllPublishButtonsEnabled(true);
                     }
+
+
                 });
             });
         } else {
@@ -515,15 +517,62 @@ public class IgPublisherActivity extends AppCompatActivity {
 
     // ---------------- preview adapter ----------------
     private class PreviewAdapter extends RecyclerView.Adapter<PreviewVH> {
-        @NonNull @Override public PreviewVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        @NonNull @Override
+        public PreviewVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             ImageView iv = new ImageView(parent.getContext());
-            int pad = 8; iv.setPadding(pad,pad,pad,pad);
-            RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(220,220);
-            iv.setLayoutParams(lp); iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            int pad = 8;
+            iv.setPadding(pad, pad, pad, pad);
+            RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(220, 220);
+            iv.setLayoutParams(lp);
+            iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
             return new PreviewVH(iv);
         }
-        @Override public void onBindViewHolder(@NonNull PreviewVH holder, int position) { holder.img.setImageURI(selectedUris.get(position)); }
-        @Override public int getItemCount() { return selectedUris.size(); }
+        // task: hiện frame đầu của video
+
+        // cho imageview vào để hiện ảnh
+        // làm thế nào để lấy frame đầu tiên của ảnh
+        // cho frame đầu tiên vào   image view
+
+
+
+        @Override
+        public void onBindViewHolder(@NonNull PreviewVH holder, int position) {
+            Uri uri = selectedUris.get(position);
+            String type = getContentResolver().getType(uri);
+
+            // Nếu là video, lấy frame đầu tiên
+            if (type != null && type.startsWith("video/")) {
+                try {
+                    android.media.MediaMetadataRetriever retriever = new android.media.MediaMetadataRetriever();
+                    retriever.setDataSource(IgPublisherActivity.this, uri);
+                    android.graphics.Bitmap frame = retriever.getFrameAtTime(0);
+                    retriever.release();
+
+                    if (frame != null) {
+                        holder.img.setImageBitmap(frame);
+                    } else {
+                        holder.img.setImageURI(uri);
+                    }
+                } catch (Exception e) {
+                    holder.img.setImageURI(uri);
+                }
+            } else {
+                // Nếu là ảnh, load bình thường
+                holder.img.setImageURI(uri);
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return selectedUris.size();
+        }
     }
-    private static class PreviewVH extends RecyclerView.ViewHolder { ImageView img; PreviewVH(@NonNull View v){ super(v); img=(ImageView)v; } }
+
+    private static class PreviewVH extends RecyclerView.ViewHolder {
+        ImageView img;
+        PreviewVH(@NonNull View v) {
+            super(v);
+            img = (ImageView) v;
+        }
+    }
 }

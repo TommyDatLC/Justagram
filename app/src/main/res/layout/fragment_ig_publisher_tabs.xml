@@ -35,6 +35,7 @@
                 <TextView android:text="Reel Creator" android:fontFamily="@font/sf_text_bold" android:textSize="16sp"  android:layout_width="match_parent" android:layout_height="wrap_content"/>
                 <Button  android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/btnPickMedia_reel" android:text="Pick images (max 10)" android:layout_marginTop="8dp" android:fontFamily="@font/sf_pro_rounded_thin"/>
                 <androidx.recyclerview.widget.RecyclerView android:id="@+id/rvPreview_reel" android:layout_marginTop="8dp" android:layout_width="match_parent" android:layout_height="120dp"/>
+
                 <EditText  android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/etCaption_reel" android:hint="Caption (optional)" android:layout_marginTop="8dp" android:fontFamily="@font/sf_pro_rounded_thin"/>
                 <Button  android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/btnPublishNow_reel" android:text="Publish Reel Now" android:layout_marginTop="8dp" android:fontFamily="@font/sf_text_bold"/>
                 <Button  android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/btnSchedule_reel" android:text="Schedule Reel" android:layout_marginTop="8dp" android:fontFamily="@font/sf_pro_rounded_thin"/>
