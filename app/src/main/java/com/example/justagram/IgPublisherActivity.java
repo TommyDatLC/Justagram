@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -22,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.tabs.TabLayout;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.InputStream;
@@ -30,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
@@ -38,7 +41,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-
+import okhttp3.HttpUrl;
 public class IgPublisherActivity extends AppCompatActivity {
     private static final int REQUEST_PICK_MEDIA = 4001;
     private static final int MAX_IMAGES = 10;
@@ -166,16 +169,19 @@ public class IgPublisherActivity extends AppCompatActivity {
                     setAllPublishButtonsEnabled(true);
                     return;
                 }
-                createVideoContainerThenPublish(IG_USER_ID, ACCESS_TOKEN, videoUrl, caption, true, new TerminalCallback() {
-                    @Override public void onDone(String error) {
-                        if (error != null) showMsg("Reel publish error: " + error);
+                publishReelToInstagram(IG_USER_ID, ACCESS_TOKEN, videoUrl, caption, (url, error) -> {
+                    runOnUiThread(() -> {
+                        if (error != null) {
+                            showMsg("Reel publish error: " + error);
+                        } else {
+                            showMsg("Reel published successfully!");
+                        }
                         setAllPublishButtonsEnabled(true);
-                    }
-
-
+                    });
                 });
             });
         } else {
+            // mảng url chứa server trả về
             uploadAllImagesToServer(SERVER_URL, selectedUris, (urls, err) -> {
                 if (err != null) {
                     showMsg("Upload server error: " + err);
@@ -196,7 +202,9 @@ public class IgPublisherActivity extends AppCompatActivity {
             });
         }
     }
+    private void publishToInstagram(){
 
+    }
     private void setAllPublishButtonsEnabled(boolean enabled) {
         runOnUiThread(() -> {
             if (btnPublishNow_post != null) btnPublishNow_post.setEnabled(enabled);
@@ -313,6 +321,68 @@ public class IgPublisherActivity extends AppCompatActivity {
         } catch (Exception e) {
             runOnUiThread(() -> cb.onDone(null, e.getMessage()));
         }
+    }
+    public void publishReelToInstagram(String igUserId, String videoUrl, String caption, String accessToken, UploadVideoCallback callback) {
+        OkHttpClient client = new OkHttpClient();
+
+        // CONTAINER
+        String createUrl = "https://graph.facebook.com/v21.0/" + igUserId + "/media";
+        RequestBody createBody = new FormBody.Builder()
+                .add("media_type", "REELS")
+                .add("video_url", videoUrl)
+                .add("caption", caption)
+                .add("access_token", accessToken)
+                .build();
+
+        Request createRequest = new Request.Builder()
+                .url(createUrl)
+                .post(createBody)
+                .build();
+
+        client.newCall(createRequest).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                callback.onDone(null, e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseData = response.body().string();
+                Log.e("IG_RESPONSE_CREATE", responseData); //
+                try {
+                    JSONObject json = new JSONObject(responseData);
+                    String containerId = json.getString("id");
+
+                    // Step 2: Publish the container
+                    String publishUrl = "https://graph.facebook.com/v21.0/" + igUserId + "/media_publish";
+                    RequestBody publishBody = new FormBody.Builder()
+                            .add("creation_id", containerId)
+                            .add("access_token", accessToken)
+                            .build();
+
+                    Request publishRequest = new Request.Builder()
+                            .url(publishUrl)
+                            .post(publishBody)
+                            .build();
+
+                    client.newCall(publishRequest).enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            callback.onDone(null, e.getMessage());
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            String publishResponse = response.body().string();
+                            callback.onDone(publishResponse, null);
+                        }
+                    });
+
+                } catch (JSONException e) {
+                    callback.onDone(null, "Invalid JSON: " + e.getMessage());
+                }
+            }
+        });
     }
 
     private String urlEncodePathSegment(String s) {
