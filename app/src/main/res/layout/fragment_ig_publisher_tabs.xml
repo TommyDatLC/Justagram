@@ -71,7 +71,13 @@
             android:backgroundTint="@android:color/white">
             <LinearLayout android:orientation="vertical" android:padding="12dp" android:layout_width="match_parent" android:layout_height="wrap_content">
                 <TextView  android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Scheduled Jobs" android:fontFamily="@font/sf_text_bold" android:textSize="16sp"/>
-                <androidx.recyclerview.widget.RecyclerView android:id="@+id/rvScheduled" android:layout_marginTop="8dp" android:layout_width="match_parent" android:layout_height="200dp"/>
+                <ListView
+                    android:id="@+id/scheduled_jobs_listview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:divider="@android:color/darker_gray"
+                    android:dividerHeight="1dp"
+                    android:padding="8dp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 

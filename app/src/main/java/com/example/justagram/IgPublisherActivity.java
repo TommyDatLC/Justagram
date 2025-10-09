@@ -15,6 +15,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,7 +33,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -61,6 +62,9 @@ public class IgPublisherActivity extends AppCompatActivity {
     private final List<Uri> selectedUris = new ArrayList<>();
     private final List<String> selectedNames = new ArrayList<>();
     private final OkHttpClient http = new OkHttpClient();
+    private List<String> scheduledList = new ArrayList<>();
+    private ArrayAdapter<String> scheduledAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +101,21 @@ public class IgPublisherActivity extends AppCompatActivity {
 
         btnSchedule_reel.setOnClickListener(ch -> pickDateTimeAndSchedule(true));
         btnSchedule_post.setOnClickListener(ch -> pickDateTimeAndSchedule(false));
+
+        ListView scheduledListView = findViewById(R.id.scheduled_jobs_listview);
+        scheduledAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, scheduledList);
+        scheduledListView.setAdapter(scheduledAdapter);
+
+        scheduledListView.setOnItemLongClickListener((parent, view, position, id) -> {
+            new android.app.AlertDialog.Builder(this)
+                    .setTitle("Xóa lịch hẹn?")
+                    .setMessage("Bạn có chắc muốn xóa job này không?")
+                    .setPositiveButton("Xóa", (dialog, which) -> removeScheduledJob(position))
+                    .setNegativeButton("Hủy", null)
+                    .show();
+            return true;
+        });
+
     }
 
     private void pickMedia(boolean isReel) {
@@ -541,6 +560,7 @@ public class IgPublisherActivity extends AppCompatActivity {
         int y = cal.get(java.util.Calendar.YEAR);
         int m = cal.get(java.util.Calendar.MONTH);
         int d = cal.get(java.util.Calendar.DAY_OF_MONTH);
+
         new android.app.DatePickerDialog(this, (view, yy, mm, dd) -> {
             cal.set(java.util.Calendar.YEAR, yy);
             cal.set(java.util.Calendar.MONTH, mm);
@@ -548,6 +568,7 @@ public class IgPublisherActivity extends AppCompatActivity {
 
             int h = cal.get(java.util.Calendar.HOUR_OF_DAY);
             int mi = cal.get(java.util.Calendar.MINUTE);
+
             new android.app.TimePickerDialog(this, (v2, hh, mm2) -> {
                 cal.set(java.util.Calendar.HOUR_OF_DAY, hh);
                 cal.set(java.util.Calendar.MINUTE, mm2);
@@ -559,9 +580,13 @@ public class IgPublisherActivity extends AppCompatActivity {
                 }
 
                 scheduleAlarm(isReel, cal.getTimeInMillis());
+                addScheduledJob(isReel, cal.getTimeInMillis()); // ✅ thêm dòng này
+
             }, h, mi, true).show();
+
         }, y, m, d).show();
     }
+
 
     private void scheduleAlarm(boolean isReel, long triggerAtMillis) {
         try {
@@ -584,6 +609,42 @@ public class IgPublisherActivity extends AppCompatActivity {
             showMsg("Schedule error: " + e.getMessage());
         }
     }
+    private void addScheduledJob(boolean isReel, long timeMillis) {
+        java.text.SimpleDateFormat f = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault());
+        String timeStr = f.format(new java.util.Date(timeMillis));
+        String newItem = (isReel ? "Reel" : "Post") + " - " + timeStr;
+        // sửa lỗi add ở cuối dòng thay vì đầu -> chỉnh lại thành tham số 0
+        scheduledList.add(0, newItem);
+        scheduledAdapter.notifyDataSetChanged();
+
+    }
+
+    private void removeScheduledJob(int position) {
+        if (position < 0 || position >= scheduledList.size()) return;
+
+        String job = scheduledList.get(position);
+        scheduledList.remove(position);
+        scheduledAdapter.notifyDataSetChanged();
+
+        cancelScheduledAlarm(job);
+        showMsg("Đã xóa: " + job);
+    }
+
+    private void cancelScheduledAlarm(String jobInfo) {
+        try {
+            boolean isReel = jobInfo.startsWith("Reel");
+            int requestCode = isReel ? 8001 : 8002;
+
+            Intent i = new Intent(this, AlarmReceiver.class);
+            int flags = android.app.PendingIntent.FLAG_UPDATE_CURRENT | android.app.PendingIntent.FLAG_IMMUTABLE;
+            android.app.PendingIntent pi = android.app.PendingIntent.getBroadcast(this, requestCode, i, flags);
+
+            android.app.AlarmManager am = (android.app.AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            am.cancel(pi);
+        } catch (Exception e) {
+            showMsg("Lỗi khi hủy: " + e.getMessage());
+        }
+    }
 
     // ---------------- preview adapter ----------------
     private class PreviewAdapter extends RecyclerView.Adapter<PreviewVH> {
@@ -597,11 +658,6 @@ public class IgPublisherActivity extends AppCompatActivity {
             iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
             return new PreviewVH(iv);
         }
-        // task: hiện frame đầu của video
-
-        // cho imageview vào để hiện ảnh
-        // làm thế nào để lấy frame đầu tiên của ảnh
-        // cho frame đầu tiên vào   image view
 
 
 
