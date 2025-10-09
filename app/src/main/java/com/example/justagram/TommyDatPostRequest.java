@@ -2,9 +2,9 @@ package com.example.justagram;
 
 import android.util.Log;
 
+import com.example.justagram.LoginAuth.LoginActivity;
 import com.google.gson.Gson;
 
-import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.function.Consumer;
 
@@ -37,7 +37,7 @@ public class TommyDatPostRequest {
         else
             reqBody.put(key,value);
     }
-    void Send(TommyDatCallBack c)
+    public void Send(TommyDatCallBack c)
     {
         var gson = new Gson();
         var jsonString = gson.toJson(reqBody);
@@ -53,7 +53,7 @@ public class TommyDatPostRequest {
         }
         Request r = builder.post(requestBody).url(URL).build();
         c.onResponeJson = this.onResponeJson;
-        MainActivity.client.newCall(r).enqueue(c);
+        LoginActivity.client.newCall(r).enqueue(c);
     }
 
     public Consumer<Hashtable<String,Object>> onResponeJson;

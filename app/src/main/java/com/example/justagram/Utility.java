@@ -1,35 +1,24 @@
 package com.example.justagram;
 
-import static androidx.core.content.ContextCompat.startActivity;
 
-
-import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.IpSecManager;
 import android.net.Uri;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
-import com.google.gson.reflect.TypeToken;
+import com.example.justagram.LoginAuth.LoginActivity;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Objects;
+import java.util.function.Consumer;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.Request;
-import okhttp3.Response;
 
 public class Utility {
     public static void showMessageBox(String content,Context t) {
@@ -67,7 +56,7 @@ public class Utility {
     public static void SimpleGetRequest(String URL,TommyDatCallBack callback)
     {
         Request r = new Request.Builder().url(URL).build();
-        MainActivity.client.newCall(r).enqueue(callback);
+        LoginActivity.client.newCall(r).enqueue(callback);
     }
     public static TommyDatPostRequest SimplePostRequest(String URL,boolean isForm)
     {
@@ -75,7 +64,7 @@ public class Utility {
     }
     public static void Save(Context ctx, Object obj, String FileName)
     {
-        var jsonString = MainActivity.gson.toJson(obj);
+        var jsonString = LoginActivity.gson.toJson(obj);
         File f = new File(ctx.getFilesDir() , FileName);
         try (FileWriter writer = new FileWriter(f))
         {
@@ -95,10 +84,19 @@ public class Utility {
         File f = new File(ctx.getFilesDir(),FileName);
         try (FileReader r = new FileReader(f))
         {
-            return MainActivity.gson.fromJson(r,c);
+            return LoginActivity.gson.fromJson(r,c);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
+    }
+    public static Runnable CreateRunnable(Consumer<Object> a)
+    {
+        return new Runnable() {
+            @Override
+            public void run() {
+                a.accept(null);
+            }
+        };
     }
 }

@@ -1,7 +1,5 @@
-package com.example.justagram;
+package com.example.justagram.LoginAuth;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -11,21 +9,21 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.os.SystemClock;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
+import com.example.justagram.HomeActivity;
+import com.example.justagram.IgPublisherFragment;
+import com.example.justagram.InstagramAccountFragment;
+import com.example.justagram.R;
+import com.example.justagram.TommyDatCallBack;
+import com.example.justagram.UserInfo;
+import com.example.justagram.Utility;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Hashtable;
 
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
@@ -33,7 +31,7 @@ import okhttp3.Response;
 
 
 
-public class MainActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     public static OkHttpClient client = new OkHttpClient();
     public static String OurBackendServer = "https://catechistical-questingly-na.ngrok-free.dev";
@@ -46,14 +44,14 @@ public class MainActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-       home_page();
+        OpenHomeActivity();
 
     }
     // Exchange the short term code for the the long term code
     // Save the code into the device disk
 
 
-    void home_page()
+    void login_actvity()
     {
         Intent intent = getIntent();
         Uri data = intent.getData();
@@ -113,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
 //                return;
 //            }
             Stoken[0] = hash.get("access_token").toString();
+            userInfo.UserID = hash.get("user_id").toString();
             ExchangeForLongtoken(Stoken[0]);
         };
 
@@ -159,7 +158,45 @@ public class MainActivity extends AppCompatActivity {
         IgPublisherFragment test = new IgPublisherFragment();
         FragmentTransaction t = getSupportFragmentManager().beginTransaction();
         t.add(R.id.test_fragment,test).commit();
+
     }
 
+    void btn_LoginAction()
+    {
+        if (userInfo.UserID.isEmpty())
+        {
+            var callback = new TommyDatCallBack();
+            var onFailure = Utility.CreateRunnable(obj ->
+                    Utility.showMessageBox("Cannot not fetch user info, please check the access_token is valid or not",this));
+            callback.onResponeJson = hashTable ->
+            {
+                if ((int)hashTable.get("request_code") > 299)
+                {
+                    runOnUiThread(onFailure);
+                }
+                else
+                {
+                    userInfo.UserID =  hashTable.get("id").toString();
 
+                }
+            };
+            // Sending request to the server
+            Utility.SimpleGetRequest(" https://graph.instagram.com/v24.0/me?" +
+                    "fields=id&access_token="  + userInfo.AccessToken,new TommyDatCallBack() {
+            });
+        }
+        else
+        {
+            OpenHomeActivity();
+        }
+        // Get the account user id
+        // if cannot , Log to the screen for the user
+        // Use the account user ID to open The home_page
+
+    }
+    void OpenHomeActivity()
+    {
+        Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+        startActivity(i);
+    }
 }

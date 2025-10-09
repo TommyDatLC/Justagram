@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.justagram.LoginAuth.LoginActivity;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
@@ -26,7 +27,8 @@ public class TommyDatCallBack implements Callback {
         Type type_hashtable = new TypeToken<Hashtable<String,Object>>() {}.getType();
         String jsonString = response.body().string();
         Log.i("jsonReqString",jsonString);
-        Hashtable<String,Object> hashtable =  MainActivity.gson.fromJson(jsonString,type_hashtable);
+        Hashtable<String,Object> hashtable =  LoginActivity.gson.fromJson(jsonString,type_hashtable);
+        hashtable.put("request_code",response.code());
         onResponeJson.accept(hashtable);
     }
     public Consumer<Hashtable<String,Object>> onResponeJson;
