@@ -14,6 +14,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 public class MainActivity extends AppCompatActivity {
+
+    private FragmentTransition fragmentTransition;
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
