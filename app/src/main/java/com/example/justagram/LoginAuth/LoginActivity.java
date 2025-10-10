@@ -18,9 +18,8 @@ import com.example.justagram.HomeActivity;
 import com.example.justagram.IgPublisherFragment;
 import com.example.justagram.InstagramAccountFragment;
 import com.example.justagram.R;
-import com.example.justagram.TommyDatCallBack;
-import com.example.justagram.UserInfo;
-import com.example.justagram.Utility;
+import com.example.justagram.etc.TommyDatCallBack;
+import com.example.justagram.etc.Utility;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -40,11 +39,15 @@ public class LoginActivity extends AppCompatActivity {
     public final String InstagramLoginAuthLink = "https://www.instagram.com/oauth/authorize?force_reauth=true&client_id=1326733148350430&redirect_uri=https://catechistical-questingly-na.ngrok-free.dev/returnCode&response_type=code&scope=instagram_business_basic%2Cinstagram_business_manage_messages%2Cinstagram_business_manage_comments%2Cinstagram_business_content_publish%2Cinstagram_business_manage_insights";
     public static UserInfo userInfo;
     public final String UserFileName = "UserInfo.json";
+
+    public EditText txtbox_accessToken;
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
+        userInfo = Utility.Load(this,UserInfo.class,UserFileName);
+
         super.onCreate(savedInstanceState);
-        OpenHomeActivity();
+        login_actvity();
 
     }
     // Exchange the short term code for the the long term code
@@ -56,28 +59,41 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Uri data = intent.getData();
         setContentView(R.layout.login_activity);
+        var btn_login = findViewById(R.id.btn_Login);
+        btn_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btn_LoginAction();
+            }
+        } );
+
         if (data != null)
         {
             String access_code = data.getQueryParameter("code");
           ExchangeForToken(access_code);
         }
-        userInfo = Utility.Load(this,UserInfo.class,UserFileName);
-        EditText txtbox_accessToken = (EditText)findViewById(R.id.txtbox_accessToken);
-        if (userInfo != null)
-        {
-            txtbox_accessToken.setText(userInfo.AccessToken);
-        }
-        else
-            userInfo = new UserInfo();
+
+        txtbox_accessToken = findViewById(R.id.txtbox_accessToken);
         ImageView logo = findViewById(R.id.justagram);
         ImageView glow1 = findViewById(R.id.glow1);
         ImageView glow2 = findViewById(R.id.glow2);
+        var forget = findViewById(R.id.tvForgot);
+        var signUp = findViewById(R.id.signUp);
         LinearLayout content = findViewById(R.id.content);
 
+        if (userInfo != null)
+        {
+            txtbox_accessToken.setText(userInfo.GetAccessToken());
+        }
+        else
+            userInfo = new UserInfo();
+        txtbox_accessToken.setText(userInfo.GetAccessToken());
+        userInfo.onAccessTokenChange = obj -> {
+            txtbox_accessToken.setText(userInfo.GetAccessToken());
+        };
+
         IntroAnimator.start(logo,glow1,glow2,content);
-        var forget = findViewById(R.id.tvForgot);
         forget.setOnClickListener(new forgetPassword(this));
-        var signUp = findViewById(R.id.signUp);
         signUp.setOnClickListener(new SignUpButton(this));
         var btn_loginWInstagram = findViewById(R.id.btn_loginWInstagram);
         Context thisContext = this;
@@ -111,7 +127,6 @@ public class LoginActivity extends AppCompatActivity {
 //                return;
 //            }
             Stoken[0] = hash.get("access_token").toString();
-            userInfo.UserID = hash.get("user_id").toString();
             ExchangeForLongtoken(Stoken[0]);
         };
 
@@ -140,7 +155,7 @@ public class LoginActivity extends AppCompatActivity {
         };
         t.onResponeJson = hashTable -> {
             ltoken[0] = hashTable.get("access_token").toString();
-            userInfo.AccessToken = ltoken[0];
+            userInfo.SetAccessToken(ltoken[0]);
             Utility.Save(this,userInfo,UserFileName);
         };
         Utility.SimpleGetRequest(endpoint_code2Stoken,t);
@@ -163,35 +178,27 @@ public class LoginActivity extends AppCompatActivity {
 
     void btn_LoginAction()
     {
-        if (userInfo.UserID.isEmpty())
+        userInfo.SetAccessToken(txtbox_accessToken.getText().toString());
+        var callback = new TommyDatCallBack();
+        var onFailure = Utility.CreateRunnable(obj ->
+        Utility.showMessageBox("Cannot not fetch user info, please check the access_token is valid or not",this));
+        callback.onResponeJson = hashTable ->
         {
-            var callback = new TommyDatCallBack();
-            var onFailure = Utility.CreateRunnable(obj ->
-                    Utility.showMessageBox("Cannot not fetch user info, please check the access_token is valid or not",this));
-            callback.onResponeJson = hashTable ->
+            if ((int)hashTable.get("request_code") > 299)
             {
-                if ((int)hashTable.get("request_code") > 299)
-                {
-                    runOnUiThread(onFailure);
-                }
-                else
-                {
-                    userInfo.UserID =  hashTable.get("id").toString();
+                runOnUiThread(onFailure);
+            }
+            else
+            {
+                userInfo.UserID =  hashTable.get("id").toString();
+                OpenHomeActivity();
 
-                }
-            };
+            }
+        };
             // Sending request to the server
-            Utility.SimpleGetRequest(" https://graph.instagram.com/v24.0/me?" +
-                    "fields=id&access_token="  + userInfo.AccessToken,new TommyDatCallBack() {
-            });
-        }
-        else
-        {
-            OpenHomeActivity();
-        }
-        // Get the account user id
-        // if cannot , Log to the screen for the user
-        // Use the account user ID to open The home_page
+        Utility.SimpleGetRequest(" https://graph.instagram.com/v24.0/me?" +
+                                        "fields=id&access_token="  +
+                userInfo.GetAccessToken(),callback);
 
     }
     void OpenHomeActivity()
