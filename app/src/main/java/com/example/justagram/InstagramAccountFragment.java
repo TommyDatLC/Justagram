@@ -40,7 +40,7 @@ public class InstagramAccountFragment extends Fragment {
     // TODO: điền vào đây
     // IGAAS2qCIE595BZAFJ0SmVNaHBUbFFCM0NqOFBOYkdNOHhBdC1PR1hNTHV6ZAEtLZAm5RVTNZAa3lweFdqM0xxNVcwY2xLVlBadFdDUm54QkFBd0Jvdl8zRkJEMFFBNEtMZAkhyX2hfQUtIZAzNnVGdSa2pVYmtoX1I2bkZAxOFZAuOGp6VQZDZD
     // 17841474853201686
-    private static final String ACCESS_TOKEN = LoginActivity.userInfo.AccessToken;
+    private static final String ACCESS_TOKEN = LoginActivity.userInfo.GetAccessToken();
     private static final String IG_USER_ID = LoginActivity.userInfo.UserID;
 
     private ImageView ivProfile;
