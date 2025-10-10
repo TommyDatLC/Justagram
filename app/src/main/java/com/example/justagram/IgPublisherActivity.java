@@ -103,15 +103,17 @@ public class IgPublisherActivity extends AppCompatActivity {
         btnSchedule_post.setOnClickListener(ch -> pickDateTimeAndSchedule(false));
 
         ListView scheduledListView = findViewById(R.id.scheduled_jobs_listview);
+        scheduledListView = findViewById(R.id.scheduled_jobs_listview);
+        scheduledList = new ArrayList<>();
         scheduledAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, scheduledList);
         scheduledListView.setAdapter(scheduledAdapter);
 
         scheduledListView.setOnItemLongClickListener((parent, view, position, id) -> {
             new android.app.AlertDialog.Builder(this)
-                    .setTitle("Xóa lịch hẹn?")
-                    .setMessage("Bạn có chắc muốn xóa job này không?")
-                    .setPositiveButton("Xóa", (dialog, which) -> removeScheduledJob(position))
-                    .setNegativeButton("Hủy", null)
+                    .setTitle("Deleted scheduled task?")
+                    .setMessage("Are you sure you wanna delete this?")
+                    .setPositiveButton("Delete", (dialog, which) -> removeScheduledJob(position))
+                    .setNegativeButton("Cancel", null)
                     .show();
             return true;
         });
@@ -575,7 +577,7 @@ public class IgPublisherActivity extends AppCompatActivity {
                 cal.set(java.util.Calendar.SECOND, 0);
 
                 if (cal.getTimeInMillis() <= System.currentTimeMillis()) {
-                    showMsg("Thời gian đã chọn ở quá khứ");
+                    showMsg("Can't choose past time");
                     return;
                 }
 
@@ -627,7 +629,7 @@ public class IgPublisherActivity extends AppCompatActivity {
         scheduledAdapter.notifyDataSetChanged();
 
         cancelScheduledAlarm(job);
-        showMsg("Đã xóa: " + job);
+        showMsg("Successfully deleted: " + job);
     }
 
     private void cancelScheduledAlarm(String jobInfo) {
