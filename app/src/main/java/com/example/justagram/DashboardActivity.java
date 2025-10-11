@@ -1,70 +1,77 @@
 package com.example.justagram;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.widget.ImageButton;
 import android.widget.ImageView;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import android.content.Intent;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
+
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 public class DashboardActivity extends AppCompatActivity {
 
-    private FragmentTransition fragmentTransition;
+    private final int[] TAB_ICONS = {
+            R.drawable.ic_dashboard,
+            R.drawable.ic_analytics,
+            R.drawable.ic_calendar,
+            R.drawable.ic_settings
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
-        // Use the nav_indicator id (the sliding gradient)
-        ImageView gradient = findViewById(R.id.nav_indicator);
+        TabLayout tabLayout = findViewById(R.id.tabLayout);
+        ViewPager2 viewPager = findViewById(R.id.viewPager);
+        ImageView tabGradient = findViewById(R.id.tabGradient);
         ImageView navAdd = findViewById(R.id.nav_add);
-        ImageButton navDashboard = findViewById(R.id.nav_dashboard);
-        ImageButton navAnalytics = findViewById(R.id.nav_analytics);
-        ImageButton navCalendar = findViewById(R.id.nav_calendar);
-        ImageButton navSettings = findViewById(R.id.nav_settings);
 
-        fragmentTransition = new FragmentTransition(gradient);
+        // Add button action
+        navAdd.setOnClickListener(v -> startActivity(new Intent(DashboardActivity.this, AddPostActivity.class)));
 
-        // Default: put gradient under Dashboard
+        // Setup ViewPager2 adapter
+        viewPager.setAdapter(new DashboardPagerAdapter(this));
 
-        if (savedInstanceState == null) {
-            loadFragment(new DashboardFragment());
-            navDashboard.post(() -> fragmentTransition.animateTo(navDashboard));
+        // Attach TabLayout with icons
+        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> tab.setIcon(TAB_ICONS[position])).attach();
+
+        // Initialize the animation helper
+        int activeColor = getColor(R.color.sunset_orange);
+        int inactiveColor = getColor(R.color.gray);
+        TabAnimationHelper tabHelper = new TabAnimationHelper(tabLayout, tabGradient, viewPager,
+                activeColor, inactiveColor);
+        tabLayout.post(tabHelper::init);
+
+        // Optional: Set default tab
+        viewPager.setCurrentItem(0, false);
+    }
+
+    /** Minimal PagerAdapter for 4 fragments */
+    private static class DashboardPagerAdapter extends FragmentStateAdapter {
+        public DashboardPagerAdapter(@NonNull FragmentActivity fa) {
+            super(fa);
         }
 
-        // Animate + switch fragments
-        navDashboard.setOnClickListener(v -> {
-            fragmentTransition.animateTo(navDashboard);
-            loadFragment(new DashboardFragment());
-        });
+        @NonNull
+        @Override
+        public Fragment createFragment(int position) {
+            switch (position) {
+                case 0: return DashboardFragment.newInstance();
+                case 1: return AnalyticsFragment.newInstance();
+                case 2: return CalendarFragment.newInstance();
+                case 3: return SettingsFragment.newInstance();
+                default: return DashboardFragment.newInstance();
+            }
+        }
 
-        navAnalytics.setOnClickListener(v -> {
-            fragmentTransition.animateTo(navAnalytics);
-            loadFragment(new AnalyticsFragment());
-        });
-
-        navCalendar.setOnClickListener(v -> {
-            fragmentTransition.animateTo(navCalendar);
-            loadFragment(new CalendarFragment());
-        });
-
-        navSettings.setOnClickListener(v -> {
-            fragmentTransition.animateTo(navSettings);
-            loadFragment(new SettingsFragment());
-        });
-
-        navAdd.setOnClickListener(v -> {
-            Intent intent = new Intent(DashboardActivity.this, AddPostActivity.class);
-            startActivity(intent);
-        });
+        @Override
+        public int getItemCount() { return 4; }
     }
-
-    private void loadFragment(Fragment fragment) {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .commit();
-    }
-
 }

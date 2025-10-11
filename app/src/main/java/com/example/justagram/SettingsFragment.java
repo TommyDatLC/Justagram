@@ -9,6 +9,16 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 public class SettingsFragment extends Fragment {
+
+    public SettingsFragment() {}
+
+    public static SettingsFragment newInstance() {
+        SettingsFragment fragment = new SettingsFragment();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,

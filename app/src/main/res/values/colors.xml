@@ -12,4 +12,6 @@
     <color name="facebook_blue">#1877F2</color>
     <color name="light_cyan">#20F0FF</color>
     <color name="sunset_orange">#ffae00</color>
+    <color name="gray">#999999</color>
+
 </resources>

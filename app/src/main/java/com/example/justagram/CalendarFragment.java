@@ -9,6 +9,16 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 public class CalendarFragment extends Fragment {
+
+    public CalendarFragment() {}
+
+    public static CalendarFragment newInstance() {
+        CalendarFragment fragment = new CalendarFragment();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,

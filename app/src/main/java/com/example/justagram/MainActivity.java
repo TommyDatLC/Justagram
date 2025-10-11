@@ -31,5 +31,6 @@ public class MainActivity extends AppCompatActivity {
 //        InstagramAccountFragment test = new InstagramAccountFragment();
 //        FragmentTransaction t = getSupportFragmentManager().beginTransaction();
 //        t.add(R.id.test_fragment,test).commit();
+
     }
 }

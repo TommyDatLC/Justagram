@@ -9,6 +9,16 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 public class DashboardFragment extends Fragment {
+
+    public DashboardFragment() {}
+
+    public static DashboardFragment newInstance() {
+        DashboardFragment fragment = new DashboardFragment();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
