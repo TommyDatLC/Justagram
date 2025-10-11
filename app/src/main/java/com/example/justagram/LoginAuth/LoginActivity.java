@@ -195,7 +195,7 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         };
-            // Sending request to the server
+        // Sending request to the server
         Utility.SimpleGetRequest(" https://graph.instagram.com/v24.0/me?" +
                                         "fields=id&access_token="  +
                 userInfo.GetAccessToken(),callback);

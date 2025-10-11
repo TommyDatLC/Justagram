@@ -1,173 +1,329 @@
 package com.example.justagram.Statistic;
+import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import com.example.justagram.LoginAuth.LoginActivity;
+import com.example.justagram.etc.Utility;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.function.Consumer;
 
 
-enum EnumTimeFrame
-{
-    last_14_days, last_30_days, last_90_days, prev_month, this_month, this_week
-}
-enum EnumBreakDown
-{
-
-    media_product_type,
-    follow_type,
-    contact_button_type,
-    age,
-    city,
-    country,
-    gender
-}
-
-enum EnumMetricType
-{
-    total_value,
-    time_series
-}
 public class StatisticData {
 
-    public StatisticData(String title,String RequestQuery, EnumTimeFrame[] timeFrames,EnumBreakDown[] breakDowns,EnumMetricType[] metricTypes)
+    public StatisticData(String title,String metric,String period, EnumTimeFrame[] timeFrames,EnumBreakDown[] breakDowns,EnumMetricType[] metricTypes)
     {
         this.title = title;
-        this.RequestQuery = RequestQuery;
+        this.metric = metric;
+        this.period = period;
         this.timeFrames = timeFrames;
         this.breakDowns = breakDowns;
         this.metricTypes = metricTypes;
     }
     public String title;
-    public String RequestQuery;
+    public String metric;
+    public String period;
     public EnumTimeFrame[] timeFrames;
     public EnumBreakDown[] breakDowns;
     public EnumMetricType[] metricTypes;
+    public Hashtable<String,Object> cache;
+    int timeFrameID;
+    int breakDownID;
+    int MetricTypeID;
+    boolean CanSendReq  =true   ;
+    public void SendRequest(View ctx, int timeFrameID,int breakDownID, int MetricTypeID, long since, long until,boolean refresh
+        ,Consumer<Object> onFinish
+    )
+    {
+        this.timeFrameID = timeFrameID;
+        this.breakDownID = breakDownID;
+        this.MetricTypeID = MetricTypeID;
+        if (CanSendReq )
+        {
+            CanSendReq = false;
+            Thread t = new Thread(Utility.CreateRunnable((a) -> {
+                try {
+                    Thread.sleep(200);
+                    CanSendReq = true;
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }));
+            t.start();
+        }
+        else
+            return;
 
+        String endpoint = "https://graph.instagram.com/v24.0/" + LoginActivity.userInfo.UserID  + "/insights";
+        var Params = "?metric=" + metric;
+        if (timeFrames != null)
+            Params += "&timeframe=" + timeFrames[timeFrameID];
+        if (breakDowns != null)
+            Params += "&breakdown=" + breakDowns[breakDownID];
+        if (metricTypes != null)
+            Params += "&metric_type=" + metricTypes[MetricTypeID];
+        Params += "&period=" + period +
+                "&since=" + since + "&until=" + until +
+                "&access_token=" + LoginActivity.userInfo.GetAccessToken();
+        Utility.SimpleGetRequest(endpoint + Params, (json) -> {
+            if ((int)json.get("request_code") > 299)
+            {
+                ctx.post(Utility.CreateRunnable((a) ->
+                      Utility.showMessageBox("Fail to request for the statistic. Please check the log for more info",ctx.getContext() ))  );
+            }
+            else
+            {
+                cache = json;
+                onFinish.accept(null);
+            }
+        });
+    }
+
+    public void DrawInTotalValue(BarChart chart, TextView totalTitle, TextView totalValue, LinearLayout ElementValueInfoDisplay) {
+        if (cache == null) {
+            return;
+        }
+        try {
+            chart.post(() -> {
+                ElementValueInfoDisplay.removeAllViews();
+                chart.clear();
+
+                ArrayList<Map<String, Object>> data = (ArrayList<Map<String, Object>>) cache.get("data");
+                if (data == null || data.isEmpty()) {
+                    totalValue.setText("0");
+                    chart.invalidate();
+                    DontHaveDataToShow(chart.getContext());
+                    return;
+                }
+
+                Map<String, Object> firstDataElement = data.get(0);
+                totalTitle.setText("Total : " + title);
+
+                Map<String, Object> totalValueObj = (Map<String, Object>) firstDataElement.get("total_value");
+                if (totalValueObj == null) return;
+
+                ArrayList<Map<String, Object>> breakdowns = (ArrayList<Map<String, Object>>) totalValueObj.get("breakdowns");
+                if (breakdowns == null || breakdowns.isEmpty()) return;
+
+                Map<String, Object> firstBreakdown = breakdowns.get(0);
+                ArrayList<String> dimensionKeys = (ArrayList<String>) firstBreakdown.get("dimension_keys");
+                ArrayList<Map<String, Object>> results = (ArrayList<Map<String, Object>>) firstBreakdown.get("results");
+                if (results == null || results.isEmpty()) {
+                    totalValue.setText("0");
+                    chart.invalidate();
+                    DontHaveDataToShow(chart.getContext());
+                    return;
+                }
+
+                ArrayList<BarEntry> entries = new ArrayList<>();
+                ArrayList<String> labels = new ArrayList<>();
+                ArrayList<Number> valuesList = new ArrayList<>();
+                long totalSum = 0;
+                int i = 0;
+
+                for (Map<String, Object> result : results) {
+                    ArrayList<String> dimensionValues = (ArrayList<String>) result.get("dimension_values");
+                    Number valueNumber = (Number) result.get("value");
+                    int value = valueNumber.intValue();
+                    totalSum += value;
+                    valuesList.add(value);
+
+                    StringBuilder labelBuilder = new StringBuilder();
+                    for (int j = 0; j < dimensionKeys.size(); j++) {
+                        labelBuilder.append(dimensionKeys.get(j)).append(": ").append(dimensionValues.get(j));
+                        if (j < dimensionKeys.size() - 1) {
+                            labelBuilder.append("\n");
+                        }
+                    }
+                    labels.add(labelBuilder.toString());
+                    entries.add(new BarEntry(i, value));
+                    i++;
+                }
+
+                totalValue.setText(String.valueOf(totalSum));
+                AddInfoIntoInfoDisplay(ElementValueInfoDisplay, labels, valuesList, totalSum);
+
+                BarDataSet dataSet = new BarDataSet(entries, this.title);
+                dataSet.setValueTextSize(10f);
+
+                BarData barData = new BarData(dataSet);
+                barData.setBarWidth(0.5f);
+
+                chart.setData(barData);
+                chart.getDescription().setEnabled(false);
+                chart.setDrawGridBackground(false);
+
+                XAxis xAxis = chart.getXAxis();
+                xAxis.setValueFormatter(new IndexAxisValueFormatter(labels));
+                xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+                xAxis.setGranularity(1f);
+                xAxis.setGranularityEnabled(true);
+
+                chart.getAxisLeft().setAxisMinimum(0f);
+                chart.getAxisRight().setEnabled(false);
+                chart.setFitBars(true);
+                chart.animateY(1000);
+                chart.invalidate();
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            chart.post(() -> Utility.showMessageBox("Failed to parse and display chart data.", chart.getContext()));
+        }
+    }
+
+    void AddInfoIntoInfoDisplay(LinearLayout container, ArrayList<String> labels, ArrayList<Number> values, float totalSum) {
+        if (container == null || labels == null || values == null || labels.size() != values.size()) {
+            return;
+        }
+        container.post(() -> {
+            container.removeAllViews();
+            if (totalSum == 0) return; // Avoid division by zero
+
+            for (int i = 0; i < labels.size(); i++) {
+                String label = labels.get(i);
+                float value = values.get(i).floatValue();
+                int percentage = (int) ((value / totalSum) * 100);
+
+                LinearLayout rowLayout = new LinearLayout(container.getContext());
+                rowLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                ));
+                rowLayout.setOrientation(LinearLayout.HORIZONTAL);
+                rowLayout.setPadding(20, 10, 20, 10);
+
+                TextView labelView = new TextView(container.getContext());
+                LinearLayout.LayoutParams labelParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 3f);
+                labelView.setLayoutParams(labelParams);
+                labelView.setText(label.replace("\n", " "));
+                labelView.setGravity(Gravity.CENTER_VERTICAL | Gravity.START);
+                rowLayout.addView(labelView);
+
+                ProgressBar progressBar = new ProgressBar(container.getContext(), null, android.R.attr.progressBarStyleHorizontal);
+                LinearLayout.LayoutParams progressParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 7f);
+                progressParams.gravity = Gravity.CENTER_VERTICAL;
+                progressBar.setLayoutParams(progressParams);
+                progressBar.setMax(100);
+                progressBar.setProgress(percentage);
+                progressBar.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FFFFA500")));
+                rowLayout.addView(progressBar);
+
+                TextView valueView = new TextView(container.getContext());
+                LinearLayout.LayoutParams valueParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.5f);
+                valueParams.gravity = Gravity.CENTER;
+                valueView.setLayoutParams(valueParams);
+                valueView.setText(String.valueOf(values.get(i).intValue()));
+                valueView.setGravity(Gravity.CENTER);
+                rowLayout.addView(valueView);
+
+                TextView percentageView = new TextView(container.getContext());
+                LinearLayout.LayoutParams percentageParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.5f);
+                percentageParams.gravity = Gravity.CENTER;
+                percentageView.setLayoutParams(percentageParams);
+                percentageView.setText(String.format("(%d%%)", percentage));
+                percentageView.setGravity(Gravity.CENTER);
+                rowLayout.addView(percentageView);
+
+                container.addView(rowLayout);
+            }
+        });
+    }
+
+    public void DrawInTimeSeries(LineChart chart, TextView totalTitle, TextView totalValue, LinearLayout ElementValueInfoDisplay) {
+        if (cache == null) {
+            return;
+        }
+        try {
+            chart.post(() -> {
+                ElementValueInfoDisplay.removeAllViews();
+                chart.clear();
+
+                totalTitle.setText("Total : " + title);
+                ArrayList<Map<String, Object>> data = (ArrayList<Map<String, Object>>) cache.get("data");
+                if (data == null || data.isEmpty()) {
+                    totalValue.setText("0");
+                    chart.invalidate();
+                    DontHaveDataToShow(chart.getContext());
+                    return;
+                }
+
+                Map<String, Object> firstDataElement = data.get(0);
+
+                ArrayList<Map<String, Object>> values = (ArrayList<Map<String, Object>>) firstDataElement.get("values");
+                if (values == null || values.isEmpty()) {
+                    totalValue.setText("0");
+                    chart.invalidate();
+                    DontHaveDataToShow(chart.getContext());
+                    return;
+                }
+
+                ArrayList<Entry> entries = new ArrayList<>();
+                ArrayList<String> labels = new ArrayList<>();
+                ArrayList<Number> valuesList = new ArrayList<>();
+                long totalSum = 0;
+                int i = 0;
+
+                for (Map<String, Object> valueMap : values) {
+                    Number valueNumber = (Number) valueMap.get("value");
+                    float value = valueNumber.floatValue();
+                    totalSum += value;
+                    valuesList.add(value);
+
+                    String endTime = (String) valueMap.get("end_time");
+                    String label = endTime.substring(0, 10);
+
+                    entries.add(new Entry(i, value));
+                    labels.add(label);
+                    i++;
+                }
+
+                totalValue.setText(String.valueOf(totalSum));
+                AddInfoIntoInfoDisplay(ElementValueInfoDisplay, labels, valuesList, totalSum);
+
+                LineDataSet dataSet = new LineDataSet(entries, this.title);
+                dataSet.setValueTextSize(10f);
+
+                LineData lineData = new LineData(dataSet);
+                chart.setData(lineData);
+
+                XAxis xAxis = chart.getXAxis();
+                xAxis.setValueFormatter(new IndexAxisValueFormatter(labels));
+                xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+                xAxis.setGranularity(1f);
+                xAxis.setGranularityEnabled(true);
+
+                chart.getDescription().setEnabled(false);
+                chart.getAxisLeft().setAxisMinimum(0f);
+                chart.getAxisRight().setEnabled(false);
+                chart.animateY(1000);
+                chart.invalidate();
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            chart.post(() -> Utility.showMessageBox("Failed to parse and display chart data.", chart.getContext()));
+        }
+    }
+    void DontHaveDataToShow(Context ctx)
+    {
+        Utility.showMessageBox("No content to show",ctx);
+    }
 }
-
-
-/*<table class="_4-ss _5k9x"><thead><tr><th style="width:15%">
-          Metric
-        </th><th style="width:10%">
-          Period
-        </th><th style="width:13%">
-          Timeframe
-        </th><th style="width:11%">
-          Breakdown
-        </th><th style="width:12%">
-          Metric Type
-        </th><th>
-          Description
-        </th></tr></thead><tbody class="_5m37" id="u_0_4_c1"><tr class="row_0"><td><p><code>accounts_engaged</code></p>
-</td><td><p><code>day</code></p>
-</td><td><p>n/a</p>
-</td><td><p>n/a</p>
-</td><td><p><code>total_value</code></p>
-</td><td><p>The number of accounts that have interacted with your content, including in ads. Content includes posts, stories, reels, videos and live videos. Interactions can include actions such as likes, saves, comments, shares or replies.</p>
-<br><p>This metric is estimated.</p>
-</td></tr><tr class="row_1 _5m29"><td><p><code>comments</code></p>
-</td><td><p><code>day</code></p>
-</td><td><p>n/a</p>
-</td><td><p><code>media_product_type</code></p>
-</td><td><p><code>total_value</code></p>
-</td><td><p>The number of comments on your posts, reels, videos and live videos.</p>
-<br><p>This metric is <a href="https://business.facebook.com/business/help/metrics-labeling" data-auto-logging-id="fe5263f37">in development</a>.</p>
-</td></tr><tr class="row_2"><td><p><code>engaged_audience_demographics</code></p>
-</td><td><p><code>lifetime</code></p>
-</td><td><p>One of:</p>
-<br><p><code>last_14_days</code>,
-<code>last_30_days</code>,
-<code>last_90_days</code>,
-<code>prev_month</code>,
-<code>this_month</code>,
-<code>this_week</code></p>
-</td><td><p><code>age</code>,
-<br><code>city</code>,
-<br><code>country</code>,
-<br><code>gender</code></p>
-</td><td><p><code>total_value</code></p>
-</td><td><p>The demographic characteristics of the engaged audience, including countries, cities and gender distribution.  <code>this_month</code>Return the data in the last 30 days and  <code>this_week</code>Return data in the last 7 days.</p>
-<br><p>Does not support  <code>since</code>or <code>until</code>. See <a href="#range-2" data-auto-logging-id="f5fde3ac3">Range</a> for more information.</p>
-<br><p>Not returned if the IG User has less than 100 engagements during the timeframe.</p>
-<br><p><strong>Note:</strong> The <code>last_14_days</code>, <code>last_30_days</code>,  <code>last_90_days</code>and  <code>prev_month</code>timeframes will no longer be be supported with v20.0. See the <a href="/docs/instagram-api/changelog#may-21--2024" data-auto-logging-id="fba52c7a5">changelog</a> for more information.</p>
-</td></tr><tr class="row_3 _5m29"><td><p><code>follows_and_unfollows</code></p>
-</td><td><p><code>day</code></p>
-</td><td><p>n/a</p>
-</td><td><p><code>follow_type</code></p>
-</td><td><p><code>total_value</code></p>
-</td><td><p>The number of accounts that follow you and the number of accounts that unfollowed you or left Instagram in the selected time period.</p>
-<br><p>Not returned if the IG User has less than 100 followers.</p>
-</td></tr><tr class="row_4"><td><p><code>follower_demographics</code></p>
-</td><td><p><code>lifetime</code></p>
-</td><td><p>One of:</p>
-<br><p><code data-moz-translations-id="0">last_14_days</code>,
-<code data-moz-translations-id="1">last_30_days</code>,
-<code data-moz-translations-id="2">last_90_days</code>,
-<code data-moz-translations-id="3">prev_month</code>,
-<code data-moz-translations-id="4">this_month</code>,
-<code data-moz-translations-id="5">this_week</code></p>
-</td><td><p><code>age</code>,
-<br><code>city</code>,
-<br><code>country</code>,
-<br><code>gender</code></p>
-</td><td><p><code>total_value</code></p>
-</td><td><p>The demographic characteristics of followers, including countries, cities and gender distribution.</p>
-<br><p>Does not support  <code>since</code>or <code>until</code>. See <a href="#range-2" data-auto-logging-id="f3921b370">Range</a> for more information.</p>
-<br><p>Not returned if the IG User has less than 100 followers.</p>
-</td></tr><tr class="row_5 _5m29"><td><p><code>impressions</code> <strong>Deprecated for v22.0+ and all versions April 21, 2025.</strong></p>
-</td><td><p><code>day</code></p>
-</td><td><p>n/a</p>
-</td><td><p>n/a</p>
-</td><td><p><code>total_value</code>,
-<code>time_series</code></p>
-</td><td><p>The number of times your posts, stories, reels, videos and live videos were on screen, including in ads.</p>
-</td></tr><tr class="row_6"><td><p><code>likes</code></p>
-</td><td><p><code>day</code></p>
-</td><td><p>n/a</p>
-</td><td><p><code>media_product_type</code></p>
-</td><td><p><code>total_value</code></p>
-</td><td><p>The number of likes on your posts, reels, and videos.</p>
-</td></tr><tr class="row_7 _5m29"><td><p><code>profile_links_taps</code></p>
-</td><td><p><code>day</code></p>
-</td><td><p>n/a</p>
-</td><td><p><code>contact_button_type</code></p>
-</td><td><p><code>total_value</code></p>
-</td><td><p>The number of taps on your business address, call button, email button and text button.</p>
-</td></tr><tr class="row_8"><td><p><code>reach</code></p>
-</td><td><p><code>day</code></p>
-</td><td><p>n/a</p>
-</td><td><p><code>media_product_type</code>,
-<code>follow_type</code></p>
-</td><td><p><code data-moz-translations-id="0">total_value</code>,
-<code data-moz-translations-id="1">time_series</code></p>
-</td><td><p>The number of unique accounts that have seen your content, at least once, including in ads. Content includes posts, stories, reels, videos and live videos. Reach is different from impressions, which includes may multiple views of your content by the same accounts.</p>
-<br><p>This metric is estimated.</p>
-</td></tr><tr class="row_9 _5m29"><td><p><code>replies</code></p>
-</td><td><p><code>day</code></p>
-</td><td><p>n/a</p>
-</td><td><p>n/a</p>
-</td><td><p><code>total_value</code></p>
-</td><td><p>The number of replies you received from your story, including text and quick replies reactions.</p>
-</td></tr><tr class="row_10"><td><p><code>saved</code></p>
-</td><td><p><code>day</code></p>
-</td><td><p>n/a</p>
-</td><td><p><code>media_product_type</code></p>
-</td><td><p><code>total_value</code></p>
-</td><td><p>The number of saves of your posts, reels, and videos.</p>
-</td></tr><tr class="row_11 _5m29"><td><p><code>shares</code></p>
-</td><td><p><code>day</code></p>
-</td><td><p>n/a</p>
-</td><td><p><code>media_product_type</code></p>
-</td><td><p><code>total_value</code></p>
-</td><td><p>The number of shares of your posts, stories, reels, videos and live videos.</p>
-</td></tr><tr class="row_12"><td><p><code>total_interactions</code></p>
-</td><td><p><code>day</code></p>
-</td><td><p>n/a</p>
-</td><td><p><code>media_product_type</code></p>
-</td><td><p><code>total_value</code></p>
-</td><td><p>The total number of post interactions, story interactions, reels interactions, video interactions and live video interactions, including any interactions on boosted content.</p>
-</td></tr><tr class="row_13 _5m29"><td><p><code>views</code></p>
-</td><td><p><code>day</code></p>
-</td><td><p>n/a</p>
-</td><td><p><code>follower_type</code>, <code>media_product_type</code></p>
-</td><td><p><code>total_value</code></p>
-</td><td><p>The number of times your content was played or displayed. Content reels, posts, stories.</p>
-<br><p>This metric is <a href="https://business.facebook.com/business/help/metrics-labeling" data-moz-translations-id="0" data-auto-logging-id="f5cec2fb3">in development</a>.</p>
-</td></tr></tbody></table>
-
- */

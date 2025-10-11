@@ -83,6 +83,7 @@ public class InstagramAccountFragment extends Fragment {
         if (TextUtils.isEmpty(IG_USER_ID) || IG_USER_ID.contains("YOUR_IG_USER_ID")) {
             showMessageBox("ERROR: IG_USER_ID not provided");
             return;
+
         }
 
         tvStatus.setText("Loading...");
