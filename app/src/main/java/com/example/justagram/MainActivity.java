@@ -18,15 +18,10 @@ public class MainActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_activity);
-        ImageView logo = findViewById(R.id.justagram);
-        ImageView glow1 = findViewById(R.id.glow1);
-        ImageView glow2 = findViewById(R.id.glow2);
-        LinearLayout content = findViewById(R.id.content);
+        setContentView(R.layout.home_page);
 
-        IntroAnimator.start(logo,glow1,glow2,content);
-//        InstagramAccountFragment test = new InstagramAccountFragment();
-//        FragmentTransaction t = getSupportFragmentManager().beginTransaction();
-//        t.add(R.id.test_fragment,test).commit();
+        PostFeedFragment test = new PostFeedFragment();
+        FragmentTransaction t = getSupportFragmentManager().beginTransaction();
+        t.add(R.id.test_fragment,test).commit();
     }
 }
