@@ -47,7 +47,7 @@
         android:id="@+id/justagram"
         android:layout_width="300dp"
         android:layout_height="160dp"
-        android:layout_below="@id/header"
+
         android:layout_centerHorizontal="true"
         android:layout_marginTop="32dp"
         android:src="@mipmap/justagram_logo"
@@ -62,15 +62,15 @@
         android:layout_centerHorizontal="true"
         android:gravity="center_horizontal"
         android:layout_marginTop="16dp"
-        android:alpha="0"
+        android:alpha="1"
 
         >
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/btnFacebook"
+            android:id="@+id/btn_loginWInstagram"
             android:layout_width="300dp"
             android:layout_height="50dp"
-            app:cardBackgroundColor="@color/facebook_blue"
+            app:cardBackgroundColor="@color/instagram_main"
             app:cardCornerRadius="40px"
             app:cardElevation="9dp"
             android:clickable="true"
@@ -88,14 +88,14 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/facebook_social_icon"
+                    android:src="@drawable/instagram_logo"
                     android:layout_marginEnd="0dp"
-                    app:tint="@android:color/white"/>
+                   />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Continue with Fakebook"
+                    android:text="Continue with Instagram"
                     android:fontFamily="@font/sf_text_bold"
                     android:textColor="@android:color/white"
                     android:textSize="16sp"
@@ -143,7 +143,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            app:cardBackgroundColor="#FFDDDDDD"
+            app:cardBackgroundColor="@color/element_gray"
             app:cardElevation="9dp"
             app:cardCornerRadius="40px"
             android:layout_gravity="center"
@@ -153,14 +153,14 @@
             android:foreground="?attr/selectableItemBackground"
             >
                 <EditText
-                    android:id="@+id/edtUsername"
+                    android:id="@+id/txtbox_accessToken"
                     android:layout_width="300dp"
                     android:layout_height="50dp"
                     android:textColorHint="@color/hint_gray"
                     android:textColor="@color/hint_text"
                     android:textSize="14dp"
                     android:fontFamily="@font/sf_pro_rounded_thin"
-                    android:hint="Phone number, email or username"
+                    android:hint="Token"
                     android:background="@null"
                     android:padding="12dp"/>
 
@@ -171,7 +171,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30px"
-            app:cardBackgroundColor="#FFDDDDDD"
+            app:cardBackgroundColor="@color/element_gray"
             app:cardElevation="9dp"
             app:cardCornerRadius="40px"
             android:layout_gravity="center"
@@ -180,22 +180,22 @@
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
             >
-            <EditText
-                android:id="@+id/edtPassword"
-                android:layout_width="300dp"
-                android:layout_height="50dp"
-                android:textColorHint="@color/hint_gray"
-                android:textColor="@color/hint_text"
-                android:textSize="14dp"
-                android:paddingStart="12dp"
-                android:hint="Password"
-                android:fontFamily="@font/sf_pro_rounded_thin"
-                android:drawableEnd="@drawable/eye_vision_view_icon"
-                android:drawableTint="@color/hint_gray"
-                android:inputType="textPassword"
-                android:background="@null"
+<!--            <EditText-->
+<!--                android:id="@+id/edtPassword"-->
+<!--                android:layout_width="300dp"-->
+<!--                android:layout_height="50dp"-->
+<!--                android:textColorHint="@color/hint_gray"-->
+<!--                android:textColor="@color/hint_text"-->
+<!--                android:textSize="14dp"-->
+<!--                android:paddingStart="12dp"-->
+<!--                android:hint="User ID"-->
+<!--                android:fontFamily="@font/sf_pro_rounded_thin"-->
+<!--                android:drawableEnd="@drawable/eye_vision_view_icon"-->
+<!--                android:drawableTint="@color/hint_gray"-->
+<!--                android:inputType="textPassword"-->
+<!--                android:background="@null"-->
 
-         />
+<!--         />-->
 
         </androidx.cardview.widget.CardView>
 
@@ -217,7 +217,7 @@
             />
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/btnLogin"
+            android:id="@+id/btn_Login"
             android:layout_width="300dp"
             android:layout_height="100px"
             android:layout_marginTop="20dp"
@@ -276,7 +276,7 @@
                 android:text=" Sign up"
                 android:fontFamily="@font/sf_text_bold"
                 android:textSize="14sp"
-
+                android:id="@+id/signUp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
