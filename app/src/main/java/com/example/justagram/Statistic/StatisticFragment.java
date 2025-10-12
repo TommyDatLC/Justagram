@@ -16,13 +16,17 @@ import androidx.fragment.app.Fragment;
 
 import com.example.justagram.R;
 import com.example.justagram.etc.DateTime;
+import com.example.justagram.etc.Utility;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class StatisticFragment extends Fragment {
@@ -224,11 +228,27 @@ public class StatisticFragment extends Fragment {
     TextView txtview_totaltitle ;
     LinearLayout card_ElementValueInfoDisplay;
     View btn_refresh;
+    private Boolean checkValidTime(DateTime t) {
+        long since = SinceTime.ConvertToUnixTime();
+        long until = UntilTime.ConvertToUnixTime();
+        long now = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000;
+
+        boolean isTimeRangeValid = (since <= until && since <= now && until <= now);
+
+
+
+        if (!isTimeRangeValid) {
+            Utility.showMessageBox("The time you have set does not valid", getContext());
+        }
+
+        return isTimeRangeValid;
+    }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         thisLayout = inflater.inflate(R.layout.fragment_statistic,container,false);
+
         card_ElementValueInfoDisplay = thisLayout.findViewById(R.id.container_ValueInfoDisplay);
         btn_refresh = thisLayout.findViewById(R.id.btn_refresh);
         barchart_totalvalue = thisLayout.findViewById(R.id.grph_TotalValue);
@@ -294,7 +314,9 @@ public class StatisticFragment extends Fragment {
         };
         SinceTime.SetToCurrentTime();
         UntilTime.SetToCurrentTime();
-
+        SinceTime.setDay(SinceTime.getDay() - 1);
+        SinceTime.isValid = (d) -> checkValidTime(d);
+        UntilTime.isValid = (d) -> checkValidTime(d);
         AttachEventSpinner(spn_metric,true);
         AttachEventSpinner(spn_metricType,false);
         AttachEventSpinner(spn_breakDown,false);
@@ -355,7 +377,10 @@ public class StatisticFragment extends Fragment {
             UntilTime = new DateTime();
 
 
+
     void onSpinnerChoosen(StatisticData metricData) {
+
+
         int metricPos = spn_metric.getSelectedItemPosition();
         int timeframePos = spn_timeFrame.getSelectedItemPosition();
         int breakdownPos = spn_breakDown.getSelectedItemPosition();
@@ -374,12 +399,13 @@ public class StatisticFragment extends Fragment {
         Consumer<Object> onFinishCallback = (a) -> {
             thisLayout.post(() -> {
                 if (selectedType == EnumMetricType.total_value) {
-                    linechart_totalvalue.setVisibility(View.GONE);
-                    barchart_totalvalue.setVisibility(View.VISIBLE);
+
+                    ((View)linechart_totalvalue.getParent().getParent()).setVisibility(View.GONE);
+                    ((View)barchart_totalvalue.getParent().getParent()).setVisibility(View.VISIBLE);
                     finalMetricData.DrawInTotalValue(barchart_totalvalue, txtview_totaltitle, txtview_totalvalue, card_ElementValueInfoDisplay);
                 } else { // time_series
-                    barchart_totalvalue.setVisibility(View.GONE);
-                    linechart_totalvalue.setVisibility(View.VISIBLE);
+                    ((View)barchart_totalvalue.getParent().getParent()).setVisibility(View.GONE);
+                    ((View)linechart_totalvalue.getParent().getParent()).setVisibility(View.VISIBLE);
                     finalMetricData.DrawInTimeSeries(linechart_totalvalue, txtview_totaltitle, txtview_totalvalue, card_ElementValueInfoDisplay);
                 }
             });
@@ -391,7 +417,7 @@ public class StatisticFragment extends Fragment {
                 metricTypePos,
                 SinceTime.ConvertToUnixTime(),
                 UntilTime.ConvertToUnixTime(),
-                false, 
+                false,
                 onFinishCallback);
     }
 
@@ -399,27 +425,28 @@ public class StatisticFragment extends Fragment {
     {
 
         StatisticData metricReqInfo =  AvalableRequest.get(newIndex);
-        List<String> newBreakDown = null,newTimeFrame = null,newMetrixType = null;
 
-        if (metricReqInfo.breakDowns != null)
-        {
-            newBreakDown = Arrays.stream(metricReqInfo.breakDowns).map(items -> StatisticRequestUtils.TranslateEnumBreakDownToRequest(items)).collect(Collectors.toList());
-        }
-        SetSpinnerList(newBreakDown,R.id.spn_breakdown);
-
-        if (metricReqInfo.timeFrames != null)
-        {
-            newTimeFrame = Arrays.stream(metricReqInfo.timeFrames).map(items -> StatisticRequestUtils.TranslateEnumTimeFrameToRequest(items)).collect(Collectors.toList());
-        }
-        SetSpinnerList(newTimeFrame,R.id.spn_timeframe);
-
-        if (metricReqInfo.metricTypes != null)
-        {
-            newMetrixType = Arrays.stream(metricReqInfo.metricTypes).map(items -> StatisticRequestUtils.TranslateEnumMetricTypeToRequest(items)).collect(Collectors.toList());
-        }
-        SetSpinnerList(newMetrixType,R.id.spn_metricType);
-
+        TranslateAndSetSpinnerList(spn_breakDown,metricReqInfo.breakDowns,
+                (obj) -> StatisticRequestUtils.TranslateEnumBreakDownToRequest((EnumBreakDown)obj));
+        TranslateAndSetSpinnerList(spn_timeFrame,metricReqInfo.timeFrames,
+                (obj) -> StatisticRequestUtils.TranslateEnumTimeFrameToRequest((EnumTimeFrame)obj));
+        TranslateAndSetSpinnerList(spn_metricType,metricReqInfo.metricTypes,
+                (obj) -> StatisticRequestUtils.TranslateEnumMetricTypeToRequest((EnumMetricType) obj));
         onSpinnerChoosen(metricReqInfo);
 
     }
+    void TranslateAndSetSpinnerList(Spinner spinner,Object[] arr, Function<Object,String> translater)
+    {
+        if (arr != null)
+        {
+            spinner.setVisibility(View.VISIBLE);
+            List<String> newMetrixType = Arrays.stream(arr).map(items -> translater.apply(items)).collect(Collectors.toList());
+            SetSpinnerList(newMetrixType,spinner.getId());
+        }
+        else
+        {
+            spinner.setVisibility(View.GONE);
+        }
+    }
+
 }
