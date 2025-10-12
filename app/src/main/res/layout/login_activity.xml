@@ -143,7 +143,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            app:cardBackgroundColor="#FFDDDDDD"
+            app:cardBackgroundColor="@color/element_gray"
             app:cardElevation="9dp"
             app:cardCornerRadius="40px"
             android:layout_gravity="center"
@@ -171,7 +171,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30px"
-            app:cardBackgroundColor="#FFDDDDDD"
+            app:cardBackgroundColor="@color/element_gray"
             app:cardElevation="9dp"
             app:cardCornerRadius="40px"
             android:layout_gravity="center"
@@ -180,22 +180,22 @@
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
             >
-            <EditText
-                android:id="@+id/edtPassword"
-                android:layout_width="300dp"
-                android:layout_height="50dp"
-                android:textColorHint="@color/hint_gray"
-                android:textColor="@color/hint_text"
-                android:textSize="14dp"
-                android:paddingStart="12dp"
-                android:hint="User ID"
-                android:fontFamily="@font/sf_pro_rounded_thin"
-                android:drawableEnd="@drawable/eye_vision_view_icon"
-                android:drawableTint="@color/hint_gray"
-                android:inputType="textPassword"
-                android:background="@null"
+<!--            <EditText-->
+<!--                android:id="@+id/edtPassword"-->
+<!--                android:layout_width="300dp"-->
+<!--                android:layout_height="50dp"-->
+<!--                android:textColorHint="@color/hint_gray"-->
+<!--                android:textColor="@color/hint_text"-->
+<!--                android:textSize="14dp"-->
+<!--                android:paddingStart="12dp"-->
+<!--                android:hint="User ID"-->
+<!--                android:fontFamily="@font/sf_pro_rounded_thin"-->
+<!--                android:drawableEnd="@drawable/eye_vision_view_icon"-->
+<!--                android:drawableTint="@color/hint_gray"-->
+<!--                android:inputType="textPassword"-->
+<!--                android:background="@null"-->
 
-         />
+<!--         />-->
 
         </androidx.cardview.widget.CardView>
 

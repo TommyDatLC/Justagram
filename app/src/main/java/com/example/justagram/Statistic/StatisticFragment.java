@@ -273,25 +273,37 @@ public class StatisticFragment extends Fragment {
         txtview_ChooseDateSince.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DateTime.OpenDateSelector(getContext(),SinceTime);
+                DateTime.OpenDateSelector(getContext(),SinceTime,() -> {
+                    onSpinnerChoosen(null);
+                });
+
             }
         });
         txtview_ChooseDateUntil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DateTime.OpenDateSelector(getContext(),UntilTime);
+                DateTime.OpenDateSelector(getContext(),UntilTime ,() -> {
+                    onSpinnerChoosen(null);
+                });
+
             }
         });
         txtview_ChooseTimeSince.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DateTime.OpenTimeSelector(getContext(),SinceTime);
+                DateTime.OpenTimeSelector(getContext(),SinceTime,() -> {
+                    onSpinnerChoosen(null);
+                });
+
             }
         });
         txtview_ChooseTimeUntil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DateTime.OpenTimeSelector(getContext(),UntilTime);
+                DateTime.OpenTimeSelector(getContext(),UntilTime,() -> {
+                    onSpinnerChoosen(null);
+                });
+
             }
         });
         SinceTime.onTimeChange = (a) -> {

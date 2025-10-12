@@ -12,12 +12,13 @@ import java.util.function.Function;
 
 public class DateTime {
     static final Calendar calendar = Calendar.getInstance();
-    public static void OpenDateSelector(Context ctx, DateTime needToChange) {
+    public static void OpenDateSelector(Context ctx, DateTime needToChange,Runnable onDone) {
 //        int year = calendar.get(Calendar.YEAR);
 //        int month = calendar.get(Calendar.MONTH);
 //        int day = calendar.get(Calendar.DAY_OF_MONTH);
         DatePickerDialog datepicker = new DatePickerDialog(ctx, (view, Syear, Smonth, Sday) -> {
             needToChange.SetDate(Syear,Smonth + 1,Sday);
+            onDone.run();
         },
                 needToChange.year,
                 needToChange.month - 1,
@@ -26,13 +27,14 @@ public class DateTime {
         datepicker.show();
     }
 
-    public static void OpenTimeSelector(Context ctx, DateTime needToChange)
+    public static void OpenTimeSelector(Context ctx, DateTime needToChange,Runnable onDone)
     {
 //        int h = calendar.get(Calendar.HOUR_OF_DAY); // Sử dụng HOUR_OF_DAY cho định dạng 24 giờ
 //        int m = calendar.get(Calendar.MINUTE);
 
         TimePickerDialog tpk = new TimePickerDialog(ctx, (view, hourOfDay, minute) -> {
             needToChange.SetTime(hourOfDay,minute);
+            onDone.run();
         },
                 needToChange.hour,
                 needToChange.minute,

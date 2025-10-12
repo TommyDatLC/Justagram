@@ -32,7 +32,7 @@
                     android:layout_width="150px"
                     android:layout_height="150px"
                     android:layout_weight="1"
-                    app:cardBackgroundColor="#FFDDDDDD"
+                    app:cardBackgroundColor="@color/element_gray"
                     app:cardCornerRadius="10dp"
                     android:layout_margin="5dp"
                     android:focusable="true"
@@ -63,7 +63,7 @@
 
                     app:cardCornerRadius="20dp"
                     android:layout_margin="5dp"
-                    app:cardBackgroundColor="#FFDDDDDD"
+                    app:cardBackgroundColor="@color/element_gray"
                     android:padding="20dp"
                     >
                     <Spinner
@@ -79,7 +79,7 @@
                     android:layout_weight="1"
                     app:cardCornerRadius="20dp"
                     android:layout_margin="5dp"
-                    app:cardBackgroundColor="#FFDDDDDD"
+                    app:cardBackgroundColor="@color/element_gray"
                     android:padding="20dp"
 
 
@@ -105,7 +105,7 @@
                     android:layout_weight="1"
                     app:cardCornerRadius="20dp"
                     android:layout_margin="5dp"
-                    app:cardBackgroundColor="#FFDDDDDD"
+                    app:cardBackgroundColor="@color/element_gray"
                     android:padding="20dp"
                     >
                     <Spinner
@@ -121,7 +121,7 @@
                     android:layout_weight="1"
                     app:cardCornerRadius="20dp"
                     android:layout_margin="5dp"
-                    app:cardBackgroundColor="#FFDDDDDD"
+                    app:cardBackgroundColor="@color/element_gray"
                     android:padding="20dp"
                     >
                     <Spinner
@@ -151,7 +151,7 @@
                     android:layout_weight="1"
                     app:cardCornerRadius="20dp"
                     android:layout_margin="5dp"
-                    app:cardBackgroundColor="#FFDDDDDD"
+                    app:cardBackgroundColor="@color/element_gray"
                     android:padding="20dp"
 
                     >
@@ -172,7 +172,7 @@
                     android:layout_weight="1"
                     app:cardCornerRadius="20dp"
                     android:layout_margin="5dp"
-                    app:cardBackgroundColor="#FFDDDDDD"
+                    app:cardBackgroundColor="@color/element_gray"
                     android:padding="20dp"
                     >
                     <TextView
@@ -206,7 +206,7 @@
                     android:layout_weight="1"
                     app:cardCornerRadius="20dp"
                     android:layout_margin="5dp"
-                    app:cardBackgroundColor="#FFDDDDDD"
+                    app:cardBackgroundColor="@color/element_gray"
                     android:padding="20dp"
 
                     >
@@ -226,7 +226,7 @@
                     android:layout_weight="1"
                     app:cardCornerRadius="20dp"
                     android:layout_margin="5dp"
-                    app:cardBackgroundColor="#FFDDDDDD"
+                    app:cardBackgroundColor="@color/element_gray"
                     android:padding="20dp"
                     >
                     <TextView
@@ -293,18 +293,18 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="0px"
-                        android:layout_marginLeft="30px"
+                        android:paddingLeft="20px"
                         android:text="Total value"
                         android:fontFamily="@font/sf_text_bold"
-                        android:textSize="30dp"
-                        android:layout_weight="1"
-                        android:textColor="#FF000000"/>
+                        android:textSize="20dp"
+                        android:layout_weight="0.75"
+                        />
 
                     <com.github.mikephil.charting.charts.BarChart
                         android:layout_width="match_parent"
                         android:layout_height="0px"
                         android:layout_gravity="center"
-                        android:layout_weight="7.5"
+                        android:layout_weight="10"
                         android:id="@+id/grph_TotalValue"
                         />
 
@@ -329,16 +329,16 @@
                         android:layout_marginLeft="30px"
                         android:text="Time series"
                         android:fontFamily="@font/sf_text_bold"
-                        android:textSize="30dp"
-                        android:layout_weight="1"
-                        android:textColor="#FF000000"/>
+                        android:textSize="20dp"
+                        android:layout_weight="0.75"
+                  />
 
                     <com.github.mikephil.charting.charts.LineChart
                         android:layout_width="match_parent"
                         android:layout_height="0px"
                         android:layout_gravity="center"
                         android:id ="@+id/grph_TimeSeries"
-                        android:layout_weight="7.5"
+                        android:layout_weight="10"
 
                         />
 
