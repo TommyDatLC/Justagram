@@ -14,9 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 public class MainActivity extends AppCompatActivity {
-
-    private FragmentTransition fragmentTransition;
-
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -27,10 +24,9 @@ public class MainActivity extends AppCompatActivity {
         ImageView glow2 = findViewById(R.id.glow2);
         LinearLayout content = findViewById(R.id.content);
 
-        IntroAnimator.start(logo,glow1,glow2,content);
+//        IntroAnimator.start(logo,glow1,glow2,content);
 //        InstagramAccountFragment test = new InstagramAccountFragment();
 //        FragmentTransaction t = getSupportFragmentManager().beginTransaction();
 //        t.add(R.id.test_fragment,test).commit();
-
     }
 }

@@ -1,12 +1,3 @@
 <resources>
     <string name="app_name">Justagram</string>
-    <string name="notifications">Notifications</string>
-    <string name="profile">Profile</string>
-    <string name="dashboard">Dashboard</string>
-    <string name="analytics">Analytics</string>
-    <string name="add_button">Add Button</string>
-    <string name="add">Add Gradient</string>
-    <string name="calendar">Calendar</string>
-    <string name="settings">Settings</string>
-
 </resources>

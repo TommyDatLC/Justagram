@@ -44,7 +44,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         // Initialize the animation helper
         int activeColor = getColor(R.color.sunset_orange);
-        int inactiveColor = getColor(R.color.gray);
+        int inactiveColor = getColor(R.color.hint_gray);
         TabAnimationHelper tabHelper = new TabAnimationHelper(tabLayout, tabGradient, viewPager,
                 activeColor, inactiveColor);
         tabLayout.post(tabHelper::init);
