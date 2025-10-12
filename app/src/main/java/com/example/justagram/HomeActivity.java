@@ -17,7 +17,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_page);
        // InstagramAccountFragment test = new InstagramAccountFragment();
-        StatisticFragment test = new StatisticFragment();
+        ReelPostFragment test = new ReelPostFragment();
         LoadFragment(test);
     }
     void LoadFragment(Fragment test)
