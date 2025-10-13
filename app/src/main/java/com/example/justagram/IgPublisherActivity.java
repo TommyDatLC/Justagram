@@ -19,7 +19,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
+import com.example.justagram.etc.Utility;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -102,24 +102,9 @@ public class IgPublisherActivity extends AppCompatActivity {
         btnPublishNow_reel.setOnClickListener(ch -> publishNow(true));
         btnPublishNow_post.setOnClickListener(ch -> publishNow(false));
 
-        btnSchedule_reel.setOnClickListener(ch -> pickDateTimeAndSchedule(true));
-        btnSchedule_post.setOnClickListener(ch -> pickDateTimeAndSchedule(false));
 
-        ListView scheduledListView = findViewById(R.id.scheduled_jobs_listview);
-        scheduledListView = findViewById(R.id.scheduled_jobs_listview);
-        scheduledList = new ArrayList<>();
-        scheduledAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, scheduledList);
-        scheduledListView.setAdapter(scheduledAdapter);
 
-        scheduledListView.setOnItemLongClickListener((parent, view, position, id) -> {
-            new android.app.AlertDialog.Builder(this)
-                    .setTitle("Deleted scheduled task?")
-                    .setMessage("Are you sure you wanna delete this?")
-                    .setPositiveButton("Delete", (dialog, which) -> removeScheduledJob(position))
-                    .setNegativeButton("Cancel", null)
-                    .show();
-            return true;
-        });
+
 
     }
 
@@ -176,6 +161,10 @@ public class IgPublisherActivity extends AppCompatActivity {
 
     private void publishNow(boolean asReel) {
         String caption = asReel ? etCaption_reel.getText().toString() : etCaption_post.getText().toString();
+        if (!checkCaptionLength(caption)) {
+            showMsg("Caption must be at least 8 characters long");
+            return;
+        }
         if (selectedUris.isEmpty()) { showMsg("Pick at least one media"); return; }
 
         setAllPublishButtonsEnabled(false);
@@ -357,6 +346,16 @@ public class IgPublisherActivity extends AppCompatActivity {
         }
     }
     // function to upload instagram 123
+    // check 6-7 charr moi cho up
+    // dung dateTime lay schedule
+    // hienẹ thông báo khi upload thành công lên server
+    public boolean checkCaptionLength(String caption){
+        if(caption == null || caption.length() < 8){
+            return false;
+        }
+        return true;
+    }
+
     public void publishReelToInstagram(String igUserId, String videoUrl, String caption, String accessToken, UploadVideoCallback callback) {
         OkHttpClient client = new OkHttpClient();
 
@@ -624,97 +623,8 @@ public class IgPublisherActivity extends AppCompatActivity {
         try { Utility.showMessageBox(s, this); } catch (Exception e) { Toast.makeText(this, s, Toast.LENGTH_LONG).show(); }
     }
 
-    // ---------------- schedule via AlarmManager ----------------
-    private void pickDateTimeAndSchedule(boolean isReel) {
-        java.util.Calendar cal = java.util.Calendar.getInstance();
-        int y = cal.get(java.util.Calendar.YEAR);
-        int m = cal.get(java.util.Calendar.MONTH);
-        int d = cal.get(java.util.Calendar.DAY_OF_MONTH);
-
-        new android.app.DatePickerDialog(this, (view, yy, mm, dd) -> {
-            cal.set(java.util.Calendar.YEAR, yy);
-            cal.set(java.util.Calendar.MONTH, mm);
-            cal.set(java.util.Calendar.DAY_OF_MONTH, dd);
-
-            int h = cal.get(java.util.Calendar.HOUR_OF_DAY);
-            int mi = cal.get(java.util.Calendar.MINUTE);
-
-            new android.app.TimePickerDialog(this, (v2, hh, mm2) -> {
-                cal.set(java.util.Calendar.HOUR_OF_DAY, hh);
-                cal.set(java.util.Calendar.MINUTE, mm2);
-                cal.set(java.util.Calendar.SECOND, 0);
-
-                if (cal.getTimeInMillis() <= System.currentTimeMillis()) {
-                    showMsg("Can't choose past time");
-                    return;
-                }
-
-                scheduleAlarm(isReel, cal.getTimeInMillis());
-                addScheduledJob(isReel, cal.getTimeInMillis()); // ✅ thêm dòng này
-
-            }, h, mi, true).show();
-
-        }, y, m, d).show();
-    }
-
-
-    private void scheduleAlarm(boolean isReel, long triggerAtMillis) {
-        try {
-            android.app.AlarmManager am = (android.app.AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            Intent i = new Intent(this, AlarmReceiver.class);
-            i.putExtra("what", isReel ? "Reel" : "Post");
-            int requestCode = isReel ? 8001 : 8002;
-            int flags = android.app.PendingIntent.FLAG_UPDATE_CURRENT | android.app.PendingIntent.FLAG_IMMUTABLE;
-            android.app.PendingIntent pi = android.app.PendingIntent.getBroadcast(this, requestCode, i, flags);
-
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                am.setExactAndAllowWhileIdle(android.app.AlarmManager.RTC_WAKEUP, triggerAtMillis, pi);
-            } else {
-                am.setExact(android.app.AlarmManager.RTC_WAKEUP, triggerAtMillis, pi);
-            }
-
-            java.text.SimpleDateFormat f = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault());
-            showMsg("Scheduled " + (isReel ? "Reel" : "Post") + " at " + f.format(new java.util.Date(triggerAtMillis)));
-        } catch (Exception e) {
-            showMsg("Schedule error: " + e.getMessage());
-        }
-    }
-    private void addScheduledJob(boolean isReel, long timeMillis) {
-        java.text.SimpleDateFormat f = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault());
-        String timeStr = f.format(new java.util.Date(timeMillis));
-        String newItem = (isReel ? "Reel" : "Post") + " - " + timeStr;
-        // sửa lỗi add ở cuối dòng thay vì đầu -> chỉnh lại thành tham số 0
-        scheduledList.add(0, newItem);
-        scheduledAdapter.notifyDataSetChanged();
-
-    }
-
-    private void removeScheduledJob(int position) {
-        if (position < 0 || position >= scheduledList.size()) return;
-
-        String job = scheduledList.get(position);
-        scheduledList.remove(position);
-        scheduledAdapter.notifyDataSetChanged();
-
-        cancelScheduledAlarm(job);
-        showMsg("Successfully deleted: " + job);
-    }
-
-    private void cancelScheduledAlarm(String jobInfo) {
-        try {
-            boolean isReel = jobInfo.startsWith("Reel");
-            int requestCode = isReel ? 8001 : 8002;
-
-            Intent i = new Intent(this, AlarmReceiver.class);
-            int flags = android.app.PendingIntent.FLAG_UPDATE_CURRENT | android.app.PendingIntent.FLAG_IMMUTABLE;
-            android.app.PendingIntent pi = android.app.PendingIntent.getBroadcast(this, requestCode, i, flags);
-
-            android.app.AlarmManager am = (android.app.AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            am.cancel(pi);
-        } catch (Exception e) {
-            showMsg("Lỗi khi hủy: " + e.getMessage());
-        }
-    }
+    // ĐÃ XÓA SCHEDULED FEATURE SỬ DỤNG ALARM MANAGER
+    // --------> DÙNG HÀM DATETIME
 
     // ---------------- preview adapter ----------------
     private class PreviewAdapter extends RecyclerView.Adapter<PreviewVH> {
