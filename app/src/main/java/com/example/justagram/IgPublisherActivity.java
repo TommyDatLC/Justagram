@@ -348,7 +348,7 @@ public class IgPublisherActivity extends AppCompatActivity {
     // function to upload instagram 123
     // check 6-7 charr moi cho up
     // dung dateTime lay schedule
-    // hienẹ thông báo khi upload thành công lên server
+    // hiện thông báo khi upload thành công lên server
     public boolean checkCaptionLength(String caption){
         if(caption == null || caption.length() < 8){
             return false;
