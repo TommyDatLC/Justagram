@@ -1,4 +1,4 @@
-package com.example.justagram.Statistic;
+package com.example.justagram.fragment.Statistic;
 enum EnumTimeFrame
 {
     last_14_days, last_30_days, last_90_days, prev_month, this_month, this_week

@@ -1,4 +1,4 @@
-package com.example.justagram.Statistic;
+package com.example.justagram.fragment.Statistic;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -324,18 +324,24 @@ public class StatisticFragment extends Fragment {
             txtview_ChooseTimeUntil.setText(UntilTime.GetTimeString());
             txtview_ChooseDateUntil.setText(UntilTime.GetDateString());
         };
+        //set to current time again to change the lable of all the time selector
         SinceTime.SetToCurrentTime();
         UntilTime.SetToCurrentTime();
-        SinceTime.setDay(SinceTime.getDay() - 1);
+        SinceTime.setDay(SinceTime.getDay() - 10);
+        // check valid when time change
         SinceTime.isValid = (d) -> checkValidTime(d);
         UntilTime.isValid = (d) -> checkValidTime(d);
+
+        // attach event for the spinner onClick
         AttachEventSpinner(spn_metric,true);
         AttachEventSpinner(spn_metricType,false);
         AttachEventSpinner(spn_breakDown,false);
         AttachEventSpinner(spn_timeFrame,false);
+        // init the Avalable Request array
         InitAvalableRequest();
         // Get all the statistic data
         List<String> allMetricTitle = AvalableRequest.stream().map(item -> item.title).collect(Collectors.toList());
+        //set all spinner text
         SetSpinnerList(allMetricTitle,R.id.spn_Metric);
         LoadNewMetric(0);
         return thisLayout;
