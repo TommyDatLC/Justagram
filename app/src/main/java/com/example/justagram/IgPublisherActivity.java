@@ -457,7 +457,7 @@ public class IgPublisherActivity extends AppCompatActivity {
 
                         /**
                          * @parameter creation_id: id sau khi tạo thành công container
-                         * @parameter access_token: very self explainatory
+                         * @parameter access_token: self explainatory
                          */
                         RequestBody publishBody = new FormBody.Builder(Charset.forName("UTF-8"))
                                 .add("creation_id", creationId)
