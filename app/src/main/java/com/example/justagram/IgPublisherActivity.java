@@ -623,9 +623,10 @@ public class IgPublisherActivity extends AppCompatActivity {
         try { Utility.showMessageBox(s, this); } catch (Exception e) { Toast.makeText(this, s, Toast.LENGTH_LONG).show(); }
     }
 
-    // ---------------- schedule via AlarmManager ----------------
+    // hàm chọn ngày và giờ 
     private void pickDateTimeAndSchedule(boolean isReel) {
         java.util.Calendar cal = java.util.Calendar.getInstance();
+        // lấy ngày tháng năm muốn chọn
         int y = cal.get(java.util.Calendar.YEAR);
         int m = cal.get(java.util.Calendar.MONTH);
         int d = cal.get(java.util.Calendar.DAY_OF_MONTH);
@@ -643,13 +644,15 @@ public class IgPublisherActivity extends AppCompatActivity {
                 cal.set(java.util.Calendar.MINUTE, mm2);
                 cal.set(java.util.Calendar.SECOND, 0);
 
+
+                // nếu thời gian < thời gian hiện tại -> báo lỗi 
                 if (cal.getTimeInMillis() <= System.currentTimeMillis()) {
                     showMsg("Can't choose past time");
                     return;
                 }
 
                 scheduleAlarm(isReel, cal.getTimeInMillis());
-                addScheduledJob(isReel, cal.getTimeInMillis()); // ✅ thêm dòng này
+                addScheduledJob(isReel, cal.getTimeInMillis()); 
 
             }, h, mi, true).show();
 
@@ -682,12 +685,13 @@ public class IgPublisherActivity extends AppCompatActivity {
         java.text.SimpleDateFormat f = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault());
         String timeStr = f.format(new java.util.Date(timeMillis));
         String newItem = (isReel ? "Reel" : "Post") + " - " + timeStr;
-        // sửa lỗi add ở cuối dòng thay vì đầu -> chỉnh lại thành tham số 0
         scheduledList.add(0, newItem);
         scheduledAdapter.notifyDataSetChanged();
 
     }
+    
 
+    // xóa scheduled job
     private void removeScheduledJob(int position) {
         if (position < 0 || position >= scheduledList.size()) return;
 
@@ -699,11 +703,15 @@ public class IgPublisherActivity extends AppCompatActivity {
         showMsg("Successfully deleted: " + job);
     }
 
+
+    // nút cancel schedule
     private void cancelScheduledAlarm(String jobInfo) {
         try {
+            // check nếu là reel thì requestCode = 8001, post thì 8002
             boolean isReel = jobInfo.startsWith("Reel");
             int requestCode = isReel ? 8001 : 8002;
 
+            // tạo intent và pending intent 
             Intent i = new Intent(this, AlarmReceiver.class);
             int flags = android.app.PendingIntent.FLAG_UPDATE_CURRENT | android.app.PendingIntent.FLAG_IMMUTABLE;
             android.app.PendingIntent pi = android.app.PendingIntent.getBroadcast(this, requestCode, i, flags);
@@ -711,7 +719,7 @@ public class IgPublisherActivity extends AppCompatActivity {
             android.app.AlarmManager am = (android.app.AlarmManager) getSystemService(Context.ALARM_SERVICE);
             am.cancel(pi);
         } catch (Exception e) {
-            showMsg("Lỗi khi hủy: " + e.getMessage());
+            showMsg("Error during canceling?: " + e.getMessage());
         }
     }
 
