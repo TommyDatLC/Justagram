@@ -1,11 +1,10 @@
-package com.example.justagram;
+package com.example.justagram.fragment;
 
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
@@ -22,10 +21,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.justagram.R;
+import com.example.justagram.etc.Utility;
 import com.google.android.material.tabs.TabLayout;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.InputStream;
@@ -100,6 +99,7 @@ public class IgPublisherFragment extends Fragment {
         rvPreview_reel.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         rvPreview_post.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         PreviewAdapter previewAdapter = new PreviewAdapter();
+
         rvPreview_reel.setAdapter(previewAdapter);
         rvPreview_post.setAdapter(previewAdapter);
 

@@ -1,4 +1,4 @@
-package com.example.justagram;
+package com.example.justagram.fragment;
 
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -13,6 +13,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.example.justagram.LoginAuth.LoginActivity;
+import com.example.justagram.R;
+import com.example.justagram.etc.Utility;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
@@ -36,8 +39,10 @@ import okhttp3.Response;
 public class InstagramAccountFragment extends Fragment {
 
     // TODO: điền vào đây
-    private static final String ACCESS_TOKEN = "IGAAS2qCIE595BZAFJ0SmVNaHBUbFFCM0NqOFBOYkdNOHhBdC1PR1hNTHV6ZAEtLZAm5RVTNZAa3lweFdqM0xxNVcwY2xLVlBadFdDUm54QkFBd0Jvdl8zRkJEMFFBNEtMZAkhyX2hfQUtIZAzNnVGdSa2pVYmtoX1I2bkZAxOFZAuOGp6VQZDZD";
-    private static final String IG_USER_ID = "17841474853201686";
+    // IGAAS2qCIE595BZAFJ0SmVNaHBUbFFCM0NqOFBOYkdNOHhBdC1PR1hNTHV6ZAEtLZAm5RVTNZAa3lweFdqM0xxNVcwY2xLVlBadFdDUm54QkFBd0Jvdl8zRkJEMFFBNEtMZAkhyX2hfQUtIZAzNnVGdSa2pVYmtoX1I2bkZAxOFZAuOGp6VQZDZD
+    // 17841474853201686
+    private static final String ACCESS_TOKEN = LoginActivity.userInfo.GetAccessToken();
+    private static final String IG_USER_ID = LoginActivity.userInfo.UserID;
 
     private ImageView ivProfile;
     private TextView tvName, tvUsername, tvFollowers, tvFollows, tvMediaCount, tvBiography, tvWebsite, tvStatus;
@@ -79,6 +84,7 @@ public class InstagramAccountFragment extends Fragment {
         if (TextUtils.isEmpty(IG_USER_ID) || IG_USER_ID.contains("YOUR_IG_USER_ID")) {
             showMessageBox("ERROR: IG_USER_ID not provided");
             return;
+
         }
 
         tvStatus.setText("Loading...");
