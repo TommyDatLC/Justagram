@@ -1,4 +1,4 @@
-package com.example.justagram.fragment;
+package com.example.justagram.fragment.PostFeed;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
