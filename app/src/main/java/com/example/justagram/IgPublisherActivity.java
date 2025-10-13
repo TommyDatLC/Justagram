@@ -8,6 +8,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.util.Log;
@@ -32,6 +34,7 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -364,19 +367,38 @@ public class IgPublisherActivity extends AppCompatActivity {
 
         // TAO BODY 
         RequestBody createBody = new FormBody.Builder(Charset.forName("UTF-8"))
+        // URL
+        String createUrl = String.format("https://graph.instagram.com/v23.0/%s/media", igUserId);
+
+        // TAO BODY 
+        RequestBody createBody = new FormBody.Builder(Charset.forName("UTF-8"))
                 .add("media_type", "REELS")
                 .add("video_url", videoUrl)
                 .add("caption", caption)
+                .add("share_to_feed", "true")
                 .add("share_to_feed", "true")
                 .add("access_token", accessToken)
                 .build();
 
         // hàm tổng thể để gửi request
+        // hàm tổng thể để gửi request
         Request createRequest = new Request.Builder()
                 .url(createUrl)
                 .addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
+                .addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
                 .post(createBody)
                 .build();
+
+
+        // Log để debug
+        Log.e("IG_DEBUG", "Create URL: " + createUrl);
+
+        // lấy 20 ký tự đầu của access token
+        Log.e("IG_DEBUG", "AccessToken (first 20): " + accessToken.substring(0, Math.min(20, accessToken.length())) + "...");
+        Log.e("IG_DEBUG", "Video URL: " + videoUrl);
+        Log.e("IG_DEBUG", "Caption: " + caption);
+
+
 
 
         // Log để debug
@@ -393,12 +415,21 @@ public class IgPublisherActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 callback.onDone(null, "Create failed: " + e.getMessage());
+                callback.onDone(null, "Create failed: " + e.getMessage());
             }
 
+            // nếu phản hồi thành công
             // nếu phản hồi thành công
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseData = response.body().string();
+                Log.e("IG_CREATE_RESPONSE", responseData);
+
+                if (!response.isSuccessful()) {
+                    callback.onDone(null, "Create error: " + response.code() + " - " + responseData);
+                    return;
+                }
+                // nếu phản hồi không có id -> lỗi
                 Log.e("IG_CREATE_RESPONSE", responseData);
 
                 if (!response.isSuccessful()) {
@@ -432,6 +463,30 @@ public class IgPublisherActivity extends AppCompatActivity {
                                 .add("creation_id", creationId)
                                 .add("access_token", accessToken)
                                 .build();
+                    if (!json.has("id")) {
+                        callback.onDone(null, "Create response missing ID");
+                        return;
+                    }
+
+
+                    // thành công lấy id -> log ra id
+                    String creationId = json.getString("id");
+                    Log.e("IG_DEBUG", "✅ Creation ID: " + creationId);
+
+                    // đợi 20s trước khi post để instagram xử lí
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+
+                        // link publish
+                        String publishUrl = String.format("https://graph.instagram.com/v23.0/%s/media_publish", igUserId);
+
+                        /**
+                         * @parameter creation_id: id sau khi tạo thành công container
+                         * @parameter access_token: very self explainatory
+                         */
+                        RequestBody publishBody = new FormBody.Builder(Charset.forName("UTF-8"))
+                                .add("creation_id", creationId)
+                                .add("access_token", accessToken)
+                                .build();
 
                         Request publishRequest = new Request.Builder()
                                 .url(publishUrl)
@@ -440,7 +495,19 @@ public class IgPublisherActivity extends AppCompatActivity {
                                 .build();
                         // log để debug
                         Log.e("IG_DEBUG", "Publish URL: " + publishUrl);
+                        Request publishRequest = new Request.Builder()
+                                .url(publishUrl)
+                                .addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
+                                .post(publishBody)
+                                .build();
+                        // log để debug
+                        Log.e("IG_DEBUG", "Publish URL: " + publishUrl);
 
+                        client.newCall(publishRequest).enqueue(new Callback() {
+                            @Override
+                            public void onFailure(Call call, IOException e) {
+                                callback.onDone(null, "Publish failed: " + e.getMessage());
+                            }
                         client.newCall(publishRequest).enqueue(new Callback() {
                             @Override
                             public void onFailure(Call call, IOException e) {
@@ -462,6 +529,22 @@ public class IgPublisherActivity extends AppCompatActivity {
                             }
                         });
 
+                            // nếu phản hồi thành công
+                            @Override
+                            public void onResponse(Call call, Response response) throws IOException {
+                                String publishResponse = response.body().string();
+                                Log.e("IG_PUBLISH_RESPONSE", publishResponse);
+
+                                if (!response.isSuccessful()) {
+                                    callback.onDone(null, "Publish error: " + publishResponse);
+                                } else {
+                                    callback.onDone(publishResponse, null);
+                                }
+                            }
+                        });
+
+                    }, 20000); // delay 20s
+
                     }, 20000); // delay 20s
 
                 } catch (JSONException e) {
@@ -470,6 +553,8 @@ public class IgPublisherActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
 
 
