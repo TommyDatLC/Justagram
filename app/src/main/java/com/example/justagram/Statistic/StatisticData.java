@@ -3,14 +3,17 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.justagram.LoginAuth.LoginActivity;
+import com.example.justagram.R;
 import com.example.justagram.etc.Utility;
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -96,7 +99,45 @@ public class StatisticData {
             }
         });
     }
-
+//{
+//  "data": [
+//    {
+//      "name": "{data}",
+//      "period": "<PERIOD>",
+//      "title": "{title}",
+//      "description": "{description}",
+//      "total_value": {
+//        "value": {value},
+//        "breakdowns": [
+//          {
+//            "dimension_keys": [
+//              "{key-1}",
+//              "{key-2",
+//              ...
+//            ],
+//            "results": [
+//              {
+//                "dimension_values": [
+//                  "{value-1}",
+//                  "{value-2}",
+//                  ...
+//                ],
+//                "value": {value},
+//                "end_time": "{end-time}"
+//              },
+//              ...
+//            ]
+//          }
+//        ]
+//      },
+//      "id": "{id}"
+//    }
+//  ],
+//  "paging": {
+//    "previous": "{previous}",
+//    "next": "{next}"
+//  }
+//}
     public void DrawInTotalValue(BarChart chart, TextView totalTitle, TextView totalValue, LinearLayout ElementValueInfoDisplay) {
         if (cache == null) {
             return;
@@ -108,9 +149,7 @@ public class StatisticData {
 
                 ArrayList<Map<String, Object>> data = (ArrayList<Map<String, Object>>) cache.get("data");
                 if (data == null || data.isEmpty()) {
-                    totalValue.setText("0");
-                    chart.invalidate();
-                    DontHaveDataToShow(chart.getContext());
+                    DontHaveDataToShow(chart,totalValue);
                     return;
                 }
 
@@ -127,9 +166,7 @@ public class StatisticData {
                 ArrayList<String> dimensionKeys = (ArrayList<String>) firstBreakdown.get("dimension_keys");
                 ArrayList<Map<String, Object>> results = (ArrayList<Map<String, Object>>) firstBreakdown.get("results");
                 if (results == null || results.isEmpty()) {
-                    totalValue.setText("0");
-                    chart.invalidate();
-                    DontHaveDataToShow(chart.getContext());
+                    DontHaveDataToShow(chart,totalValue);
                     return;
                 }
 
@@ -190,64 +227,35 @@ public class StatisticData {
         }
     }
 
-    void AddInfoIntoInfoDisplay(LinearLayout container, ArrayList<String> labels, ArrayList<Number> values, float totalSum) {
-        if (container == null || labels == null || values == null || labels.size() != values.size()) {
-            return;
-        }
-        container.post(() -> {
-            container.removeAllViews();
-            if (totalSum == 0) return; // Avoid division by zero
-
-            for (int i = 0; i < labels.size(); i++) {
-                String label = labels.get(i);
-                float value = values.get(i).floatValue();
-                int percentage = (int) ((value / totalSum) * 100);
-
-                LinearLayout rowLayout = new LinearLayout(container.getContext());
-                rowLayout.setLayoutParams(new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                ));
-                rowLayout.setOrientation(LinearLayout.HORIZONTAL);
-                rowLayout.setPadding(20, 10, 20, 10);
-
-                TextView labelView = new TextView(container.getContext());
-                LinearLayout.LayoutParams labelParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 3f);
-                labelView.setLayoutParams(labelParams);
-                labelView.setText(label.replace("\n", " "));
-                labelView.setGravity(Gravity.CENTER_VERTICAL | Gravity.START);
-                rowLayout.addView(labelView);
-
-                ProgressBar progressBar = new ProgressBar(container.getContext(), null, android.R.attr.progressBarStyleHorizontal);
-                LinearLayout.LayoutParams progressParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 7f);
-                progressParams.gravity = Gravity.CENTER_VERTICAL;
-                progressBar.setLayoutParams(progressParams);
-                progressBar.setMax(100);
-                progressBar.setProgress(percentage);
-                progressBar.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FFFFA500")));
-                rowLayout.addView(progressBar);
-
-                TextView valueView = new TextView(container.getContext());
-                LinearLayout.LayoutParams valueParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.5f);
-                valueParams.gravity = Gravity.CENTER;
-                valueView.setLayoutParams(valueParams);
-                valueView.setText(String.valueOf(values.get(i).intValue()));
-                valueView.setGravity(Gravity.CENTER);
-                rowLayout.addView(valueView);
-
-                TextView percentageView = new TextView(container.getContext());
-                LinearLayout.LayoutParams percentageParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.5f);
-                percentageParams.gravity = Gravity.CENTER;
-                percentageView.setLayoutParams(percentageParams);
-                percentageView.setText(String.format("(%d%%)", percentage));
-                percentageView.setGravity(Gravity.CENTER);
-                rowLayout.addView(percentageView);
-
-                container.addView(rowLayout);
-            }
-        });
-    }
-
+//{
+//  "data": [
+//    {
+//      "name": "reach",
+//      "period": "day",
+//      "values": [
+//        {
+//          "value": 1,
+//          "end_time": "2025-10-09T07:00:00+0000"
+//        },
+//        {
+//          "value": 0,
+//          "end_time": "2025-10-10T07:00:00+0000"
+//        },
+//        {
+//          "value": 2,
+//          "end_time": "2025-10-11T07:00:00+0000"
+//        },
+//        {
+//          "value": 253,
+//          "end_time": "2025-10-12T07:00:00+0000"
+//        }
+//      ],
+//      "title": "Số người tiếp cận",
+//      "description": "Tổng số lượt xem (duy nhất) đối tượng phương tiện của Tài khoản kinh doanh",
+//      "id": "17841474853201686/insights/reach/day"
+//    }
+//  ]
+//}
     public void DrawInTimeSeries(LineChart chart, TextView totalTitle, TextView totalValue, LinearLayout ElementValueInfoDisplay) {
         if (cache == null) {
             return;
@@ -258,21 +266,19 @@ public class StatisticData {
                 chart.clear();
 
                 totalTitle.setText("Total : " + title);
+                // get the array data in the first req
                 ArrayList<Map<String, Object>> data = (ArrayList<Map<String, Object>>) cache.get("data");
                 if (data == null || data.isEmpty()) {
-                    totalValue.setText("0");
-                    chart.invalidate();
-                    DontHaveDataToShow(chart.getContext());
+                    DontHaveDataToShow(chart,totalValue);
                     return;
                 }
-
+                // get the first element in data
                 Map<String, Object> firstDataElement = data.get(0);
 
                 ArrayList<Map<String, Object>> values = (ArrayList<Map<String, Object>>) firstDataElement.get("values");
                 if (values == null || values.isEmpty()) {
-                    totalValue.setText("0");
-                    chart.invalidate();
-                    DontHaveDataToShow(chart.getContext());
+
+                    DontHaveDataToShow(chart,totalValue);
                     return;
                 }
 
@@ -322,8 +328,55 @@ public class StatisticData {
             chart.post(() -> Utility.showMessageBox("Failed to parse and display chart data.", chart.getContext()));
         }
     }
-    void DontHaveDataToShow(Context ctx)
-    {
-        Utility.showMessageBox("No content to show",ctx);
+    void AddInfoIntoInfoDisplay(LinearLayout container, ArrayList<String> labels, ArrayList<Number> values, float totalSum) {
+        if (container == null || labels == null || values == null || labels.size() != values.size()) {
+            return;
+        }
+        // queueing a main thread message
+        container.post(() -> {
+            // remove all child view
+            container.removeAllViews();
+            if (totalSum == 0) return; // Avoid division by zero
+
+            Context context = container.getContext();
+            LayoutInflater inflater = LayoutInflater.from(context);
+
+            for (int i = 0; i < labels.size(); i++) {
+                // Inflate the XML layout for the row
+                View rowView = inflater.inflate(R.layout.items_statistic_request_value_display, container, false);
+
+                // Find the views within the inflated layout
+                TextView labelView = rowView.findViewById(R.id.statistic_label);
+                ProgressBar progressBar = rowView.findViewById(R.id.statistic_progress_bar);
+                TextView valueView = rowView.findViewById(R.id.statistic_value);
+                TextView percentageView = rowView.findViewById(R.id.statistic_percentage);
+
+                // Get the data for the current row
+                String label = labels.get(i);
+                float value = values.get(i).floatValue();
+                int percentage = (int) ((value / totalSum) * 100);
+
+                // Populate the views with data
+                labelView.setText(label.replace("\n", " "));
+                valueView.setText(String.valueOf(values.get(i).intValue()));
+                percentageView.setText(String.format("(%d%%)", percentage));
+
+                progressBar.setProgress(percentage);
+                // You can still set the tint programmatically if needed
+                progressBar.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FFFFA500")));
+
+
+                // Add the fully populated row to the container
+                container.addView(rowView);
+            }
+        });
     }
+    void DontHaveDataToShow(Chart chart,TextView totalValue)
+    {
+        totalValue.setText("0");
+        chart.invalidate();
+        // neu khong co data thi hien thong bao
+        Utility.showMessageBox("No content to show",chart.getContext());
+    }
+
 }
