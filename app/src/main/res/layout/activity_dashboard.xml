@@ -39,52 +39,55 @@
 
     </LinearLayout>
 
-    <!-- BOTTOM NAV CONTAINER -->
-    <FrameLayout
-        android:id="@+id/bottom_nav_container"
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="12dp"
         android:layout_gravity="bottom"
+        android:padding="30dp"
+        android:elevation="8dp"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/bg_bottom_nav"
-        android:elevation="8dp">
+        >
 
-        <!-- Sliding Gradient -->
-        <ImageView
-            android:id="@+id/tabGradient"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_gravity="bottom|start"
-            android:layout_marginBottom="16dp"
-            android:src="@drawable/ic_add_gradient"
-            android:scaleType="centerInside"
-            android:elevation="10dp"/>
-
-        <!-- TabLayout for tabs/icons -->
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
+        <!-- BOTTOM NAV CONTAINER -->
+        <FrameLayout
+            android:id="@+id/bottom_nav_container"
             android:layout_width="match_parent"
-            android:layout_height="72dp"
+            android:layout_height="70dp"
             android:layout_gravity="bottom"
-            android:background="@android:color/transparent"
-            app:tabGravity="fill"
-            app:tabMode="fixed"
-            app:tabIndicatorHeight="0dp"
-            app:tabRippleColor="@android:color/transparent"/>
+            android:clipChildren="false"
+            android:clipToPadding="false">
 
-    </FrameLayout>
 
-    <!-- Floating ADD BUTTON -->
-    <ImageView
-        android:id="@+id/nav_add"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_gravity="bottom|center"
-        android:layout_marginBottom="50dp"
-        android:src="@drawable/ic_sign"
-        android:scaleType="centerInside"
-        android:elevation="12dp"/>
+            <!-- Sliding Gradient -->
+            <ImageView
+                android:id="@+id/tabGradient"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="bottom|start"
+                android:layout_marginBottom="16dp"
+                android:src="@drawable/ic_add_gradient"
+                android:scaleType="centerInside"
+                android:elevation="15dp"/>
+
+
+            <!-- TabLayout for tabs/icons -->
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayout"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:layout_gravity="bottom"
+                app:tabGravity="fill"
+                app:tabMode="fixed"
+                app:tabIndicatorHeight="0dp"
+                app:tabRippleColor="@android:color/transparent" />
+
+        </FrameLayout>
+
+    </androidx.cardview.widget.CardView>
+
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
@@ -94,5 +97,23 @@
         android:layout_marginBottom="100dp"
         app:layout_anchor="@+id/linearLayout"
         app:layout_anchorGravity="center" />
+
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="56dp"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/signButton"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/ic_sign"
+        android:elevation="30dp"
+        android:clickable="true"
+        android:focusable="true" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

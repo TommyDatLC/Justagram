@@ -8,9 +8,6 @@ import android.widget.ImageView;
 import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 
-/**
- * Handles gradient movement, icon scaling, and color blending for bottom navigation.
- */
 public class TabAnimationHelper {
 
     private final TabLayout tabLayout;
@@ -29,29 +26,22 @@ public class TabAnimationHelper {
         this.inactiveColor = inactiveColor;
     }
 
-    /** Initialize helper after layout is ready */
     public void init() {
         tabLayout.post(() -> {
-            int count = tabLayout.getTabCount();
-            if (count == 0) return;
-
-            tabWidth = tabLayout.getWidth() / count;
-
-            // Place gradient under first tab
+            tabWidth = tabLayout.getWidth() / tabLayout.getTabCount();
             float startX = (tabWidth / 2f) - (tabGradient.getWidth() / 2f);
             tabGradient.setTranslationX(startX);
-
             setupListeners();
         });
     }
 
-    /** Setup tab clicks and swipe callbacks */
     private void setupListeners() {
         // Tab clicks
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 int pos = tab.getPosition();
+                if (pos == 2) return; // sign placeholder
                 moveGradientWithBounce(pos);
                 scaleIcon(tab, true);
             }
@@ -65,44 +55,61 @@ public class TabAnimationHelper {
             public void onTabReselected(TabLayout.Tab tab) {}
         });
 
-        // Swipe events
+        // Swipe events with explicit per-case handling
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageScrolled(int position, float offset, int offsetPixels) {
-                float translationX = (position + offset) * tabWidth + (tabWidth / 2f) - (tabGradient.getWidth() / 2f);
-                tabGradient.setTranslationX(translationX);
+                float gradientX = tabGradient.getTranslationX();
+                int startTab = position;
+                int endTab = position + 1;
 
-                // Optional: update icon colors while swiping
+                // Map real swipe transitions skipping placeholder (index 2)
+                if (position == 0 && offset > 0) { // 0 -> 1
+                    startTab = 0; endTab = 1;
+                } else if (position == 1 && offset > 0) { // 1 -> 3
+                    startTab = 1; endTab = 3;
+                } else if (position == 3 && offset > 0) { // 3 -> 4
+                    startTab = 3; endTab = 4;
+                } else if (position == 4 && offset < 0) { // 4 -> 3
+                    startTab = 4; endTab = 3; offset = -offset;
+                } else if (position == 3 && offset < 0) { // 3 -> 1
+                    startTab = 3; endTab = 1; offset = -offset;
+                } else if (position == 1 && offset < 0) { // 1 -> 0
+                    startTab = 1; endTab = 0; offset = -offset;
+                } else {
+                    startTab = position; endTab = position; offset = 0;
+                }
+
+                // Linear interpolate gradient position
+                float startX = startTab * tabWidth + tabWidth / 2f - tabGradient.getWidth() / 2f;
+                float endX = endTab * tabWidth + tabWidth / 2f - tabGradient.getWidth() / 2f;
+                gradientX = startX + (endX - startX) * offset;
+                tabGradient.setTranslationX(gradientX);
+
+                // Update icon colors for these two tabs
                 for (int i = 0; i < tabLayout.getTabCount(); i++) {
                     TabLayout.Tab tab = tabLayout.getTabAt(i);
                     if (tab != null && tab.getIcon() != null) {
-                        float alphaActive = 1f - Math.min(Math.abs(i - (position + offset)), 1f);
-                        tab.getIcon().setTint(blendColors(inactiveColor, activeColor, alphaActive));
-                        tab.getIcon().setAlpha((int)((0.7f + 0.5f * alphaActive) * 255));
+                        float alpha = 0f;
+                        if (i == startTab) alpha = 1f - offset;
+                        else if (i == endTab) alpha = offset;
+                        tab.getIcon().setTint(blendColors(inactiveColor, activeColor, alpha));
+                        tab.getIcon().setAlpha((int)((0.7f + 0.5f * alpha) * 255));
                     }
                 }
             }
         });
     }
 
-    /** Move gradient with slight overshoot and bounce back */
     private void moveGradientWithBounce(int tabPosition) {
         float targetX = tabPosition * tabWidth + (tabWidth / 2f) - (tabGradient.getWidth() / 2f);
-
-        // Current position
         float currentX = tabGradient.getTranslationX();
-
-        // Direction of movement: +1 right, -1 left
         float direction = Math.signum(targetX - currentX);
-
-        // Compute overshoot proportional to tab distance but capped
         float distance = Math.abs(targetX - currentX);
-        float maxOvershoot = tabWidth * 0.4f; // max 15% of tab width
-        float overshoot = Math.min(distance * 0.5f, maxOvershoot) * direction; // 25% of distance or cap
-
+        float maxOvershoot = tabWidth * 0.4f;
+        float overshoot = Math.min(distance * 0.5f, maxOvershoot) * direction;
         float endX = targetX + overshoot;
 
-        // Animate gradient: go slightly past target then settle
         ObjectAnimator animator = ObjectAnimator.ofFloat(tabGradient, View.TRANSLATION_X,
                 currentX, endX, targetX);
         animator.setDuration(600);
@@ -110,8 +117,6 @@ public class TabAnimationHelper {
         animator.start();
     }
 
-
-    /** Scale tab icon when selected/unselected */
     private void scaleIcon(TabLayout.Tab tab, boolean selected) {
         if (tab == null || tab.getIcon() == null) return;
         View tabView = tab.view;
@@ -121,13 +126,12 @@ public class TabAnimationHelper {
         }
     }
 
-    /** Blend two colors based on ratio (0..1) */
     private int blendColors(int from, int to, float ratio) {
-        final float inverseR = 1f - ratio;
-        int a = (int)((android.graphics.Color.alpha(from) * inverseR) + (android.graphics.Color.alpha(to) * ratio));
-        int r = (int)((android.graphics.Color.red(from) * inverseR) + (android.graphics.Color.red(to) * ratio));
-        int g = (int)((android.graphics.Color.green(from) * inverseR) + (android.graphics.Color.green(to) * ratio));
-        int b = (int)((android.graphics.Color.blue(from) * inverseR) + (android.graphics.Color.blue(to) * ratio));
+        final float inv = 1f - ratio;
+        int a = (int)((android.graphics.Color.alpha(from) * inv) + (android.graphics.Color.alpha(to) * ratio));
+        int r = (int)((android.graphics.Color.red(from) * inv) + (android.graphics.Color.red(to) * ratio));
+        int g = (int)((android.graphics.Color.green(from) * inv) + (android.graphics.Color.green(to) * ratio));
+        int b = (int)((android.graphics.Color.blue(from) * inv) + (android.graphics.Color.blue(to) * ratio));
         return android.graphics.Color.argb(a, r, g, b);
     }
 }

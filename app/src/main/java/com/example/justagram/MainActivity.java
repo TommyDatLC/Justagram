@@ -20,15 +20,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_page);
 
-<<<<<<< HEAD
 //        IntroAnimator.start(logo,glow1,glow2,content);
 //        InstagramAccountFragment test = new InstagramAccountFragment();
 //        FragmentTransaction t = getSupportFragmentManager().beginTransaction();
 //        t.add(R.id.test_fragment,test).commit();
-=======
         PostFeedFragment test = new PostFeedFragment();
         FragmentTransaction t = getSupportFragmentManager().beginTransaction();
         t.add(R.id.test_fragment,test).commit();
->>>>>>> origin/quangtung
     }
 }
