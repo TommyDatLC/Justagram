@@ -1,8 +1,7 @@
-package com.example.justagram.Statistic;
+package com.example.justagram.fragment.Statistic;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -102,41 +101,29 @@ public class StatisticData {
 //{
 //  "data": [
 //    {
-//      "name": "{data}",
-//      "period": "<PERIOD>",
-//      "title": "{title}",
-//      "description": "{description}",
+//      "name": "reach",
+//      "period": "day",
 //      "total_value": {
-//        "value": {value},
+//        "value": 257,
 //        "breakdowns": [
 //          {
-//            "dimension_keys": [
-//              "{key-1}",
-//              "{key-2",
-//              ...
-//            ],
+//            "dimension_keys": ["media_product_type"],
 //            "results": [
 //              {
-//                "dimension_values": [
-//                  "{value-1}",
-//                  "{value-2}",
-//                  ...
-//                ],
-//                "value": {value},
-//                "end_time": "{end-time}"
+//                "dimension_values": ["POST"],
+//                "value": 5
 //              },
-//              ...
+//              {
+//                "dimension_values": ["REEL"],
+//                "value": 255
+//              }
 //            ]
 //          }
 //        ]
 //      },
-//      "id": "{id}"
+//      "id": "17841474853201686/insights/reach/day"
 //    }
-//  ],
-//  "paging": {
-//    "previous": "{previous}",
-//    "next": "{next}"
-//  }
+//  ]
 //}
     public void DrawInTotalValue(BarChart chart, TextView totalTitle, TextView totalValue, LinearLayout ElementValueInfoDisplay) {
         if (cache == null) {
@@ -144,8 +131,8 @@ public class StatisticData {
         }
         try {
             chart.post(() -> {
-                ElementValueInfoDisplay.removeAllViews();
-                chart.clear();
+                ElementValueInfoDisplay.removeAllViews(); // remove all child on the value display
+                chart.clear(); // clear all the chart data and invalidate
 
                 ArrayList<Map<String, Object>> data = (ArrayList<Map<String, Object>>) cache.get("data");
                 if (data == null || data.isEmpty()) {
@@ -155,7 +142,7 @@ public class StatisticData {
 
                 Map<String, Object> firstDataElement = data.get(0);
                 totalTitle.setText("Total : " + title);
-
+                // set the totalValue title to the title of the filter
                 Map<String, Object> totalValueObj = (Map<String, Object>) firstDataElement.get("total_value");
                 if (totalValueObj == null) return;
 
@@ -177,6 +164,7 @@ public class StatisticData {
                 int i = 0;
 
                 for (Map<String, Object> result : results) {
+                    // get the value
                     ArrayList<String> dimensionValues = (ArrayList<String>) result.get("dimension_values");
                     Number valueNumber = (Number) result.get("value");
                     int value = valueNumber.intValue();
@@ -197,15 +185,14 @@ public class StatisticData {
 
                 totalValue.setText(String.valueOf(totalSum));
                 AddInfoIntoInfoDisplay(ElementValueInfoDisplay, labels, valuesList, totalSum);
-
-                BarDataSet dataSet = new BarDataSet(entries, this.title);
+                // set the text below the right bottom corner of this ,title not being show because we not set that yet
+                BarDataSet dataSet = new BarDataSet(entries,this.title);
                 dataSet.setValueTextSize(10f);
 
                 BarData barData = new BarData(dataSet);
                 barData.setBarWidth(0.5f);
 
                 chart.setData(barData);
-                chart.getDescription().setEnabled(false);
                 chart.setDrawGridBackground(false);
 
                 XAxis xAxis = chart.getXAxis();
@@ -215,10 +202,9 @@ public class StatisticData {
                 xAxis.setGranularityEnabled(true);
 
                 chart.getAxisLeft().setAxisMinimum(0f);
-                chart.getAxisRight().setEnabled(false);
+                chart.getDescription().setEnabled(false);
                 chart.setFitBars(true);
                 chart.animateY(1000);
-                chart.invalidate();
             });
 
         } catch (Exception e) {
@@ -277,7 +263,6 @@ public class StatisticData {
 
                 ArrayList<Map<String, Object>> values = (ArrayList<Map<String, Object>>) firstDataElement.get("values");
                 if (values == null || values.isEmpty()) {
-
                     DontHaveDataToShow(chart,totalValue);
                     return;
                 }
@@ -312,16 +297,16 @@ public class StatisticData {
                 chart.setData(lineData);
 
                 XAxis xAxis = chart.getXAxis();
+                //set the lable of the graph
                 xAxis.setValueFormatter(new IndexAxisValueFormatter(labels));
                 xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-                xAxis.setGranularity(1f);
+                xAxis.setGranularity(1);
                 xAxis.setGranularityEnabled(true);
 
                 chart.getDescription().setEnabled(false);
                 chart.getAxisLeft().setAxisMinimum(0f);
-                chart.getAxisRight().setEnabled(false);
+
                 chart.animateY(1000);
-                chart.invalidate();
             });
         } catch (Exception e) {
             e.printStackTrace();
