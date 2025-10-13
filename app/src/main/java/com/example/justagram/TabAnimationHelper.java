@@ -4,8 +4,11 @@ import android.animation.ObjectAnimator;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Space;
 
 import androidx.viewpager2.widget.ViewPager2;
+
 import com.google.android.material.tabs.TabLayout;
 
 public class TabAnimationHelper {
@@ -15,7 +18,8 @@ public class TabAnimationHelper {
     private final ViewPager2 viewPager;
     private final int activeColor;
     private final int inactiveColor;
-    private int tabWidth;
+
+    private float lastTranslationX = -1f;
 
     public TabAnimationHelper(TabLayout tabLayout, ImageView tabGradient, ViewPager2 viewPager,
                               int activeColor, int inactiveColor) {
@@ -28,90 +32,80 @@ public class TabAnimationHelper {
 
     public void init() {
         tabLayout.post(() -> {
-            tabWidth = tabLayout.getWidth() / tabLayout.getTabCount();
-            float startX = (tabWidth / 2f) - (tabGradient.getWidth() / 2f);
-            tabGradient.setTranslationX(startX);
+            if (tabLayout.getTabCount() == 0) return;
+
+            // Move gradient to initial tab
+            moveGradientWithBounce(viewPager.getCurrentItem());
+
             setupListeners();
         });
     }
 
     private void setupListeners() {
-        // Tab clicks
+        // Tab click
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 int pos = tab.getPosition();
-                if (pos == 2) return; // sign placeholder
                 moveGradientWithBounce(pos);
                 scaleIcon(tab, true);
             }
 
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                scaleIcon(tab, false);
-            }
+            public void onTabUnselected(TabLayout.Tab tab) { scaleIcon(tab, false); }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {}
         });
 
-        // Swipe events with explicit per-case handling
+        // Swipe events
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageScrolled(int position, float offset, int offsetPixels) {
-                float gradientX = tabGradient.getTranslationX();
-                int startTab = position;
-                int endTab = position + 1;
+                float center1 = getTabCenterX(position);
+                float center2 = getTabCenterX(Math.min(position + 1, tabLayout.getTabCount() - 1));
 
-                // Map real swipe transitions skipping placeholder (index 2)
-                if (position == 0 && offset > 0) { // 0 -> 1
-                    startTab = 0; endTab = 1;
-                } else if (position == 1 && offset > 0) { // 1 -> 3
-                    startTab = 1; endTab = 3;
-                } else if (position == 3 && offset > 0) { // 3 -> 4
-                    startTab = 3; endTab = 4;
-                } else if (position == 4 && offset < 0) { // 4 -> 3
-                    startTab = 4; endTab = 3; offset = -offset;
-                } else if (position == 3 && offset < 0) { // 3 -> 1
-                    startTab = 3; endTab = 1; offset = -offset;
-                } else if (position == 1 && offset < 0) { // 1 -> 0
-                    startTab = 1; endTab = 0; offset = -offset;
-                } else {
-                    startTab = position; endTab = position; offset = 0;
+                float translationX = center1 + (center2 - center1) * offset - tabGradient.getWidth() / 2f;
+
+                // Optional: small overshoot effect
+                if (lastTranslationX >= 0) {
+                    float direction = Math.signum(translationX - lastTranslationX);
+                    float distance = Math.abs(translationX - lastTranslationX);
+                    float maxOvershoot = (center2 - center1) * 0.2f;
+                    float overshoot = Math.min(distance * 0.3f, maxOvershoot) * direction;
+                    translationX += overshoot;
                 }
 
-                // Linear interpolate gradient position
-                float startX = startTab * tabWidth + tabWidth / 2f - tabGradient.getWidth() / 2f;
-                float endX = endTab * tabWidth + tabWidth / 2f - tabGradient.getWidth() / 2f;
-                gradientX = startX + (endX - startX) * offset;
-                tabGradient.setTranslationX(gradientX);
+                tabGradient.setX(translationX);
+                lastTranslationX = translationX;
 
-                // Update icon colors for these two tabs
+                // Update icon colors
                 for (int i = 0; i < tabLayout.getTabCount(); i++) {
-                    TabLayout.Tab tab = tabLayout.getTabAt(i);
-                    if (tab != null && tab.getIcon() != null) {
-                        float alpha = 0f;
-                        if (i == startTab) alpha = 1f - offset;
-                        else if (i == endTab) alpha = offset;
-                        tab.getIcon().setTint(blendColors(inactiveColor, activeColor, alpha));
-                        tab.getIcon().setAlpha((int)((0.7f + 0.5f * alpha) * 255));
+                    TabLayout.Tab t = tabLayout.getTabAt(i);
+                    if (t != null && t.getIcon() != null) {
+                        float alphaActive = 1f - Math.min(Math.abs(i - (position + offset)), 1f);
+                        t.getIcon().setTint(blendColors(inactiveColor, activeColor, alphaActive));
+                        t.getIcon().setAlpha((int)((0.7f + 0.5f * alphaActive) * 255));
                     }
                 }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                if (state == ViewPager2.SCROLL_STATE_IDLE) lastTranslationX = -1f;
             }
         });
     }
 
     private void moveGradientWithBounce(int tabPosition) {
-        float targetX = tabPosition * tabWidth + (tabWidth / 2f) - (tabGradient.getWidth() / 2f);
+        float targetX = getTabCenterX(tabPosition) - tabGradient.getWidth() / 2f;
         float currentX = tabGradient.getTranslationX();
         float direction = Math.signum(targetX - currentX);
         float distance = Math.abs(targetX - currentX);
-        float maxOvershoot = tabWidth * 0.4f;
-        float overshoot = Math.min(distance * 0.5f, maxOvershoot) * direction;
+        float overshoot = Math.min(distance * 0.5f, tabGradient.getWidth()) * direction;
         float endX = targetX + overshoot;
 
-        ObjectAnimator animator = ObjectAnimator.ofFloat(tabGradient, View.TRANSLATION_X,
-                currentX, endX, targetX);
+        ObjectAnimator animator = ObjectAnimator.ofFloat(tabGradient, View.TRANSLATION_X, currentX, endX, targetX);
         animator.setDuration(600);
         animator.setInterpolator(new OvershootInterpolator(0.8f));
         animator.start();
@@ -126,12 +120,29 @@ public class TabAnimationHelper {
         }
     }
 
+    private float getTabCenterX(int position) {
+        LinearLayout tabStrip = (LinearLayout) tabLayout.getChildAt(0);
+        int index = position;
+
+        // Adjust for spacer: if you added a Space after tab 1, skip it
+        for (int i = 0; i < tabStrip.getChildCount(); i++) {
+            View child = tabStrip.getChildAt(i);
+            if (child instanceof Space && i <= index) {
+                index += 1;
+                break;
+            }
+        }
+
+        View tabView = tabStrip.getChildAt(index);
+        return tabView.getLeft() + tabView.getWidth() / 2f;
+    }
+
     private int blendColors(int from, int to, float ratio) {
-        final float inv = 1f - ratio;
-        int a = (int)((android.graphics.Color.alpha(from) * inv) + (android.graphics.Color.alpha(to) * ratio));
-        int r = (int)((android.graphics.Color.red(from) * inv) + (android.graphics.Color.red(to) * ratio));
-        int g = (int)((android.graphics.Color.green(from) * inv) + (android.graphics.Color.green(to) * ratio));
-        int b = (int)((android.graphics.Color.blue(from) * inv) + (android.graphics.Color.blue(to) * ratio));
+        float inverse = 1f - ratio;
+        int a = (int)((android.graphics.Color.alpha(from) * inverse) + (android.graphics.Color.alpha(to) * ratio));
+        int r = (int)((android.graphics.Color.red(from) * inverse) + (android.graphics.Color.red(to) * ratio));
+        int g = (int)((android.graphics.Color.green(from) * inverse) + (android.graphics.Color.green(to) * ratio));
+        int b = (int)((android.graphics.Color.blue(from) * inverse) + (android.graphics.Color.blue(to) * ratio));
         return android.graphics.Color.argb(a, r, g, b);
     }
 }

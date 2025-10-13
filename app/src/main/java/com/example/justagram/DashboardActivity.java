@@ -3,6 +3,8 @@ package com.example.justagram;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Space;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,7 +21,6 @@ public class DashboardActivity extends AppCompatActivity {
     private final int[] TAB_ICONS = {
             R.drawable.ic_dashboard,
             R.drawable.ic_analytics,
-            0,
             R.drawable.ic_calendar,
             R.drawable.ic_settings
     };
@@ -34,65 +35,39 @@ public class DashboardActivity extends AppCompatActivity {
         ImageView tabGradient = findViewById(R.id.tabGradient);
         ImageView signButton = findViewById(R.id.signButton);
 
-        // Setup ViewPager2 adapter
+        // ViewPager Adapter
         viewPager.setAdapter(new DashboardPagerAdapter(this));
 
-        final int[] lastReal = {viewPager.getCurrentItem()};
-        final int[] lastPosition = {viewPager.getCurrentItem()};
+        // Attach TabLayout with icons
+        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> tab.setIcon(TAB_ICONS[position])).attach();
 
-        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+        tabLayout.post(new Runnable() {
             @Override
-            public void onPageSelected(int position) {
-                // remember the latest selected position
-                lastPosition[0] = position;
-                if (position != 2) lastReal[0] = position;
-            }
+            public void run() {
+                LinearLayout tabStrip = (LinearLayout) tabLayout.getChildAt(0);
 
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                if (state == ViewPager2.SCROLL_STATE_IDLE) {
-                    int cur = viewPager.getCurrentItem();
-                    if (cur == 2) {
-                        // detect direction: was previous < current → right swipe, else left
-                        if (lastReal[0] < 2) {
-                            // going right → jump to index 3
-                            viewPager.setCurrentItem(3, true);
-                            lastReal[0] = 3;
-                        } else {
-                            // going left → jump to index 1
-                            viewPager.setCurrentItem(1, true);
-                            lastReal[0] = 1;
-                        }
-                    }
-                }
+                Space spacer = new Space(DashboardActivity.this);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, 0, 1f); // weight fills remaining space
+                spacer.setLayoutParams(params);
+
+                tabStrip.addView(spacer, 2); // insert at index 2 (between tab 2 and 3)
             }
         });
 
-
-        // Attach TabLayout with icons
-        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
-            if (TAB_ICONS[position] != 0) {
-                tab.setIcon(TAB_ICONS[position]);
-            } else {
-                tab.view.setClickable(false); // Disable the placeholder tab
-            }
-        }).attach();
-
-        // Initialize the animation helper
+        // Tab animation helper
         int activeColor = getColor(R.color.sunset_orange);
         int inactiveColor = getColor(R.color.hint_gray);
-        TabAnimationHelper tabHelper = new TabAnimationHelper(tabLayout, tabGradient, viewPager,
-                activeColor, inactiveColor);
+        TabAnimationHelper tabHelper = new TabAnimationHelper(tabLayout, tabGradient, viewPager, activeColor, inactiveColor);
         tabLayout.post(tabHelper::init);
 
-        // Optional: Set default tab
-        viewPager.setCurrentItem(0, false);
-
+        // Floating sign button click
         signButton.setOnClickListener(v -> {
+            // Launch your AddPostActivity or fragment
             Intent intent = new Intent(this, AddPostActivity.class);
             startActivity(intent);
         });
 
+        viewPager.setCurrentItem(0, false);
     }
 
     /** Minimal PagerAdapter for 4 fragments */
@@ -107,14 +82,13 @@ public class DashboardActivity extends AppCompatActivity {
             switch (position) {
                 case 0: return DashboardFragment.newInstance();
                 case 1: return AnalyticsFragment.newInstance();
-                case 2: return new Fragment();
-                case 3: return CalendarFragment.newInstance();
-                case 4: return SettingsFragment.newInstance();
+                case 2: return CalendarFragment.newInstance();
+                case 3: return SettingsFragment.newInstance();
                 default: return DashboardFragment.newInstance();
             }
         }
 
         @Override
-        public int getItemCount() { return 5; }
+        public int getItemCount() { return 4; }
     }
 }
