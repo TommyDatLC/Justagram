@@ -205,7 +205,7 @@ public class IgPublisherActivity extends AppCompatActivity {
                  * 
                  * 
                  */
-                
+                // ======================= Hàm publish lên instagram =======================
                 publishReelToInstagram(IG_USER_ID, videoUrl, caption, ACCESS_TOKEN, (url, error) -> {
                     runOnUiThread(() -> {
                         if (error != null) {
@@ -359,6 +359,10 @@ public class IgPublisherActivity extends AppCompatActivity {
             runOnUiThread(() -> cb.onDone(null, e.getMessage()));
         }
     }
+
+
+
+    // ======================= Hàm publish lên instagram =======================
     public void publishReelToInstagram(String igUserId, String videoUrl, String caption, String accessToken, UploadVideoCallback callback) {
         OkHttpClient client = new OkHttpClient();
         // URL
@@ -372,7 +376,7 @@ public class IgPublisherActivity extends AppCompatActivity {
                 .add("access_token", accessToken)
                 .build();
 
-        // hàm tổng thể để gửi request
+        // POST request
         Request createRequest = new Request.Builder()
                 .url(createUrl)
                 .addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
