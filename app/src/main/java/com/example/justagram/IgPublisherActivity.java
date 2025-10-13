@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.util.Log;
@@ -30,6 +32,7 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -190,7 +193,17 @@ public class IgPublisherActivity extends AppCompatActivity {
                     setAllPublishButtonsEnabled(true);
                     return;
                 }
-                publishReelToInstagram(IG_USER_ID, ACCESS_TOKEN, videoUrl, caption, (url, error) -> {
+                /**
+                 * sau khi upload video lên server thành công thì up lên instagram thông qua hàm publishReelToInstagram
+                 * @parameter igUserId: id instagram
+                 * @parameter videoUrl: url video ở server
+                 * @parameter caption: caption
+                 * @parameter accessToken: self explainatory
+                 * 
+                 * 
+                 */
+                
+                publishReelToInstagram(IG_USER_ID, videoUrl, caption, ACCESS_TOKEN, (url, error) -> {
                     runOnUiThread(() -> {
                         if (error != null) {
                             showMsg("Reel publish error: " + error);
@@ -346,58 +359,110 @@ public class IgPublisherActivity extends AppCompatActivity {
     public void publishReelToInstagram(String igUserId, String videoUrl, String caption, String accessToken, UploadVideoCallback callback) {
         OkHttpClient client = new OkHttpClient();
 
-        // CONTAINER
-        String createUrl = "https://graph.facebook.com/v21.0/" + igUserId + "/media";
-        RequestBody createBody = new FormBody.Builder()
+        // URL
+        String createUrl = String.format("https://graph.instagram.com/v23.0/%s/media", igUserId);
+
+        // TAO BODY 
+        RequestBody createBody = new FormBody.Builder(Charset.forName("UTF-8"))
                 .add("media_type", "REELS")
                 .add("video_url", videoUrl)
                 .add("caption", caption)
+                .add("share_to_feed", "true")
                 .add("access_token", accessToken)
                 .build();
 
+        // hàm tổng thể để gửi request
         Request createRequest = new Request.Builder()
                 .url(createUrl)
+                .addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
                 .post(createBody)
                 .build();
+
+
+        // Log để debug
+        Log.e("IG_DEBUG", "Create URL: " + createUrl);
+
+        // lấy 20 ký tự đầu của access token
+        Log.e("IG_DEBUG", "AccessToken (first 20): " + accessToken.substring(0, Math.min(20, accessToken.length())) + "...");
+        Log.e("IG_DEBUG", "Video URL: " + videoUrl);
+        Log.e("IG_DEBUG", "Caption: " + caption);
+
+
 
         client.newCall(createRequest).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                callback.onDone(null, e.getMessage());
+                callback.onDone(null, "Create failed: " + e.getMessage());
             }
 
+            // nếu phản hồi thành công
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseData = response.body().string();
-                Log.e("IG_RESPONSE_CREATE", responseData); //
+                Log.e("IG_CREATE_RESPONSE", responseData);
+
+                if (!response.isSuccessful()) {
+                    callback.onDone(null, "Create error: " + response.code() + " - " + responseData);
+                    return;
+                }
+                // nếu phản hồi không có id -> lỗi
                 try {
                     JSONObject json = new JSONObject(responseData);
-                    String containerId = json.getString("id");
+                    if (!json.has("id")) {
+                        callback.onDone(null, "Create response missing ID");
+                        return;
+                    }
 
-                    // Step 2: Publish the container
-                    String publishUrl = "https://graph.facebook.com/v21.0/" + igUserId + "/media_publish";
-                    RequestBody publishBody = new FormBody.Builder()
-                            .add("creation_id", containerId)
-                            .add("access_token", accessToken)
-                            .build();
 
-                    Request publishRequest = new Request.Builder()
-                            .url(publishUrl)
-                            .post(publishBody)
-                            .build();
+                    // thành công lấy id -> log ra id
+                    String creationId = json.getString("id");
+                    Log.e("IG_DEBUG", "✅ Creation ID: " + creationId);
 
-                    client.newCall(publishRequest).enqueue(new Callback() {
-                        @Override
-                        public void onFailure(Call call, IOException e) {
-                            callback.onDone(null, e.getMessage());
-                        }
+                    // đợi 20s trước khi post để instagram xử lí
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
 
-                        @Override
-                        public void onResponse(Call call, Response response) throws IOException {
-                            String publishResponse = response.body().string();
-                            callback.onDone(publishResponse, null);
-                        }
-                    });
+                        // link publish
+                        String publishUrl = String.format("https://graph.instagram.com/v23.0/%s/media_publish", igUserId);
+
+                        /**
+                         * @parameter creation_id: id sau khi tạo thành công container
+                         * @parameter access_token: very self explainatory
+                         */
+                        RequestBody publishBody = new FormBody.Builder(Charset.forName("UTF-8"))
+                                .add("creation_id", creationId)
+                                .add("access_token", accessToken)
+                                .build();
+
+                        Request publishRequest = new Request.Builder()
+                                .url(publishUrl)
+                                .addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
+                                .post(publishBody)
+                                .build();
+                        // log để debug
+                        Log.e("IG_DEBUG", "Publish URL: " + publishUrl);
+
+                        client.newCall(publishRequest).enqueue(new Callback() {
+                            @Override
+                            public void onFailure(Call call, IOException e) {
+                                callback.onDone(null, "Publish failed: " + e.getMessage());
+                            }
+
+
+                            // nếu phản hồi thành công
+                            @Override
+                            public void onResponse(Call call, Response response) throws IOException {
+                                String publishResponse = response.body().string();
+                                Log.e("IG_PUBLISH_RESPONSE", publishResponse);
+
+                                if (!response.isSuccessful()) {
+                                    callback.onDone(null, "Publish error: " + publishResponse);
+                                } else {
+                                    callback.onDone(publishResponse, null);
+                                }
+                            }
+                        });
+
+                    }, 20000); // delay 20s
 
                 } catch (JSONException e) {
                     callback.onDone(null, "Invalid JSON: " + e.getMessage());
@@ -405,6 +470,8 @@ public class IgPublisherActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     private String urlEncodePathSegment(String s) {
         try { return java.net.URLEncoder.encode(s, "UTF-8").replace("+", "%20"); }
