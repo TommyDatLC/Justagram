@@ -195,16 +195,20 @@ public class StatisticData {
                 chart.setData(barData);
                 chart.setDrawGridBackground(false);
 
+
+
                 XAxis xAxis = chart.getXAxis();
                 xAxis.setValueFormatter(new IndexAxisValueFormatter(labels));
                 xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
                 xAxis.setGranularity(1f);
                 xAxis.setGranularityEnabled(true);
 
-                chart.getAxisLeft().setAxisMinimum(0f);
+                chart.getAxisLeft().setAxisMinimum(2.5f);
+                chart.getAxisRight().setEnabled(false);
                 chart.getDescription().setEnabled(false);
                 chart.setFitBars(true);
                 chart.animateY(1000);
+                //chart.invalidate();
             });
 
         } catch (Exception e) {
@@ -302,6 +306,7 @@ public class StatisticData {
                 xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
                 xAxis.setGranularity(1);
                 xAxis.setGranularityEnabled(true);
+
 
                 chart.getDescription().setEnabled(false);
                 chart.getAxisLeft().setAxisMinimum(0f);
