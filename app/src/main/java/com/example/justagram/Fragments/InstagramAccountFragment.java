@@ -1,4 +1,4 @@
-package com.example.justagram;
+package com.example.justagram.Fragments;
 
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.justagram.LoginAuth.LoginActivity;
+import com.example.justagram.R;
 import com.example.justagram.etc.Utility;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;

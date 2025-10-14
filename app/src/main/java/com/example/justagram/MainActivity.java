@@ -1,17 +1,11 @@
 package com.example.justagram;
 
 import android.os.Bundle;
-import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.transition.TransitionInflater;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import com.example.justagram.Fragments.PostFeedFragment;
 
 public class MainActivity extends AppCompatActivity {
     @Override

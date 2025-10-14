@@ -2,6 +2,7 @@ package com.example.justagram;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Space;
@@ -13,6 +14,12 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.justagram.Fragments.AnalyticsFragment;
+import com.example.justagram.Fragments.CalendarFragment;
+import com.example.justagram.Fragments.DashboardFragment;
+import com.example.justagram.Fragments.SettingsFragment;
+import com.example.justagram.Helper.ScrollAwareFragment;
+import com.example.justagram.Helper.TabAnimationHelper;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -25,15 +32,20 @@ public class DashboardActivity extends AppCompatActivity {
             R.mipmap.ic_reel
     };
 
+    private TabLayout tabLayout;
+    private boolean isTabHidden = false;
+    private View bottomCardView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
-        TabLayout tabLayout = findViewById(R.id.tabLayout);
+        tabLayout = findViewById(R.id.tabLayout);
         ViewPager2 viewPager = findViewById(R.id.viewPager);
         ImageView tabGradient = findViewById(R.id.tabGradient);
         ImageView signButton = findViewById(R.id.signButton);
+        bottomCardView = findViewById(R.id.cardView);
 
         // ViewPager Adapter
         viewPager.setAdapter(new DashboardPagerAdapter(this));
@@ -68,6 +80,48 @@ public class DashboardActivity extends AppCompatActivity {
         });
 
         viewPager.setCurrentItem(0, false);
+
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                Fragment current = getSupportFragmentManager().findFragmentByTag("f" + position);
+                if (current instanceof ScrollAwareFragment) {
+                    ((ScrollAwareFragment) current).setOnScrollChangeListener(new ScrollAwareFragment.OnScrollChangeListener() {
+                        @Override
+                        public void onScrollUp() {
+                            showTabLayout();
+                        }
+
+                        @Override
+                        public void onScrollDown() {
+                            hideTabLayout();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void hideTabLayout() {
+        if (!isTabHidden && bottomCardView != null) {
+            bottomCardView.animate()
+                    .translationY(bottomCardView.getHeight() + 50) // slide all the way down
+                    .setDuration(300)
+                    .setInterpolator(new android.view.animation.DecelerateInterpolator())
+                    .start();
+            isTabHidden = true;
+        }
+    }
+
+    private void showTabLayout() {
+        if (isTabHidden && bottomCardView != null) {
+            bottomCardView.animate()
+                    .translationY(0)
+                    .setDuration(300)
+                    .setInterpolator(new android.view.animation.DecelerateInterpolator())
+                    .start();
+            isTabHidden = false;
+        }
     }
 
     /** Minimal PagerAdapter for 4 fragments */

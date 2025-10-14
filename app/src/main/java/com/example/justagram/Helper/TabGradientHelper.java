@@ -1,4 +1,4 @@
-package com.example.justagram;
+package com.example.justagram.Helper;
 
 import android.animation.ObjectAnimator;
 import android.graphics.Color;
@@ -9,11 +9,6 @@ import android.widget.ImageView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
-
-import android.graphics.Color;
-import java.util.Random;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Gradient helper for bottom navigation:

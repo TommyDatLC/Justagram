@@ -1,4 +1,4 @@
-package com.example.justagram;
+package com.example.justagram.Helper;
 
 import android.animation.ObjectAnimator;
 import android.view.View;

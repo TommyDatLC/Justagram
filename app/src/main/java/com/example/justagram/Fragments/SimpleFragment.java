@@ -1,4 +1,4 @@
-package com.example.justagram;
+package com.example.justagram.Fragments;
 
 import android.os.Bundle;
 import android.view.Gravity;

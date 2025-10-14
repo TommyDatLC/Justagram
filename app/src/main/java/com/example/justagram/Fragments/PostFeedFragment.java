@@ -1,4 +1,4 @@
-package com.example.justagram;
+package com.example.justagram.Fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,6 +10,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.justagram.Helper.PostAdapter;
+import com.example.justagram.R;
 
 import java.util.Arrays;
 import java.util.List;

@@ -1,15 +1,7 @@
-package com.example.justagram;
+package com.example.justagram.Helper;
 
-import android.animation.Animator;
-import android.animation.ValueAnimator;
 import android.content.res.Resources;
-import android.os.Debug;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.view.animation.PathInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 

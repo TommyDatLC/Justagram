@@ -1,4 +1,4 @@
-package com.example.justagram;
+package com.example.justagram.Helper;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;

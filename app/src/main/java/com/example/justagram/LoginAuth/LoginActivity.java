@@ -15,8 +15,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.example.justagram.HomeActivity;
-import com.example.justagram.IgPublisherFragment;
-import com.example.justagram.InstagramAccountFragment;
+import com.example.justagram.Fragments.IgPublisherFragment;
+import com.example.justagram.Fragments.InstagramAccountFragment;
 import com.example.justagram.R;
 import com.example.justagram.etc.TommyDatCallBack;
 import com.example.justagram.etc.Utility;

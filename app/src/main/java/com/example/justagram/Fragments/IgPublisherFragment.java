@@ -1,4 +1,4 @@
-package com.example.justagram;
+package com.example.justagram.Fragments;
 
 import android.content.ClipData;
 import android.content.Context;
@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.justagram.R;
 import com.example.justagram.etc.Utility;
 import com.google.android.material.tabs.TabLayout;
 

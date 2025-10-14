@@ -1,4 +1,4 @@
-package com.example.justagram;
+package com.example.justagram.Fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,12 +8,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-public class CalendarFragment extends Fragment {
+import com.example.justagram.R;
 
-    public CalendarFragment() {}
+public class DashboardFragment extends Fragment {
 
-    public static CalendarFragment newInstance() {
-        CalendarFragment fragment = new CalendarFragment();
+    public DashboardFragment() {}
+
+    public static DashboardFragment newInstance() {
+        DashboardFragment fragment = new DashboardFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -24,6 +26,6 @@ public class CalendarFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_calendar, container, false);
+        return inflater.inflate(R.layout.fragment_dashboard, container, false);
     }
 }

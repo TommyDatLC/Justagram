@@ -1,4 +1,4 @@
-package com.example.justagram;
+package com.example.justagram.Fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,12 +8,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-public class AnalyticsFragment extends Fragment {
+import com.example.justagram.R;
 
-    public AnalyticsFragment() {}
+public class SettingsFragment extends Fragment {
 
-    public static AnalyticsFragment newInstance() {
-        AnalyticsFragment fragment = new AnalyticsFragment();
+    public SettingsFragment() {}
+
+    public static SettingsFragment newInstance() {
+        SettingsFragment fragment = new SettingsFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -24,6 +26,6 @@ public class AnalyticsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_analytics, container, false);
+        return inflater.inflate(R.layout.fragment_settings, container, false);
     }
 }

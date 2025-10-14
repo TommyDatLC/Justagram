@@ -1,4 +1,4 @@
-package com.example.justagram;
+package com.example.justagram.Helper;
 
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
