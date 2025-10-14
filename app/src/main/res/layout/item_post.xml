@@ -1,119 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="@drawable/touch_effect"
-    android:clickable="true"
-    android:focusable="true"
-    android:padding="12dp"
-    android:layout_marginBottom="14dp"
-    android:elevation="1dp">
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="6dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:padding="10dp">
 
+        <!-- Ảnh hoặc video -->
         <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@mipmap/avatar_logo"
+            android:id="@+id/imageMedia"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
             android:scaleType="centerCrop"
-            android:background="@drawable/avatar_circle_mask"
-            android:clipToOutline="true"
-            android:layout_marginEnd="10dp" />
+            android:background="#E0E0E0"
+            android:visibility="gone" />
 
-        <LinearLayout
-            android:layout_width="0dp"
+        <VideoView
+            android:id="@+id/videoMedia"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:visibility="gone"
+            android:background="#000000" />
+
+        <!-- Caption -->
+        <TextView
+            android:id="@+id/textCaption"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center_vertical">
+            android:layout_marginTop="8dp"
+            android:textColor="#000000"
+            android:textSize="14sp"
+            android:text="Đây là caption bài viết" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Replying to @Kasdks Since I saw some comments mentioning"
-                android:textColor="@android:color/black"
-                android:textSize="13sp"
-                android:fontFamily="@font/sf_text_bold"
-                android:layout_marginBottom="4dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Yesterday 1:00 PM"
-                android:textColor="#757575"
-                android:textSize="12sp"
-                android:fontFamily="@font/sf_pro_rounded_thin"/>
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginTop="10dp"
-        android:paddingTop="6dp">
-
+        <!-- Like & comment -->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginEnd="24dp">
-            <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:src="@mipmap/play_icon"
-                android:layout_marginEnd="6dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="46.5K"
-                android:textColor="#757575"
-                android:textSize="13sp" />
-        </LinearLayout>
+            android:layout_marginTop="8dp">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginEnd="24dp">
-            <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:src="@mipmap/heart_icon"
-                android:layout_marginEnd="6dp"/>
             <TextView
+                android:id="@+id/textLikes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="2.1K"
-                android:textColor="#757575"
-                android:textSize="13sp" />
-        </LinearLayout>
+                android:text="❤️ 0 likes"
+                android:textColor="#FF0000"
+                android:layout_marginEnd="16dp" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-            <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:src="@mipmap/comment_icon"
-                android:layout_marginEnd="6dp"/>
             <TextView
+                android:id="@+id/textComments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="806"
-                android:textColor="#757575"
-                android:textSize="13sp"/>
+                android:text="💬 0 comments"
+                android:textColor="#555555" />
         </LinearLayout>
 
     </LinearLayout>
 
-</LinearLayout>
+</androidx.cardview.widget.CardView>
