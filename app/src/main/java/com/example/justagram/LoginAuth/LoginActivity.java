@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.example.justagram.DashboardActivity;
 import com.example.justagram.HomeActivity;
 import com.example.justagram.fragment.IgPublisherFragment;
 import com.example.justagram.fragment.InstagramAccountFragment;
@@ -203,7 +204,7 @@ public class LoginActivity extends AppCompatActivity {
     }
     void OpenHomeActivity()
     {
-        Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+        Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
         startActivity(i);
     }
 }

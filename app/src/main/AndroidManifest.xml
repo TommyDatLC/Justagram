@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
-        <activity android:name=".DashboardActivity"
+        <activity android:name=".LoginAuth.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,9 +24,10 @@
             </intent-filter>
         </activity>
 
-        <!-- activity android:name=".DashboardActivity" -->
+        <activity android:name=".HomeActivity"/>
+        <activity android:name=".DashboardActivity"/>
         <activity android:name=".AddPostActivity" />
-
+        <activity android:name=".IgPublisherActivity"/>
 
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>

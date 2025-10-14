@@ -3,5 +3,5 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/fragment_story_post"/>
+    <include layout="@layout/fragment_ig_publisher_tabs"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

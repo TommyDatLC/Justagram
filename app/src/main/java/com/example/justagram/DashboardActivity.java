@@ -49,11 +49,17 @@ public class DashboardActivity extends AppCompatActivity {
         ImageView exitButton = findViewById(R.id.exit);
 
         exitButton.setOnClickListener(v -> {
-            if (viewPager != null) {
-                // Go back to the first fragment (DashboardFragment)
-                viewPager.setCurrentItem(0, true);
-            }
+            Intent intent = new Intent(DashboardActivity.this, com.example.justagram.LoginAuth.LoginActivity.class);
+
+            // Clear the back stack so the user cannot press back
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            startActivity(intent);
+
+            // Finish this activity so it is removed from the stack
+            finish();
         });
+
 
         // ViewPager Adapter
         viewPager.setAdapter(new DashboardPagerAdapter(this));

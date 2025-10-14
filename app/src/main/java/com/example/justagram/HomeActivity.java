@@ -1,25 +1,27 @@
 package com.example.justagram;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
-import com.example.justagram.fragment.Statistic.StatisticFragment;
 
 public class HomeActivity extends AppCompatActivity {
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Keep your layout alive! Friends can still see it
         setContentView(R.layout.activity_home_page);
-        StatisticFragment test = new StatisticFragment();
-        //ReelPostFragment test = new ReelPostFragment();
-        LoadFragment(test);
-    }
-    void LoadFragment(Fragment test)
-    {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.add(R.id.test_fragment,test).commit();
+
+        // Launch DashboardActivity
+        Intent intent = new Intent(HomeActivity.this, DashboardActivity.class);
+
+        // Make sure HomeActivity is cleared from the back stack
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        startActivity(intent);
+
+        // Close HomeActivity so back button goes to LoginActivity or exits app
+        finish();
     }
 }
