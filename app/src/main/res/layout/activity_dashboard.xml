@@ -15,10 +15,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="30dp"
         android:elevation="8dp"
-
-        android:padding="30dp"
         app:cardCornerRadius="20dp"
         app:cardElevation="12dp">
 
@@ -27,6 +25,7 @@
             android:id="@+id/bottom_nav_container"
             android:layout_width="match_parent"
             android:layout_height="70dp"
+
             android:layout_gravity="bottom"
             android:clipChildren="false"
             android:clipToPadding="false">
