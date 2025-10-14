@@ -23,7 +23,15 @@ public class HomeActivity extends AppCompatActivity {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.add(R.id.test_fragment,test).commit();
     }
-
+    void TestInstagramPostFragment() {
+        setContentView(R.layout.activity_home_page);
+        IgPublisherFragment test = new IgPublisherFragment();
+        FragmentTransaction t = getSupportFragmentManager().beginTransaction();
+        t.add(R.id.test_fragment, test).commit();
+        // Open the Activity version instead of fragment so buttons interact immediately
+        Intent i = new Intent(HomeActivity.this, IgPublisherActivity.class);
+        startActivity(i);
+    }
 
 
 
