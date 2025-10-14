@@ -19,10 +19,10 @@ import com.google.android.material.tabs.TabLayoutMediator;
 public class DashboardActivity extends AppCompatActivity {
 
     private final int[] TAB_ICONS = {
-            R.drawable.ic_dashboard,
-            R.drawable.ic_analytics,
-            R.drawable.ic_calendar,
-            R.drawable.ic_settings
+            R.mipmap.ic_overview,
+            R.mipmap.ic_statistics,
+            R.mipmap.ic_post1,
+            R.mipmap.ic_reel
     };
 
     @Override
