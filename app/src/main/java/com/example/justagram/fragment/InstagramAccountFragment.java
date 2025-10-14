@@ -1,4 +1,4 @@
-package com.example.justagram.Fragments;
+package com.example.justagram.fragment;
 
 import android.os.Bundle;
 import android.text.TextUtils;

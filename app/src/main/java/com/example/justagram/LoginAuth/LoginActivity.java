@@ -15,8 +15,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.example.justagram.HomeActivity;
-import com.example.justagram.Fragments.IgPublisherFragment;
-import com.example.justagram.Fragments.InstagramAccountFragment;
+import com.example.justagram.fragment.IgPublisherFragment;
+import com.example.justagram.fragment.InstagramAccountFragment;
 import com.example.justagram.R;
 import com.example.justagram.etc.TommyDatCallBack;
 import com.example.justagram.etc.Utility;
@@ -58,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
     {
         Intent intent = getIntent();
         Uri data = intent.getData();
-        setContentView(R.layout.login_activity);
+        setContentView(R.layout.activity_login);
         var btn_login = findViewById(R.id.btn_Login);
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,14 +162,14 @@ public class LoginActivity extends AppCompatActivity {
     }
     void TestInstagramAccountFragment()
     {
-        setContentView(R.layout.home_page);
+        setContentView(R.layout.activity_home_page);
         InstagramAccountFragment test = new InstagramAccountFragment();
         FragmentTransaction t = getSupportFragmentManager().beginTransaction();
         t.add(R.id.test_fragment,test).commit();
     }
     void TestInstagramPostFragment()
     {
-        setContentView(R.layout.home_page);
+        setContentView(R.layout.activity_home_page);
         IgPublisherFragment test = new IgPublisherFragment();
         FragmentTransaction t = getSupportFragmentManager().beginTransaction();
         t.add(R.id.test_fragment,test).commit();

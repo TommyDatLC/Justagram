@@ -4,20 +4,23 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
+import com.example.justagram.Helper.ScrollAwareFragment;
 import com.example.justagram.R;
 
-public class CalendarFragment extends Fragment {
+public class CalendarFragment extends Fragment implements ScrollAwareFragment {
 
-    public CalendarFragment() {}
+    private OnScrollChangeListener scrollChangeListener;
 
     public static CalendarFragment newInstance() {
         CalendarFragment fragment = new CalendarFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
+        fragment.setArguments(new Bundle());
         return fragment;
     }
 
@@ -27,5 +30,33 @@ public class CalendarFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_calendar, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        NestedScrollView scrollView = view.findViewById(R.id.nestedScrollViewCalendar);
+        if (scrollView == null) return;
+
+        scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            private int lastY = 0;
+
+            @Override
+            public void onScrollChanged() {
+                int currentY = scrollView.getScrollY();
+                if (scrollChangeListener == null) return;
+
+                if (currentY > lastY + 10) {
+                    scrollChangeListener.onScrollDown();
+                } else if (currentY < lastY - 10) {
+                    scrollChangeListener.onScrollUp();
+                }
+                lastY = currentY;
+            }
+        });
+    }
+
+    @Override
+    public void setOnScrollChangeListener(OnScrollChangeListener listener) {
+        this.scrollChangeListener = listener;
     }
 }

@@ -1,4 +1,4 @@
-package com.example.justagram.Helper;
+package com.example.justagram.fragment.PostFeed;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -35,7 +35,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     @Override
     public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context)
-                .inflate(R.layout.items_post_feed, parent, false);
+                .inflate(R.layout.item_post_feed, parent, false);
         return new PostViewHolder(view);
     }
 

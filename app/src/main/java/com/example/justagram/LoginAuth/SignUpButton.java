@@ -18,7 +18,7 @@ public class SignUpButton implements View.OnClickListener {
         context.startActivity(intent);
     }
 }
-/**
+/*
  Onclick function để handle việc redirect đến official web của facebook
 
  dùng trong main activity:

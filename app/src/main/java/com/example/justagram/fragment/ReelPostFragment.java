@@ -1,4 +1,5 @@
-package com.example.justagram.Fragments;
+package com.example.justagram.fragment;
+
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,7 +11,8 @@ import androidx.fragment.app.Fragment;
 
 import com.example.justagram.R;
 
-public class StoryPostFragment extends Fragment {
+public class ReelPostFragment extends Fragment {
+
 
     @Nullable
     @Override

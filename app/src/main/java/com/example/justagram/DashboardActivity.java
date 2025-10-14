@@ -46,6 +46,14 @@ public class DashboardActivity extends AppCompatActivity {
         ImageView tabGradient = findViewById(R.id.tabGradient);
         ImageView signButton = findViewById(R.id.signButton);
         bottomCardView = findViewById(R.id.cardView);
+        ImageView exitButton = findViewById(R.id.exit);
+
+        exitButton.setOnClickListener(v -> {
+            if (viewPager != null) {
+                // Go back to the first fragment (DashboardFragment)
+                viewPager.setCurrentItem(0, true);
+            }
+        });
 
         // ViewPager Adapter
         viewPager.setAdapter(new DashboardPagerAdapter(this));
