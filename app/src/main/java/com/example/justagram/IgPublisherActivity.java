@@ -24,6 +24,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.example.justagram.etc.DateTime;
+import java.util.ArrayList;
 
 import com.google.android.material.tabs.TabLayout;
 
@@ -66,8 +68,10 @@ public class IgPublisherActivity extends AppCompatActivity {
     private final List<String> selectedNames = new ArrayList<>();
     private final OkHttpClient http = new OkHttpClient();
     private ArrayAdapter<String> scheduledAdapter;
+    private ArrayList<String> scheduledJobs = new ArrayList<>();
 
-
+    private ArrayAdapter<String> jobAdapter;
+    private ArrayList<String> jobList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,6 +104,57 @@ public class IgPublisherActivity extends AppCompatActivity {
 
         btnPublishNow_reel.setOnClickListener(ch -> publishNow(true));
         btnPublishNow_post.setOnClickListener(ch -> publishNow(false));
+        ListView scheduledListView = findViewById(R.id.scheduled_jobs_listview);
+        scheduledAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, scheduledJobs);
+
+        Button btnSchedulePost = findViewById(R.id.btnSchedule_post);
+        Button btnScheduleReel = findViewById(R.id.btnSchedule_reel);
+        initScheduledList();
+        btnSchedulePost.setOnClickListener(v -> {
+            DateTime dateTime = new DateTime();
+
+            // Dùng hàm chọn ngày của DateTIme
+            DateTime.OpenDateSelector(this, dateTime, () -> {
+                // Chọn giờ
+                DateTime.OpenTimeSelector(this, dateTime, () -> {
+                    long unixTime = dateTime.ConvertToUnixTime();
+                    String readable = dateTime.GetDateString() + " " + dateTime.GetTimeString();
+
+                    Toast.makeText(this, "Post scheduled for: " + readable, Toast.LENGTH_SHORT).show();
+                    addScheduledJob("Post", readable, unixTime);
+                });
+            });
+        });
+
+        btnScheduleReel.setOnClickListener(v -> {
+            DateTime dateTime = new DateTime();
+
+            DateTime.OpenDateSelector(this, dateTime, () -> {
+                DateTime.OpenTimeSelector(this, dateTime, () -> {
+                    long unixTime = dateTime.ConvertToUnixTime();
+                    String readable = dateTime.GetDateString() + " " + dateTime.GetTimeString();
+
+                    Toast.makeText(this, "Reel scheduled for: " + readable, Toast.LENGTH_SHORT).show();
+                    addScheduledJob("Reel", readable, unixTime);
+                });
+            });
+        });
+        scheduledListView.setOnItemLongClickListener((parent, view, position, id) -> {
+            String job = jobList.get(position);
+
+            new android.app.AlertDialog.Builder(this)
+                    .setTitle("Delete scheduled job")
+                    .setMessage("Do you want to delete this job?\n\n" + job)
+                    .setPositiveButton("Delete", (dialog, which) -> {
+                        jobList.remove(position);
+                        jobAdapter.notifyDataSetChanged();
+                        android.widget.Toast.makeText(this, "Job deleted", android.widget.Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+
+            return true; // Quan trọng: báo là sự kiện giữ đã được xử lý
+        });
 
     }
 
@@ -607,7 +662,21 @@ public class IgPublisherActivity extends AppCompatActivity {
             }
         });
     }
+    // --- Khởi tạo danh sách Schedule ---
+    private void initScheduledList() {
+        ListView listView = findViewById(R.id.scheduled_jobs_listview);
+        jobList = new ArrayList<>();
+        jobAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, jobList);
+        listView.setAdapter(jobAdapter);
+    }
 
+    // --- Thêm job mới vào danh sách ---
+    private void addScheduledJob(String type, String readableTime, long unixTime) {
+        String jobInfo = type + " scheduled at " + readableTime;
+        jobList.add(jobInfo);
+        jobAdapter.notifyDataSetChanged();
+
+    }
     private void showMsg(String s) {
         try { Utility.showMessageBox(s, this); } catch (Exception e) { Toast.makeText(this, s, Toast.LENGTH_LONG).show(); }
     }
@@ -655,6 +724,7 @@ public class IgPublisherActivity extends AppCompatActivity {
                 // Nếu là ảnh, load bình thường
                 holder.img.setImageURI(uri);
             }
+
         }
 
         @Override
