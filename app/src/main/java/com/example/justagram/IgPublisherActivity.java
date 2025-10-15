@@ -109,7 +109,9 @@ public class IgPublisherActivity extends AppCompatActivity {
 
         Button btnSchedulePost = findViewById(R.id.btnSchedule_post);
         Button btnScheduleReel = findViewById(R.id.btnSchedule_reel);
+        // tạo 1 list chứa schedules
         initScheduledList();
+        // SCHEDULE POST HANDLER
         btnSchedulePost.setOnClickListener(v -> {
             DateTime dateTime = new DateTime();
 
@@ -117,15 +119,14 @@ public class IgPublisherActivity extends AppCompatActivity {
             DateTime.OpenDateSelector(this, dateTime, () -> {
                 // Chọn giờ
                 DateTime.OpenTimeSelector(this, dateTime, () -> {
-                    long unixTime = dateTime.ConvertToUnixTime();
                     String readable = dateTime.GetDateString() + " " + dateTime.GetTimeString();
 
                     Toast.makeText(this, "Post scheduled for: " + readable, Toast.LENGTH_SHORT).show();
-                    addScheduledJob("Post", readable, unixTime);
+                    addScheduledJob("Post", readable);
                 });
             });
         });
-
+        // SCHEDULE REEL HANDLER
         btnScheduleReel.setOnClickListener(v -> {
             DateTime dateTime = new DateTime();
 
@@ -135,10 +136,11 @@ public class IgPublisherActivity extends AppCompatActivity {
                     String readable = dateTime.GetDateString() + " " + dateTime.GetTimeString();
 
                     Toast.makeText(this, "Reel scheduled for: " + readable, Toast.LENGTH_SHORT).show();
-                    addScheduledJob("Reel", readable, unixTime);
+                    addScheduledJob("Reel", readable);
                 });
             });
         });
+        // NÚT GIỮ ĐỂ XÓA
         scheduledListView.setOnItemLongClickListener((parent, view, position, id) -> {
             String job = jobList.get(position);
 
@@ -153,7 +155,7 @@ public class IgPublisherActivity extends AppCompatActivity {
                     .setNegativeButton("Cancel", null)
                     .show();
 
-            return true; // Quan trọng: báo là sự kiện giữ đã được xử lý
+            return true;
         });
 
     }
@@ -211,10 +213,8 @@ public class IgPublisherActivity extends AppCompatActivity {
 
     private void publishNow(boolean asReel) {
         String caption = asReel ? etCaption_reel.getText().toString() : etCaption_post.getText().toString();
-        if (!Validation.checkCaptionLength(caption)) {
-            showMsg("Caption must be at least 8 characters long");
-            return;
-        }
+        // check độ dài caption
+        if (!Validation.checkCaptionLength(caption)) {showMsg("Caption must be at least 8 characters long");return;}
         if (selectedUris.isEmpty()) { showMsg("Pick at least one media"); return; }
 
         setAllPublishButtonsEnabled(false);
@@ -241,7 +241,7 @@ public class IgPublisherActivity extends AppCompatActivity {
                  * 
                  * 
                  */
-                
+                runOnUiThread(() -> showMsg("Successfully uploaded video to server"));
                 publishReelToInstagram(IG_USER_ID, videoUrl, caption, ACCESS_TOKEN, (url, error) -> {
                     runOnUiThread(() -> {
                         if (error != null) {
@@ -460,7 +460,7 @@ public class IgPublisherActivity extends AppCompatActivity {
 
                     // thành công lấy id -> log ra id
                     String creationId = json.getString("id");
-                    Log.e("IG_DEBUG", "✅ Creation ID: " + creationId);
+                    Log.e("IG_DEBUG", "Creation ID: " + creationId);
 
                     // đợi 20s trước khi post để instagram xử lí
                     new Handler(Looper.getMainLooper()).postDelayed(() -> {
@@ -576,39 +576,7 @@ public class IgPublisherActivity extends AppCompatActivity {
         }
     }
 
-    private void createVideoContainerThenPublish(String igId, String token, String videoUrl, String caption, boolean asReel, TerminalCallback terminal) {
-        FormBody.Builder fb = new FormBody.Builder()
-                .add("video_url", videoUrl)
-                .add("caption", caption)
-                .add("access_token", token);
-        if (asReel) fb.add("media_type", "REELS");
-        Request req = new Request.Builder().url("https://graph.instagram.com/" + API_VERSION + "/" + igId + "/media").post(fb.build()).build();
-        http.newCall(req).enqueue(new Callback() {
-            @Override public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
-                runOnUiThread(() -> { if (terminal != null) terminal.onDone("Create video container failed: " + e.getMessage()); });
-            }
-            @Override public void onResponse(@NonNull okhttp3.Call call, @NonNull Response response) throws IOException {
-                try {
-                    if (!response.isSuccessful()) {
-                        String body = response.body() != null ? response.body().string() : "";
-                        runOnUiThread(() -> { if (terminal != null) terminal.onDone("Create video container HTTP error: " + response.code() + " " + body); });
-                        return;
-                    }
-                    JSONObject jo = new JSONObject(response.body().string());
-                    String id = jo.optString("id", null);
-                    if (!TextUtils.isEmpty(id)) {
-                        publishContainer(igId, token, id, (err) -> {
-                            if (terminal != null) terminal.onDone(err);
-                        });
-                    } else {
-                        runOnUiThread(() -> { if (terminal != null) terminal.onDone("Video container returned no id"); });
-                    }
-                } catch (Exception ex) {
-                    runOnUiThread(() -> { if (terminal != null) terminal.onDone("Parse error video container: " + ex.getMessage()); });
-                }
-            }
-        });
-    }
+    // XÓA HÀM CREATE VIDEO CONTAINER AND PUBLISH VÌ ĐÃ TÍCH HỢP TRONG HÀM PUBLISH TO INSTAGRAM
 
     private void createCarouselAndPublish(String igId, String token, List<String> children, String caption, TerminalCallback terminal) {
         String childrenCsv = TextUtils.join(",", children);
@@ -662,7 +630,7 @@ public class IgPublisherActivity extends AppCompatActivity {
             }
         });
     }
-    // --- Khởi tạo danh sách Schedule ---
+    // Khởi tạo danh sách Schedule
     private void initScheduledList() {
         ListView listView = findViewById(R.id.scheduled_jobs_listview);
         jobList = new ArrayList<>();
@@ -670,8 +638,8 @@ public class IgPublisherActivity extends AppCompatActivity {
         listView.setAdapter(jobAdapter);
     }
 
-    // --- Thêm job mới vào danh sách ---
-    private void addScheduledJob(String type, String readableTime, long unixTime) {
+    // Thêm job mới vào danh sách
+    private void addScheduledJob(String type, String readableTime) {
         String jobInfo = type + " scheduled at " + readableTime;
         jobList.add(jobInfo);
         jobAdapter.notifyDataSetChanged();
