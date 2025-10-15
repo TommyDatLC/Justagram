@@ -1,4 +1,5 @@
 package com.example.justagram.fragment.PostFeed;
+import com.example.justagram.R;
 // if u need to change something, here r the related files
 // postItem.java
 // layout : items_post_feed, fragment_post_feed, activity_main, activity_post_detail
@@ -18,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.justagram.fragment.Statistic.PostItem;
-import com.google.android.exoplayer2.ui.PlayerView;
+import androidx.media3.ui.PlayerView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +48,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     @NonNull
     @Override
     public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.items_post_feed, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_post_feed, parent, false);
         return new PostViewHolder(view);
     }
 
