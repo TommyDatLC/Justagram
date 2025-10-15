@@ -51,6 +51,10 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.exoplayer)
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
+    implementation(libs.material.v190)
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("com.google.android.exoplayer:exoplayer:2.18.1")
 
     implementation(libs.glide.v4160)
     annotationProcessor(libs.compiler.v4160)
