@@ -194,7 +194,7 @@ public class StatisticData {
 
                 chart.setData(barData);
                 chart.setDrawGridBackground(false);
-
+                
                 XAxis xAxis = chart.getXAxis();
                 xAxis.setValueFormatter(new IndexAxisValueFormatter(labels));
                 xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -203,6 +203,7 @@ public class StatisticData {
 
                 chart.getAxisLeft().setAxisMinimum(0f);
                 chart.getDescription().setEnabled(false);
+                // set space of the bar btwn the edge
                 chart.setFitBars(true);
                 chart.animateY(1000);
             });
@@ -305,7 +306,7 @@ public class StatisticData {
 
                 chart.getDescription().setEnabled(false);
                 chart.getAxisLeft().setAxisMinimum(0f);
-
+                chart.getAxisRight().mAxisMaximum = 0;
                 chart.animateY(1000);
             });
         } catch (Exception e) {
