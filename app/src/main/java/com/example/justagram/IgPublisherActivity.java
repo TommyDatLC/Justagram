@@ -65,7 +65,6 @@ public class IgPublisherActivity extends AppCompatActivity {
     private final List<Uri> selectedUris = new ArrayList<>();
     private final List<String> selectedNames = new ArrayList<>();
     private final OkHttpClient http = new OkHttpClient();
-    private List<String> scheduledList = new ArrayList<>();
     private ArrayAdapter<String> scheduledAdapter;
 
 
@@ -101,10 +100,6 @@ public class IgPublisherActivity extends AppCompatActivity {
 
         btnPublishNow_reel.setOnClickListener(ch -> publishNow(true));
         btnPublishNow_post.setOnClickListener(ch -> publishNow(false));
-
-
-
-
 
     }
 
@@ -161,7 +156,7 @@ public class IgPublisherActivity extends AppCompatActivity {
 
     private void publishNow(boolean asReel) {
         String caption = asReel ? etCaption_reel.getText().toString() : etCaption_post.getText().toString();
-        if (!checkCaptionLength(caption)) {
+        if (!Validation.checkCaptionLength(caption)) {
             showMsg("Caption must be at least 8 characters long");
             return;
         }
@@ -349,12 +344,6 @@ public class IgPublisherActivity extends AppCompatActivity {
     // check 6-7 charr moi cho up
     // dung dateTime lay schedule
     // hiện thông báo khi upload thành công lên server
-    public boolean checkCaptionLength(String caption){
-        if(caption == null || caption.length() < 8){
-            return false;
-        }
-        return true;
-    }
 
     public void publishReelToInstagram(String igUserId, String videoUrl, String caption, String accessToken, UploadVideoCallback callback) {
         OkHttpClient client = new OkHttpClient();
