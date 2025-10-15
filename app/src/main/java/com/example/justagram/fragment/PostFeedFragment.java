@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.justagram.R;
-import com.example.justagram.fragment.PostFeed.Activity;
+import com.example.justagram.PostFeedActivity;
 import com.example.justagram.fragment.PostFeed.PostAdapter;
 import com.example.justagram.fragment.Statistic.PostItem;
 
@@ -55,7 +55,7 @@ public class PostFeedFragment extends Fragment {
 
         postList = new ArrayList<>();
 
-        String access_token = Activity.ACCESS_TOKEN;
+        String access_token = PostFeedActivity.ACCESS_TOKEN;
         adapter = new PostAdapter(requireContext(), postList, access_token);
         recyclerView.setAdapter(adapter);
 
@@ -72,7 +72,7 @@ public class PostFeedFragment extends Fragment {
 
     // 🆕 Method gọi Instagram API
     private void fetchInstagramPosts() {
-        String apiUrl = "https://graph.instagram.com/me/media?fields=id,caption,media_url,media_type,like_count,comments_count&access_token=" + Activity.ACCESS_TOKEN;
+        String apiUrl = "https://graph.instagram.com/me/media?fields=id,caption,media_url,media_type,like_count,comments_count&access_token=" + PostFeedActivity.ACCESS_TOKEN;
 
         Request request = new Request.Builder()
                 .url(apiUrl)
