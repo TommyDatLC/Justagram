@@ -14,12 +14,12 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.justagram.Fragments.AnalyticsFragment;
-import com.example.justagram.Fragments.CalendarFragment;
-import com.example.justagram.Fragments.DashboardFragment;
-import com.example.justagram.Fragments.SettingsFragment;
+import com.example.justagram.fragment.DashboardFragment;
 import com.example.justagram.Helper.ScrollAwareFragment;
 import com.example.justagram.Helper.TabAnimationHelper;
+import com.example.justagram.fragment.InstagramAccountFragment;
+import com.example.justagram.fragment.PostFeedFragment;
+import com.example.justagram.fragment.ReelPostFragment;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -89,7 +89,7 @@ public class DashboardActivity extends AppCompatActivity {
         // Floating sign button click
         signButton.setOnClickListener(v -> {
             // Launch your AddPostActivity or fragment
-            Intent intent = new Intent(this, AddPostActivity.class);
+            Intent intent = new Intent(this, IgPublisherActivity.class);
             startActivity(intent);
         });
 
@@ -148,10 +148,10 @@ public class DashboardActivity extends AppCompatActivity {
         @Override
         public Fragment createFragment(int position) {
             switch (position) {
-                case 0: return DashboardFragment.newInstance();
-                case 1: return AnalyticsFragment.newInstance();
-                case 2: return CalendarFragment.newInstance();
-                case 3: return SettingsFragment.newInstance();
+                case 0: return new InstagramAccountFragment();
+                case 1: return new com.example.justagram.fragment.Statistic.StatisticFragment();
+                case 2: return new ReelPostFragment();
+                case 3: return new PostFeedFragment();
                 default: return DashboardFragment.newInstance();
             }
         }

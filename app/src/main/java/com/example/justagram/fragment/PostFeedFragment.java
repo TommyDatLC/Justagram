@@ -1,4 +1,4 @@
-package com.example.justagram.fragment.PostFeed;
+package com.example.justagram.fragment;
 // if u need to change something, here r the related files
 // postItem.java
 // layout : items_post_feed, fragment_post_feed, activity_main, activity_post_detail
@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.justagram.R;
+import com.example.justagram.fragment.PostFeed.Activity;
+import com.example.justagram.fragment.PostFeed.PostAdapter;
 import com.example.justagram.fragment.Statistic.PostItem;
 
 import org.json.JSONArray;
