@@ -1,4 +1,5 @@
 package com.example.justagram.Statistic;
+
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -29,8 +30,18 @@ import java.util.function.Consumer;
 
 public class StatisticData {
 
-    public StatisticData(String title,String metric,String period, EnumTimeFrame[] timeFrames,EnumBreakDown[] breakDowns,EnumMetricType[] metricTypes)
-    {
+    public String title;
+    public String metric;
+    public String period;
+    public EnumTimeFrame[] timeFrames;
+    public EnumBreakDown[] breakDowns;
+    public EnumMetricType[] metricTypes;
+    public Hashtable<String, Object> cache;
+    int timeFrameID;
+    int breakDownID;
+    int MetricTypeID;
+    boolean CanSendReq = true;
+    public StatisticData(String title, String metric, String period, EnumTimeFrame[] timeFrames, EnumBreakDown[] breakDowns, EnumMetricType[] metricTypes) {
         this.title = title;
         this.metric = metric;
         this.period = period;
@@ -38,26 +49,14 @@ public class StatisticData {
         this.breakDowns = breakDowns;
         this.metricTypes = metricTypes;
     }
-    public String title;
-    public String metric;
-    public String period;
-    public EnumTimeFrame[] timeFrames;
-    public EnumBreakDown[] breakDowns;
-    public EnumMetricType[] metricTypes;
-    public Hashtable<String,Object> cache;
-    int timeFrameID;
-    int breakDownID;
-    int MetricTypeID;
-    boolean CanSendReq  =true   ;
-    public void SendRequest(View ctx, int timeFrameID,int breakDownID, int MetricTypeID, long since, long until,boolean refresh
-        ,Consumer<Object> onFinish
-    )
-    {
+
+    public void SendRequest(View ctx, int timeFrameID, int breakDownID, int MetricTypeID, long since, long until, boolean refresh
+            , Consumer<Object> onFinish
+    ) {
         this.timeFrameID = timeFrameID;
         this.breakDownID = breakDownID;
         this.MetricTypeID = MetricTypeID;
-        if (CanSendReq )
-        {
+        if (CanSendReq) {
             CanSendReq = false;
             Thread t = new Thread(Utility.CreateRunnable((a) -> {
                 try {
@@ -68,11 +67,10 @@ public class StatisticData {
                 }
             }));
             t.start();
-        }
-        else
+        } else
             return;
 
-        String endpoint = "https://graph.instagram.com/v24.0/" + LoginActivity.userInfo.UserID  + "/insights";
+        String endpoint = "https://graph.instagram.com/v24.0/" + LoginActivity.userInfo.UserID + "/insights";
         var Params = "?metric=" + metric;
         if (timeFrames != null)
             Params += "&timeframe=" + timeFrames[timeFrameID];
@@ -84,13 +82,10 @@ public class StatisticData {
                 "&since=" + since + "&until=" + until +
                 "&access_token=" + LoginActivity.userInfo.GetAccessToken();
         Utility.SimpleGetRequest(endpoint + Params, (json) -> {
-            if ((int)json.get("request_code") > 299)
-            {
+            if ((int) json.get("request_code") > 299) {
                 ctx.post(Utility.CreateRunnable((a) ->
-                      Utility.showMessageBox("Fail to request for the statistic. Please check the log for more info",ctx.getContext() ))  );
-            }
-            else
-            {
+                        Utility.showMessageBox("Fail to request for the statistic. Please check the log for more info", ctx.getContext())));
+            } else {
                 cache = json;
                 onFinish.accept(null);
             }
@@ -322,8 +317,8 @@ public class StatisticData {
             chart.post(() -> Utility.showMessageBox("Failed to parse and display chart data.", chart.getContext()));
         }
     }
-    void DontHaveDataToShow(Context ctx)
-    {
-        Utility.showMessageBox("No content to show",ctx);
+
+    void DontHaveDataToShow(Context ctx) {
+        Utility.showMessageBox("No content to show", ctx);
     }
 }

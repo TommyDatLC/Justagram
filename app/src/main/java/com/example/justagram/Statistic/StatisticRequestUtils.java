@@ -1,10 +1,10 @@
 package com.example.justagram.Statistic;
-enum EnumTimeFrame
-{
+
+enum EnumTimeFrame {
     last_14_days, last_30_days, last_90_days, prev_month, this_month, this_week
 }
-enum EnumBreakDown
-{
+
+enum EnumBreakDown {
 
     media_product_type,
     follow_type,
@@ -15,16 +15,14 @@ enum EnumBreakDown
     gender
 }
 
-enum EnumMetricType
-{
+enum EnumMetricType {
     total_value,
     time_series
 }
+
 public class StatisticRequestUtils {
-   public static String TranslateEnumMetricTypeToRequest(EnumMetricType m)
-    {
-        switch (m)
-        {
+    public static String TranslateEnumMetricTypeToRequest(EnumMetricType m) {
+        switch (m) {
             case total_value:
                 return "Total Value";
             case time_series:
@@ -32,10 +30,9 @@ public class StatisticRequestUtils {
         }
         return "";
     }
-    public static String TranslateEnumBreakDownToRequest(EnumBreakDown b)
-    {
-        switch (b)
-        {
+
+    public static String TranslateEnumBreakDownToRequest(EnumBreakDown b) {
+        switch (b) {
             case media_product_type:
                 return "Media product type";
             case follow_type:
@@ -54,10 +51,8 @@ public class StatisticRequestUtils {
         return "";
     }
 
-    public static String TranslateEnumTimeFrameToRequest(EnumTimeFrame t)
-    {
-        switch (t)
-        {
+    public static String TranslateEnumTimeFrameToRequest(EnumTimeFrame t) {
+        switch (t) {
             case last_14_days:
                 return "Last 14 days";
             case last_30_days:

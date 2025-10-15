@@ -49,7 +49,7 @@ public class IntroAnimator {
 
                 // Tính toán khoảng cách cần di chuyển (translation)
                 // để tâm của logo trùng với tâm của màn hình
-               // float targetTranslationX = (screenWidth / 2f) - (logoX + logo.getWidth() / 2f);
+                // float targetTranslationX = (screenWidth / 2f) - (logoX + logo.getWidth() / 2f);
                 // Because of the pivot of image is on the top left change the pivot to the center by using (logoY + logoH / 2)
                 float targetTranslationY = (screenHeight / 2f) - (logoY + logo.getHeight() / 2f);
 
