@@ -4,33 +4,42 @@
     android:id="@+id/scrollRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="?android:attr/windowBackground">
+    android:background="?android:attr/windowBackground"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Statistic"
+
+        >
+
+    </TextView>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_marginTop="8dp"
         android:gravity="center_horizontal"
-        android:layout_marginTop="8dp">
+        android:orientation="vertical">
 
         <!-- Profile card (rounded + shadow + white) -->
         <androidx.cardview.widget.CardView
             android:id="@+id/card_profile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
             app:cardCornerRadius="16dp"
             app:cardElevation="8dp"
-            app:cardUseCompatPadding="true"
-            android:layout_marginBottom="12dp"
-            android:foreground="?android:attr/selectableItemBackgroundBorderless">
+            app:cardUseCompatPadding="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:padding="16dp"
-                android:gravity="center_vertical">
+                android:padding="16dp">
 
                 <!-- Profile image inside its own rounded card -->
                 <androidx.cardview.widget.CardView
@@ -44,8 +53,8 @@
                         android:id="@+id/ivProfile"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:contentDescription="Profile picture" />
+                        android:contentDescription="Profile picture"
+                        android:scaleType="centerCrop" />
                 </androidx.cardview.widget.CardView>
 
                 <LinearLayout
@@ -60,19 +69,19 @@
                         android:id="@+id/tvName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
                         android:fontFamily="@font/sf_text_bold"
-                        android:text="Name" />
+                        android:text="Name"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tvUsername"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
                         android:alpha="0.85"
                         android:fontFamily="@font/sf_pro_rounded_thin"
-                        android:text="@username" />
+                        android:text="@username"
+                        android:textSize="14sp" />
 
                 </LinearLayout>
             </LinearLayout>
@@ -82,41 +91,41 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
             android:orientation="horizontal"
-            android:weightSum="3"
-            android:layout_marginBottom="12dp">
+            android:weightSum="3">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
                 android:layout_weight="1"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="6dp"
-                app:cardUseCompatPadding="true"
-                android:layout_marginEnd="6dp">
+                app:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="12dp"
-                    android:gravity="center">
+                    android:padding="12dp">
 
                     <TextView
                         android:id="@+id/tvFollowers"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
+                        android:fontFamily="@font/sf_text_bold"
                         android:text="0"
                         android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:fontFamily="@font/sf_text_bold"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
+                        android:fontFamily="@font/sf_pro_rounded_thin"
                         android:text="Followers"
-                        android:textSize="12sp"
-                        android:fontFamily="@font/sf_pro_rounded_thin"/>
+                        android:textSize="12sp" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -124,35 +133,35 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_marginEnd="6dp"
                 android:layout_weight="1"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="6dp"
-                app:cardUseCompatPadding="true"
-                android:layout_marginStart="6dp"
-                android:layout_marginEnd="6dp">
+                app:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="12dp"
-                    android:gravity="center">
+                    android:padding="12dp">
 
                     <TextView
                         android:id="@+id/tvFollows"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/sf_text_bold"
                         android:text="0"
                         android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:fontFamily="@font/sf_text_bold"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/sf_pro_rounded_thin"
                         android:text="Follows"
-                        android:textSize="12sp"
-                        android:fontFamily="@font/sf_pro_rounded_thin"/>
+                        android:textSize="12sp" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -160,34 +169,34 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
                 android:layout_weight="1"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="6dp"
-                app:cardUseCompatPadding="true"
-                android:layout_marginStart="6dp">
+                app:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="12dp"
-                    android:gravity="center">
+                    android:padding="12dp">
 
                     <TextView
                         android:id="@+id/tvMediaCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/sf_text_bold"
                         android:text="0"
                         android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:fontFamily="@font/sf_text_bold"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/sf_pro_rounded_thin"
                         android:text="Media"
-                        android:textSize="12sp"
-                        android:fontFamily="@font/sf_pro_rounded_thin"/>
+                        android:textSize="12sp" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -198,10 +207,10 @@
             android:id="@+id/card_bio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
             app:cardCornerRadius="14dp"
             app:cardElevation="6dp"
-            app:cardUseCompatPadding="true"
-            android:layout_marginBottom="12dp">
+            app:cardUseCompatPadding="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -212,17 +221,17 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/sf_text_bold"
                     android:text="Biography"
-                    android:textStyle="bold"
-                    android:fontFamily="@font/sf_text_bold"/>
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tvBiography"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="—"
-                    android:fontFamily="@font/sf_pro_rounded_thin"/>
+                    android:fontFamily="@font/sf_pro_rounded_thin"
+                    android:text="—" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -245,9 +254,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/sf_text_bold"
                     android:text="Website"
-                    android:textStyle="bold"
-                    android:fontFamily="@font/sf_text_bold"/>
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tvWebsite"
@@ -255,8 +264,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:autoLink="web"
-                    android:text="—"
-                    android:fontFamily="@font/sf_pro_rounded_thin"/>
+                    android:fontFamily="@font/sf_pro_rounded_thin"
+                    android:text="—" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -267,11 +276,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:alpha="0.8"
+            android:fontFamily="@font/sf_pro_rounded_thin"
             android:text="Ready"
             android:textAlignment="center"
-            android:fontFamily="@font/sf_pro_rounded_thin"
-            android:textSize="13sp"
-            android:alpha="0.8"/>
+            android:textSize="13sp" />
 
     </LinearLayout>
 

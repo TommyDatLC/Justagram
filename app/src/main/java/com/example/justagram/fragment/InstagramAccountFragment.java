@@ -34,7 +34,7 @@ import okhttp3.Response;
 
 /**
  * Fragment hiển thị thông tin tài khoản Instagram bằng Instagram Graph API
- *
+ * <p>
  * IMPORTANT:
  * - Cần điền ACCESS_TOKEN và IG_USER_ID bên dưới.
  * - Thêm permission INTERNET vào AndroidManifest.xml
@@ -134,12 +134,14 @@ public class InstagramAccountFragment extends Fragment {
                 .build();
 
         httpClient.newCall(request).enqueue(new Callback() {
-            @Override public void onFailure(@NonNull Call call, @NonNull IOException e) {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 if (getActivity() == null) return;
                 getActivity().runOnUiThread(() -> showMessageBox("Network error: " + e.getMessage()));
             }
 
-            @Override public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (getActivity() == null) return;
 
                 final String body = response.body() != null ? response.body().string() : "";
@@ -184,12 +186,17 @@ public class InstagramAccountFragment extends Fragment {
             ivProfile.setImageResource(R.mipmap.unknow_user);
         }
     }
+
     // check if s is null or only white space return
     private String nonEmptyOrDash(String s) {
         return (s == null || s.trim().isEmpty()) ? "—" : s;
     }
 
     // Model for partial fields returned by IG Graph API
+
+    void showMessageBox(String content) {
+        Utility.showMessageBox(content, getContext());
+    }
 
     // Sync the request data into this class
     private static class IGUser {
@@ -220,9 +227,5 @@ public class InstagramAccountFragment extends Fragment {
 
         @SerializedName("media_count")
         Integer mediaCount;
-    }
-    void showMessageBox(String content)
-    {
-        Utility.showMessageBox(content,getContext());
     }
 }

@@ -1,9 +1,5 @@
 <resources>
     <string name="app_name">Justagram</string>
-    <string-array name="media_type_array">
-        <item>NONE</item>
-        <item>IMAGE</item>
-        <item>VIDEO</item>
-        <item>CAROUSEL</item>
-    </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

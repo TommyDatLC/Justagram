@@ -1,4 +1,4 @@
-package com.example.justagram.fragment.Statistic;
+package com.example.justagram.Statistic;
 
 public class PostItem {
 
@@ -28,52 +28,52 @@ public class PostItem {
         return mediaUrl;
     }
 
-    public String getMediaType() {
-        return mediaType;
-    }
-
-    public String getThumbnailUrl() {
-        return thumbnailUrl;
-    }
-
-    public int getLikeCount() {
-        return likeCount;
-    }
-
-    public int getCommentCount() {
-        return commentCount;
-    }
-
-    public boolean isSelected() {
-        return isSelected;
-    }
-
-    // --- Setter ---
-    public void setPostID(String PostID) {
-        this.PostID = PostID;
-    }
-
     public void setMediaUrl(String mediaUrl) {
         this.mediaUrl = mediaUrl;
+    }
+
+    public String getMediaType() {
+        return mediaType;
     }
 
     public void setMediaType(String mediaType) {
         this.mediaType = mediaType;
     }
 
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+
     public void setThumbnailUrl(String thumbnailUrl) {
         this.thumbnailUrl = thumbnailUrl;
+    }
+
+    public int getLikeCount() {
+        return likeCount;
     }
 
     public void setLikeCount(int likeCount) {
         this.likeCount = likeCount;
     }
 
+    public int getCommentCount() {
+        return commentCount;
+    }
+
     public void setCommentCount(int commentCount) {
         this.commentCount = commentCount;
     }
 
+    public boolean isSelected() {
+        return isSelected;
+    }
+
     public void setSelected(boolean selected) {
         this.isSelected = selected;
+    }
+
+    // --- Setter ---
+    public void setPostID(String PostID) {
+        this.PostID = PostID;
     }
 }

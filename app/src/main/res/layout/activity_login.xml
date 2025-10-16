@@ -1,47 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/login_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
 
     >
+
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
+
         <ImageView
-            android:id="@+id/glow5"
+            android:id="@+id/glow1"
             android:layout_width="750dp"
             android:layout_height="750dp"
-            android:src="@mipmap/glow5"
-            android:scaleType="centerCrop"
             android:alpha="0.8"
-            ></ImageView>
+            android:scaleType="centerCrop"
+            android:src="@mipmap/glow1"></ImageView>
 
         <ImageView
             android:id="@+id/glow2"
             android:layout_width="750dp"
             android:layout_height="750dp"
-            android:src="@mipmap/glow2"
-            android:scaleType="centerCrop"
             android:alpha="0.8"
-            ></ImageView>
+            android:scaleType="centerCrop"
+            android:src="@mipmap/glow2"></ImageView>
     </FrameLayout>
-<!--    <TextView-->
-<!--        android:id="@+id/header"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_centerHorizontal="true"-->
-<!--        android:gravity="center"-->
-<!--        android:text="English (United States)"-->
-<!--        android:fontFamily="@font/sf_pro_rounded_thin"-->
-<!--        android:drawableEnd="@drawable/down_arrow_icon"-->
-<!--        android:drawableTint="#9E9E9E"-->
-<!--        android:textColor="#9E9E9E"-->
-<!--        android:textSize="18sp"-->
-<!--        android:textStyle="bold"-->
-<!--        android:layout_marginTop="40dp"/>-->
+    <!--    <TextView-->
+    <!--        android:id="@+id/header"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_centerHorizontal="true"-->
+    <!--        android:gravity="center"-->
+    <!--        android:text="English (United States)"-->
+    <!--        android:fontFamily="@font/sf_pro_rounded_thin"-->
+    <!--        android:drawableEnd="@drawable/down_arrow_icon"-->
+    <!--        android:drawableTint="#9E9E9E"-->
+    <!--        android:textColor="#9E9E9E"-->
+    <!--        android:textSize="18sp"-->
+    <!--        android:textStyle="bold"-->
+    <!--        android:layout_marginTop="40dp"/>-->
 
     <ImageView
         android:id="@+id/justagram"
@@ -57,12 +56,12 @@
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_below="@id/justagram"
         android:layout_centerHorizontal="true"
-        android:gravity="center_horizontal"
         android:layout_marginTop="16dp"
         android:alpha="1"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
 
         >
 
@@ -70,37 +69,37 @@
             android:id="@+id/btn_loginWInstagram"
             android:layout_width="300dp"
             android:layout_height="50dp"
-            app:cardBackgroundColor="@color/instagram_main"
-            app:cardCornerRadius="40px"
-            app:cardElevation="9dp"
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
+            app:cardBackgroundColor="@color/instagram_main"
+            app:cardCornerRadius="40px"
+            app:cardElevation="9dp"
 
-          >
+            >
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
                 android:gravity="center"
-                android:padding="8dp"
-                >
+                android:orientation="horizontal"
+                android:padding="8dp">
+
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/instagram_logo"
                     android:layout_marginEnd="0dp"
-                   />
+                    android:src="@drawable/instagram_logo" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Continue with Instagram"
                     android:fontFamily="@font/sf_text_bold"
+                    android:paddingBottom="4dp"
+                    android:text="Continue with Instagram"
                     android:textColor="@android:color/white"
                     android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:paddingBottom="4dp"/>
+                    android:textStyle="bold" />
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>
@@ -109,17 +108,17 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_marginTop="20dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
             android:paddingLeft="24dp"
-            android:paddingRight="24dp"
-            android:gravity="center_vertical">
+            android:paddingRight="24dp">
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_weight="1"
-                android:background="#E7E7E7"/>
+                android:background="#E7E7E7" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -128,13 +127,13 @@
                 android:layout_marginEnd="12dp"
                 android:text="OR"
                 android:textColor="#9E9E9E"
-                android:textSize="14sp"/>
+                android:textSize="14sp" />
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_weight="1"
-                android:background="#E7E7E7"/>
+                android:background="#E7E7E7" />
 
         </LinearLayout>
 
@@ -143,26 +142,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            app:cardBackgroundColor="@color/element_gray"
-            app:cardElevation="9dp"
-            app:cardCornerRadius="40px"
             android:layout_gravity="center"
-
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
-            >
-                <EditText
-                    android:id="@+id/txtbox_accessToken"
-                    android:layout_width="300dp"
-                    android:layout_height="50dp"
-                    android:textColorHint="@color/hint_gray"
-                    android:textColor="@color/hint_text"
-                    android:textSize="14dp"
-                    android:fontFamily="@font/sf_pro_rounded_thin"
-                    android:hint="Token"
-                    android:background="@null"
-                    android:padding="12dp"/>
+
+            app:cardBackgroundColor="@color/element_gray"
+            app:cardCornerRadius="40px"
+            app:cardElevation="9dp">
+
+            <EditText
+                android:id="@+id/txtbox_accessToken"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:background="@null"
+                android:fontFamily="@font/sf_pro_rounded_thin"
+                android:hint="Token"
+                android:padding="12dp"
+                android:textColor="@color/hint_text"
+                android:textColorHint="@color/hint_gray"
+                android:textSize="14dp" />
 
         </androidx.cardview.widget.CardView>
 
@@ -170,32 +169,31 @@
             android:id="@+id/edtPasswordContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30px"
-            app:cardBackgroundColor="@color/element_gray"
-            app:cardElevation="9dp"
-            app:cardCornerRadius="40px"
             android:layout_gravity="center"
-
+            android:layout_marginTop="30px"
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
-            >
-<!--            <EditText-->
-<!--                android:id="@+id/edtPassword"-->
-<!--                android:layout_width="300dp"-->
-<!--                android:layout_height="50dp"-->
-<!--                android:textColorHint="@color/hint_gray"-->
-<!--                android:textColor="@color/hint_text"-->
-<!--                android:textSize="14dp"-->
-<!--                android:paddingStart="12dp"-->
-<!--                android:hint="User ID"-->
-<!--                android:fontFamily="@font/sf_pro_rounded_thin"-->
-<!--                android:drawableEnd="@drawable/eye_vision_view_icon"-->
-<!--                android:drawableTint="@color/hint_gray"-->
-<!--                android:inputType="textPassword"-->
-<!--                android:background="@null"-->
 
-<!--         />-->
+            app:cardBackgroundColor="@color/element_gray"
+            app:cardCornerRadius="40px"
+            app:cardElevation="9dp">
+            <!--            <EditText-->
+            <!--                android:id="@+id/edtPassword"-->
+            <!--                android:layout_width="300dp"-->
+            <!--                android:layout_height="50dp"-->
+            <!--                android:textColorHint="@color/hint_gray"-->
+            <!--                android:textColor="@color/hint_text"-->
+            <!--                android:textSize="14dp"-->
+            <!--                android:paddingStart="12dp"-->
+            <!--                android:hint="User ID"-->
+            <!--                android:fontFamily="@font/sf_pro_rounded_thin"-->
+            <!--                android:drawableEnd="@drawable/eye_vision_view_icon"-->
+            <!--                android:drawableTint="@color/hint_gray"-->
+            <!--                android:inputType="textPassword"-->
+            <!--                android:background="@null"-->
+
+            <!--         />-->
 
         </androidx.cardview.widget.CardView>
 
@@ -203,49 +201,48 @@
             android:id="@+id/tvForgot"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/sf_text_bold"
-            android:text="Forgot password?"
-            android:textStyle="bold"
-            android:textColor="#1877F2"
-            android:textSize="14sp"
-            android:gravity="end"
             android:layout_marginTop="8dp"
-
             android:clickable="true"
             android:focusable="true"
+            android:fontFamily="@font/sf_text_bold"
             android:foreground="?attr/selectableItemBackground"
-            />
+            android:gravity="end"
+            android:text="Forgot password?"
+
+            android:textColor="#1877F2"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/btn_Login"
             android:layout_width="300dp"
             android:layout_height="100px"
-            android:layout_marginTop="20dp"
-            app:cardBackgroundColor="@color/facebook_blue"
-            app:cardElevation="9dp"
-            app:cardCornerRadius="40px"
             android:layout_gravity="center"
-
+            android:layout_marginTop="20dp"
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
- >
+
+            app:cardBackgroundColor="@color/facebook_blue"
+            app:cardCornerRadius="40px"
+            app:cardElevation="9dp">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
 
                 >
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/sf_text_bold"
                     android:text="Log in"
                     android:textColor="@android:color/white"
                     android:textSize="16sp"
-                    android:textStyle="bold"
 
-                    android:fontFamily="@font/sf_text_bold"
-                    >
+                    android:textStyle="bold">
 
                 </TextView>
             </LinearLayout>
@@ -256,31 +253,30 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
             android:gravity="center"
-            android:orientation="horizontal"
-            android:layout_marginTop="24dp">
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/sf_text_bold"
                 android:text="Don't have an account?"
-                android:fontFamily="@font/sf_text_bold"
                 android:textColor="@color/black"
-                android:textSize="14sp"/>
+                android:textSize="14sp" />
 
             <TextView
+                android:id="@+id/signUp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:textColor="#1877F2"
-                android:text=" Sign up"
-                android:fontFamily="@font/sf_text_bold"
-                android:textSize="14sp"
-                android:id="@+id/signUp"
                 android:clickable="true"
                 android:focusable="true"
+                android:fontFamily="@font/sf_text_bold"
                 android:foreground="?attr/selectableItemBackground"
-                />
+                android:text=" Sign up"
+                android:textColor="#1877F2"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 

@@ -14,47 +14,43 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 public class TommyDatPostRequest {
-    Hashtable<String , Object> reqBody = new Hashtable<String, Object>();
+    public Consumer<Hashtable<String, Object>> onResponeJson;
+    Hashtable<String, Object> reqBody = new Hashtable<String, Object>();
     Request.Builder builder;
     MultipartBody.Builder FormBuilder;
     RequestBody requestBody;
     String URL;
     boolean isForm;
-    public TommyDatPostRequest(String URL,Boolean isForm) {
+
+    public TommyDatPostRequest(String URL, Boolean isForm) {
         this.URL = URL;
         this.isForm = isForm;
         if (isForm)
             FormBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
 
-            builder = new Request.Builder();
+        builder = new Request.Builder();
     }
 
-    public void Add(String key,Object value)
-    {
+    public void Add(String key, Object value) {
         if (isForm)
 
-            FormBuilder.addFormDataPart(key,value.toString());
+            FormBuilder.addFormDataPart(key, value.toString());
         else
-            reqBody.put(key,value);
+            reqBody.put(key, value);
     }
-    public void Send(TommyDatCallBack c)
-    {
+
+    public void Send(TommyDatCallBack c) {
         var gson = new Gson();
         var jsonString = gson.toJson(reqBody);
-        Log.i("Sended Req body",jsonString);
+        Log.i("Sended Req body", jsonString);
         RequestBody requestBody;
-        if (isForm)
-        {
+        if (isForm) {
             requestBody = FormBuilder.build();
-        }
-        else
-        {
+        } else {
             requestBody = RequestBody.create(jsonString, MediaType.get("application/json"));
         }
         Request r = builder.post(requestBody).url(URL).build();
         c.onResponeJson = this.onResponeJson;
         LoginActivity.client.newCall(r).enqueue(c);
     }
-
-    public Consumer<Hashtable<String,Object>> onResponeJson;
 }
