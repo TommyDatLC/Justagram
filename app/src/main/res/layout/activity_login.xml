@@ -11,10 +11,10 @@
         android:layout_height="match_parent"
         >
         <ImageView
-            android:id="@+id/glow1"
+            android:id="@+id/glow5"
             android:layout_width="750dp"
             android:layout_height="750dp"
-            android:src="@mipmap/glow1"
+            android:src="@mipmap/glow5"
             android:scaleType="centerCrop"
             android:alpha="0.8"
             ></ImageView>

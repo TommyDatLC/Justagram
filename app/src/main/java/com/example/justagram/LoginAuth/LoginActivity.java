@@ -76,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
 
         txtbox_accessToken = findViewById(R.id.txtbox_accessToken);
         ImageView logo = findViewById(R.id.justagram);
-        ImageView glow1 = findViewById(R.id.glow1);
+        ImageView glow1 = findViewById(R.id.glow5);
         ImageView glow2 = findViewById(R.id.glow2);
         var forget = findViewById(R.id.tvForgot);
         var signUp = findViewById(R.id.signUp);

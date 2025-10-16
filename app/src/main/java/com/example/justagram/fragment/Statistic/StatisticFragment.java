@@ -1,19 +1,24 @@
 package com.example.justagram.fragment.Statistic;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
+import com.example.justagram.Helper.ScrollAwareFragment;
 import com.example.justagram.R;
 import com.example.justagram.etc.DateTime;
 import com.example.justagram.etc.Utility;
@@ -29,11 +34,17 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class StatisticFragment extends Fragment {
+public class StatisticFragment extends Fragment implements ScrollAwareFragment {
 
     // Tu dong them vao mang
-
+    private OnScrollChangeListener scrollChangeListener;
     ArrayList<StatisticData> AvalableRequest = new ArrayList<StatisticData>();
+    public static StatisticFragment newInstance() {
+        StatisticFragment fragment = new StatisticFragment();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
     void InitAvalableRequest()
     {
 // Reusable arrays
@@ -247,7 +258,7 @@ public class StatisticFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        thisLayout = inflater.inflate(R.layout.fragment_statistic,container,false);
+        thisLayout = inflater.inflate(R.layout.fragment_analytics,container,false);
 
         card_ElementValueInfoDisplay = thisLayout.findViewById(R.id.container_ValueInfoDisplay);
         btn_refresh = thisLayout.findViewById(R.id.btn_refresh);
@@ -344,8 +355,6 @@ public class StatisticFragment extends Fragment {
         //set all spinner text
         SetSpinnerList(allMetricTitle,R.id.spn_Metric);
         LoadNewMetric(0);
-        return thisLayout;
-
         // make a translater
         // Listen to event on spn_Metric change
         // when change send the request to the server
@@ -355,7 +364,33 @@ public class StatisticFragment extends Fragment {
             // Rendering Total value data
             // Rendering Time Series data
         // Write all the value of the
+
+        ScrollView scrollView = thisLayout.findViewById(R.id.scrollViewAnalytics);
+
+        if (scrollView != null) {
+            scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+                private int lastY = 0;
+
+                @Override
+                public void onScrollChanged() {
+                    int currentY = scrollView.getScrollY();
+                    if (scrollChangeListener == null) return;
+
+                    if (currentY > lastY + 10) {
+                        scrollChangeListener.onScrollDown();
+                    } else if (currentY < lastY - 10) {
+                        scrollChangeListener.onScrollUp();
+                    }
+                    lastY = currentY;
+                }
+            });
+        } else {
+            Log.e("StatisticFragment", "⚠️ scrollRoot (NestedScrollView) not found in layout!");
+        }
+        return thisLayout;
+
     }
+
     void AttachEventSpinner(Spinner spn,boolean isMetricSpinner)
     {
         var onSelect = new Spinner.OnItemSelectedListener() {
@@ -465,6 +500,10 @@ public class StatisticFragment extends Fragment {
         {
             spinner.setVisibility(View.GONE);
         }
+    }
+    @Override
+    public void setOnScrollChangeListener(ScrollAwareFragment.OnScrollChangeListener listener) {
+        this.scrollChangeListener = listener;
     }
 
 }

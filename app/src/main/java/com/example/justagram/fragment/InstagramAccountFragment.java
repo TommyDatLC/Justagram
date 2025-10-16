@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
-import android.widget.ScrollView;
+import androidx.core.widget.NestedScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 
+import com.example.justagram.Helper.ScrollAwareFragment;
 import com.example.justagram.LoginAuth.LoginActivity;
 import com.example.justagram.R;
 import com.example.justagram.etc.Utility;
@@ -53,6 +54,9 @@ public class InstagramAccountFragment extends Fragment {
     private OkHttpClient httpClient = new OkHttpClient();
     private Gson gson = new Gson();
 
+    private ScrollAwareFragment.OnScrollChangeListener scrollChangeListener;
+
+
     public InstagramAccountFragment() {
         // Required empty public constructor
     }
@@ -77,6 +81,28 @@ public class InstagramAccountFragment extends Fragment {
         tvStatus = view.findViewById(R.id.tvStatus);
         // Start loading
         fetchInstagramAccount();
+
+        NestedScrollView scrollView = view.findViewById(R.id.scrollRoot);
+
+        scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            private int lastY = 0;
+
+            @Override
+            public void onScrollChanged() {
+                int currentY = scrollView.getScrollY();
+                if (scrollChangeListener == null) return;
+
+                if (currentY > lastY + 10) {
+                    scrollChangeListener.onScrollDown();
+                } else if (currentY < lastY - 10) {
+                    scrollChangeListener.onScrollUp();
+                }
+                lastY = currentY;
+            }
+        });
+    }
+    public void setOnScrollChangeListener(ScrollAwareFragment.OnScrollChangeListener listener) {
+        this.scrollChangeListener = listener;
     }
 
     private void fetchInstagramAccount() {
