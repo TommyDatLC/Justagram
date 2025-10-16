@@ -5,22 +5,22 @@
     android:background="#F5F5F5"
     android:orientation="vertical">
 
-    <!-- Header (chỉ xuất hiện 1 lần ở đầu trang) -->
+    <!-- Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="@android:color/white"
-        android:elevation="4dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="16dp"
+        android:elevation="4dp"
         android:paddingEnd="16dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/sf_text_bold"
-            android:text="My Reel"
+            android:text="Manage Reels"
             android:textColor="@android:color/black"
             android:textSize="28sp" />
 
@@ -29,7 +29,31 @@
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
+        <ImageView
+            android:id="@+id/searchIcon"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="12dp"
+            android:contentDescription="Search"
+            android:src="@drawable/magnifying_glass_icon" />
 
+        <ImageView
+            android:id="@+id/notificationIcon"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="12dp"
+            android:contentDescription="Notifications"
+            android:src="@drawable/bell_mobile_icon" />
+
+        <ImageView
+            android:id="@+id/avatar_logo"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/avatar_circle_mask"
+            android:clipToOutline="true"
+            android:contentDescription="Avatar"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/avatar_logo" />
     </LinearLayout>
 
     <!-- RecyclerView chứa các video reels -->

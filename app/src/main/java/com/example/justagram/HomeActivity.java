@@ -11,10 +11,10 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        // Load ContentManagerFragment (Posts + Reels)
+        // Chỉ load ReelPostFragment thôi
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragmentContainer, new ContentManagerFragment())
+                    .replace(R.id.fragmentContainer, new ReelPostFragment())
                     .commit();
         }
     }
