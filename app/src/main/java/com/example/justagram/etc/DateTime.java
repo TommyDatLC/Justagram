@@ -12,12 +12,25 @@ import java.util.function.Function;
 
 public class DateTime {
     static final Calendar calendar = Calendar.getInstance();
-    public static void OpenDateSelector(Context ctx, DateTime needToChange,Runnable onDone) {
+    public Consumer<Object> onDateChange;
+    public Function<DateTime, Boolean> isValid;
+    public Consumer<Object> onTimeChange;
+    private int year;
+    private int month;
+    private int day;
+    private int hour;
+    private int minute;
+    private int second = 0;
+    public DateTime() {
+        SetToCurrentTime();
+    }
+
+    public static void OpenDateSelector(Context ctx, DateTime needToChange, Runnable onDone) {
 //        int year = calendar.get(Calendar.YEAR);
 //        int month = calendar.get(Calendar.MONTH);
 //        int day = calendar.get(Calendar.DAY_OF_MONTH);
         DatePickerDialog datepicker = new DatePickerDialog(ctx, (view, Syear, Smonth, Sday) -> {
-            needToChange.SetDate(Syear,Smonth + 1,Sday);
+            needToChange.SetDate(Syear, Smonth + 1, Sday);
             onDone.run();
         },
                 needToChange.year,
@@ -27,13 +40,12 @@ public class DateTime {
         datepicker.show();
     }
 
-    public static void OpenTimeSelector(Context ctx, DateTime needToChange,Runnable onDone)
-    {
+    public static void OpenTimeSelector(Context ctx, DateTime needToChange, Runnable onDone) {
 //        int h = calendar.get(Calendar.HOUR_OF_DAY); // Sử dụng HOUR_OF_DAY cho định dạng 24 giờ
 //        int m = calendar.get(Calendar.MINUTE);
 
         TimePickerDialog tpk = new TimePickerDialog(ctx, (view, hourOfDay, minute) -> {
-            needToChange.SetTime(hourOfDay,minute);
+            needToChange.SetTime(hourOfDay, minute);
             onDone.run();
         },
                 needToChange.hour,
@@ -42,83 +54,69 @@ public class DateTime {
         );
         tpk.show();
     }
-    public DateTime()
-    {
-        SetToCurrentTime();
-    }
-    public Consumer<Object> onDateChange;
-    public Function<DateTime,Boolean> isValid;
-    public Consumer<Object> onTimeChange;
-    public void SetDate(int y,int m,int d)
-    {
+
+    public void SetDate(int y, int m, int d) {
         int ty = year;
         int tm = month;
         int td = day;
         year = y;
         month = m;
         day = d;
-        if (isValid != null && !isValid.apply(this))
-        {
+        if (isValid != null && !isValid.apply(this)) {
             year = ty;
             month = tm;
             day = td;
-        };
+        }
+        ;
         if (onDateChange != null)
             onDateChange.accept(null);
     }
-    public void SetTime(int h,int m)
-    {
+
+    public void SetTime(int h, int m) {
         int th = hour;
         int tm = minute;
         hour = h;
         minute = m;
-        if (isValid != null && !isValid.apply(this))
-        {
+        if (isValid != null && !isValid.apply(this)) {
             hour = th;
             minute = tm;
-        };
+        }
+        ;
         if (onTimeChange != null)
             onTimeChange.accept(null);
     }
-    private int year;
-    private int month;
-    private int day;
-    private int hour;
-    public void setDay(int d)
-    {
+
+    public int getDay() {
+        return day;
+    }
+
+    public void setDay(int d) {
         day = d;
         if (onDateChange != null)
             onDateChange.accept(null);
     }
-    private int minute;
-    private int second = 0;
-    public int getDay()
-    {
-        return day;
-    }
-    public int getMonth()
-    {
+
+    public int getMonth() {
         return month;
     }
-    public int getYear()
-    {
+
+    public int getYear() {
         return year;
     }
-    public int getHour()
-    {
+
+    public int getHour() {
         return hour;
     }
-    public int getMinute()
-    {
+
+    public int getMinute() {
         return minute;
     }
-    public int getSecond()
-    {
+
+    public int getSecond() {
         return second;
     }
 
-    public long ConvertToUnixTime()
-    {
+    public long ConvertToUnixTime() {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         // Lưu ý: Calendar.set() dùng tháng bắt đầu từ 0 (0 = tháng 1)
         calendar.set(year, month - 1, day, (hour - 7) % 24, minute, second);
@@ -130,10 +128,12 @@ public class DateTime {
         // Định dạng chuỗi để đảm bảo giờ và phút luôn có 2 chữ số (ví dụ: 09:05)
         return String.format(Locale.getDefault(), "%02d:%02d", hour, minute);
     }
+
     public String GetDateString() {
         // Định dạng chuỗi ngày/tháng/năm
         return String.format(Locale.getDefault(), "%02d/%02d/%d", day, month, year);
     }
+
     public void SetToCurrentTime() {
         // Lấy thời gian hiện tại
         Calendar now = Calendar.getInstance();

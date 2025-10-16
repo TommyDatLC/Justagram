@@ -13,29 +13,30 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import com.example.justagram.etc.Utility;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.justagram.etc.Utility;
 import com.google.android.material.tabs.TabLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -45,7 +46,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.HttpUrl;
+
 public class IgPublisherActivity extends AppCompatActivity {
     private static final int REQUEST_PICK_MEDIA = 4001;
     private static final int MAX_IMAGES = 10;
@@ -54,20 +55,31 @@ public class IgPublisherActivity extends AppCompatActivity {
     private static final String ACCESS_TOKEN = "IGAAS2qCIE595BZAFJ0SmVNaHBUbFFCM0NqOFBOYkdNOHhBdC1PR1hNTHV6ZAEtLZAm5RVTNZAa3lweFdqM0xxNVcwY2xLVlBadFdDUm54QkFBd0Jvdl8zRkJEMFFBNEtMZAkhyX2hfQUtIZAzNnVGdSa2pVYmtoX1I2bkZAxOFZAuOGp6VQZDZD";
     private static final String IG_USER_ID = "17841474853201686";
     private static final String API_VERSION = "v23.0";
-
+    private final List<Uri> selectedUris = new ArrayList<>();
+    private final List<String> selectedNames = new ArrayList<>();
+    private final OkHttpClient http = new OkHttpClient();
     private TabLayout tabLayout;
     private Button btnPickMedia_reel, btnPublishNow_reel;
     private Button btnPickMedia_post, btnPublishNow_post;
     private Button btnSchedule_reel, btnSchedule_post;
     private EditText etCaption_reel, etCaption_post;
     private RecyclerView rvPreview_reel, rvPreview_post;
-
-    private final List<Uri> selectedUris = new ArrayList<>();
-    private final List<String> selectedNames = new ArrayList<>();
-    private final OkHttpClient http = new OkHttpClient();
     private List<String> scheduledList = new ArrayList<>();
     private ArrayAdapter<String> scheduledAdapter;
 
+    private static String queryName(Context ctx, Uri uri) {
+        String res = null;
+        Cursor c = ctx.getContentResolver().query(uri, null, null, null, null);
+        try {
+            if (c != null && c.moveToFirst()) {
+                int idx = c.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                if (idx >= 0) res = c.getString(idx);
+            }
+        } finally {
+            if (c != null) c.close();
+        }
+        return res == null ? "file" : res;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,9 +115,6 @@ public class IgPublisherActivity extends AppCompatActivity {
         btnPublishNow_post.setOnClickListener(ch -> publishNow(false));
 
 
-
-
-
     }
 
     private void pickMedia(boolean isReel) {
@@ -132,8 +141,10 @@ public class IgPublisherActivity extends AppCompatActivity {
             } else if (data.getData() != null) {
                 addPersistUri(data.getData());
             }
-            if (rvPreview_reel.getAdapter() != null) rvPreview_reel.getAdapter().notifyDataSetChanged();
-            if (rvPreview_post.getAdapter() != null) rvPreview_post.getAdapter().notifyDataSetChanged();
+            if (rvPreview_reel.getAdapter() != null)
+                rvPreview_reel.getAdapter().notifyDataSetChanged();
+            if (rvPreview_post.getAdapter() != null)
+                rvPreview_post.getAdapter().notifyDataSetChanged();
         }
     }
 
@@ -142,21 +153,10 @@ public class IgPublisherActivity extends AppCompatActivity {
         try {
             final int takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION;
             getContentResolver().takePersistableUriPermission(u, takeFlags);
-        } catch (Exception ignore) {}
+        } catch (Exception ignore) {
+        }
         selectedUris.add(u);
         selectedNames.add(queryName(this, u));
-    }
-
-    private static String queryName(Context ctx, Uri uri) {
-        String res = null;
-        Cursor c = ctx.getContentResolver().query(uri, null, null, null, null);
-        try {
-            if (c != null && c.moveToFirst()) {
-                int idx = c.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                if (idx >= 0) res = c.getString(idx);
-            }
-        } finally { if (c != null) c.close(); }
-        return res == null ? "file" : res;
     }
 
     private void publishNow(boolean asReel) {
@@ -165,7 +165,10 @@ public class IgPublisherActivity extends AppCompatActivity {
             showMsg("Caption must be at least 8 characters long");
             return;
         }
-        if (selectedUris.isEmpty()) { showMsg("Pick at least one media"); return; }
+        if (selectedUris.isEmpty()) {
+            showMsg("Pick at least one media");
+            return;
+        }
 
         setAllPublishButtonsEnabled(false);
 
@@ -188,10 +191,10 @@ public class IgPublisherActivity extends AppCompatActivity {
                  * @parameter videoUrl: url video ở server
                  * @parameter caption: caption
                  * @parameter accessToken: self explainatory
-                 * 
-                 * 
+                 *
+                 *
                  */
-                
+
                 publishReelToInstagram(IG_USER_ID, videoUrl, caption, ACCESS_TOKEN, (url, error) -> {
                     runOnUiThread(() -> {
                         if (error != null) {
@@ -217,7 +220,8 @@ public class IgPublisherActivity extends AppCompatActivity {
                     return;
                 }
                 createContainersForUrlsThenPublish(IG_USER_ID, ACCESS_TOKEN, urls, caption, false, new TerminalCallback() {
-                    @Override public void onDone(String error) {
+                    @Override
+                    public void onDone(String error) {
                         if (error != null) showMsg("Post publish error: " + error);
                         setAllPublishButtonsEnabled(true);
                     }
@@ -225,9 +229,11 @@ public class IgPublisherActivity extends AppCompatActivity {
             });
         }
     }
-    private void publishToInstagram(){
+
+    private void publishToInstagram() {
 
     }
+
     private void setAllPublishButtonsEnabled(boolean enabled) {
         runOnUiThread(() -> {
             if (btnPublishNow_post != null) btnPublishNow_post.setEnabled(enabled);
@@ -235,22 +241,25 @@ public class IgPublisherActivity extends AppCompatActivity {
         });
     }
 
-    private interface UploadAllCallback { void onDone(List<String> urls, String err); }
-    private interface UploadVideoCallback { void onDone(String videoUrl, String err); }
-    private interface TerminalCallback { void onDone(String error); }
-
     private void uploadAllImagesToServer(String serverUrl, List<Uri> uris, UploadAllCallback cb) {
         List<String> resultUrls = new ArrayList<>();
         AtomicInteger remaining = new AtomicInteger(uris.size());
-        if (uris.isEmpty()) { runOnUiThread(() -> cb.onDone(null, "No URIs")); return; }
+        if (uris.isEmpty()) {
+            runOnUiThread(() -> cb.onDone(null, "No URIs"));
+            return;
+        }
         if (serverUrl.endsWith("/")) serverUrl = serverUrl.substring(0, serverUrl.length() - 1);
 
         for (Uri u : uris) {
             try {
                 InputStream in = getContentResolver().openInputStream(u);
-                if (in == null) { runOnUiThread(() -> cb.onDone(null, "Cannot open file")); return; }
+                if (in == null) {
+                    runOnUiThread(() -> cb.onDone(null, "Cannot open file"));
+                    return;
+                }
                 byte[] bytes = new byte[in.available()];
-                in.read(bytes); in.close();
+                in.read(bytes);
+                in.close();
 
                 String name = queryName(this, u);
                 if (name == null || name.isEmpty()) name = "file_" + System.currentTimeMillis();
@@ -265,10 +274,13 @@ public class IgPublisherActivity extends AppCompatActivity {
                 String finalServerUrl = serverUrl;
                 String finalName = name;
                 http.newCall(req).enqueue(new Callback() {
-                    @Override public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
+                    @Override
+                    public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
                         runOnUiThread(() -> cb.onDone(null, e.getMessage()));
                     }
-                    @Override public void onResponse(@NonNull okhttp3.Call call, @NonNull Response response) throws IOException {
+
+                    @Override
+                    public void onResponse(@NonNull okhttp3.Call call, @NonNull Response response) throws IOException {
                         if (!response.isSuccessful()) {
                             runOnUiThread(() -> cb.onDone(null, "HTTP " + response.code()));
                             return;
@@ -279,13 +291,17 @@ public class IgPublisherActivity extends AppCompatActivity {
                             try {
                                 JSONObject jo = new JSONObject(body);
                                 url = jo.optString("url", null);
-                            } catch (Exception ignored) {}
+                            } catch (Exception ignored) {
+                            }
                             if (url == null || url.isEmpty()) {
                                 url = finalServerUrl + "/uploads/" + urlEncodePathSegment(finalName);
                             }
-                            synchronized (resultUrls) { resultUrls.add(url); }
+                            synchronized (resultUrls) {
+                                resultUrls.add(url);
+                            }
                         } finally {
-                            if (remaining.decrementAndGet() == 0) runOnUiThread(() -> cb.onDone(resultUrls, null));
+                            if (remaining.decrementAndGet() == 0)
+                                runOnUiThread(() -> cb.onDone(resultUrls, null));
                         }
                     }
                 });
@@ -295,13 +311,18 @@ public class IgPublisherActivity extends AppCompatActivity {
             }
         }
     }
+
     private void uploadVideoToServer(String serverUrl, Uri videoUri, UploadVideoCallback cb) {
         if (serverUrl.endsWith("/")) serverUrl = serverUrl.substring(0, serverUrl.length() - 1);
         try {
             InputStream in = getContentResolver().openInputStream(videoUri);
-            if (in == null) { runOnUiThread(() -> cb.onDone(null, "Cannot open video file")); return; }
+            if (in == null) {
+                runOnUiThread(() -> cb.onDone(null, "Cannot open video file"));
+                return;
+            }
             byte[] bytes = new byte[in.available()];
-            in.read(bytes); in.close();
+            in.read(bytes);
+            in.close();
 
             String name = queryName(this, videoUri);
             if (name == null || name.isEmpty()) name = "video_" + System.currentTimeMillis();
@@ -316,10 +337,13 @@ public class IgPublisherActivity extends AppCompatActivity {
             String finalServerUrl = serverUrl;
             String finalName = name;
             http.newCall(req).enqueue(new Callback() {
-                @Override public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
+                @Override
+                public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
                     runOnUiThread(() -> cb.onDone(null, e.getMessage()));
                 }
-                @Override public void onResponse(@NonNull okhttp3.Call call, @NonNull Response response) throws IOException {
+
+                @Override
+                public void onResponse(@NonNull okhttp3.Call call, @NonNull Response response) throws IOException {
                     if (!response.isSuccessful()) {
                         runOnUiThread(() -> cb.onDone(null, "HTTP " + response.code()));
                         return;
@@ -330,7 +354,8 @@ public class IgPublisherActivity extends AppCompatActivity {
                         try {
                             JSONObject jo = new JSONObject(body);
                             url = jo.optString("url", null);
-                        } catch (Exception ignored) {}
+                        } catch (Exception ignored) {
+                        }
                         if (url == null || url.isEmpty()) {
                             url = finalServerUrl + "/uploads/" + urlEncodePathSegment(finalName);
                         }
@@ -345,12 +370,13 @@ public class IgPublisherActivity extends AppCompatActivity {
             runOnUiThread(() -> cb.onDone(null, e.getMessage()));
         }
     }
+
     // function to upload instagram 123
     // check 6-7 charr moi cho up
     // dung dateTime lay schedule
     // hiện thông báo khi upload thành công lên server
-    public boolean checkCaptionLength(String caption){
-        if(caption == null || caption.length() < 8){
+    public boolean checkCaptionLength(String caption) {
+        if (caption == null || caption.length() < 8) {
             return false;
         }
         return true;
@@ -362,7 +388,7 @@ public class IgPublisherActivity extends AppCompatActivity {
         // URL
         String createUrl = String.format("https://graph.instagram.com/v23.0/%s/media", igUserId);
 
-        // TAO BODY 
+        // TAO BODY
         RequestBody createBody = new FormBody.Builder(Charset.forName("UTF-8"))
                 .add("media_type", "REELS")
                 .add("video_url", videoUrl)
@@ -386,7 +412,6 @@ public class IgPublisherActivity extends AppCompatActivity {
         Log.e("IG_DEBUG", "AccessToken (first 20): " + accessToken.substring(0, Math.min(20, accessToken.length())) + "...");
         Log.e("IG_DEBUG", "Video URL: " + videoUrl);
         Log.e("IG_DEBUG", "Caption: " + caption);
-
 
 
         client.newCall(createRequest).enqueue(new Callback() {
@@ -471,17 +496,21 @@ public class IgPublisherActivity extends AppCompatActivity {
         });
     }
 
-
-
     private String urlEncodePathSegment(String s) {
-        try { return java.net.URLEncoder.encode(s, "UTF-8").replace("+", "%20"); }
-        catch (Exception e) { return s; }
+        try {
+            return java.net.URLEncoder.encode(s, "UTF-8").replace("+", "%20");
+        } catch (Exception e) {
+            return s;
+        }
     }
 
     private void createContainersForUrlsThenPublish(String igId, String token, List<String> urls, String caption, boolean asReel, TerminalCallback terminal) {
         List<String> creationIds = new ArrayList<>();
         AtomicInteger remaining = new AtomicInteger(urls.size());
-        if (urls.isEmpty()) { if (terminal != null) terminal.onDone("No urls to create containers"); return; }
+        if (urls.isEmpty()) {
+            if (terminal != null) terminal.onDone("No urls to create containers");
+            return;
+        }
 
         for (String u : urls) {
             FormBody.Builder fb = new FormBody.Builder()
@@ -491,23 +520,35 @@ public class IgPublisherActivity extends AppCompatActivity {
             if (urls.size() > 1) fb.add("is_carousel_item", "true");
             Request req = new Request.Builder().url("https://graph.instagram.com/" + API_VERSION + "/" + igId + "/media").post(fb.build()).build();
             http.newCall(req).enqueue(new Callback() {
-                @Override public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
+                @Override
+                public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
                     runOnUiThread(() -> {
-                        if (terminal != null) terminal.onDone("Create container failed: " + e.getMessage());
+                        if (terminal != null)
+                            terminal.onDone("Create container failed: " + e.getMessage());
                     });
                 }
-                @Override public void onResponse(@NonNull okhttp3.Call call, @NonNull Response response) throws IOException {
+
+                @Override
+                public void onResponse(@NonNull okhttp3.Call call, @NonNull Response response) throws IOException {
                     try {
                         if (!response.isSuccessful()) {
                             String body = response.body() != null ? response.body().string() : "";
-                            runOnUiThread(() -> { if (terminal != null) terminal.onDone("Create container HTTP error: " + response.code() + " " + body); });
+                            runOnUiThread(() -> {
+                                if (terminal != null)
+                                    terminal.onDone("Create container HTTP error: " + response.code() + " " + body);
+                            });
                         } else {
                             JSONObject jo = new JSONObject(response.body().string());
                             String id = jo.optString("id", null);
-                            if (!TextUtils.isEmpty(id)) synchronized (creationIds) { creationIds.add(id); }
+                            if (!TextUtils.isEmpty(id)) synchronized (creationIds) {
+                                creationIds.add(id);
+                            }
                         }
                     } catch (Exception ex) {
-                        runOnUiThread(() -> { if (terminal != null) terminal.onDone("Parse error: " + ex.getMessage()); });
+                        runOnUiThread(() -> {
+                            if (terminal != null)
+                                terminal.onDone("Parse error: " + ex.getMessage());
+                        });
                     } finally {
                         if (remaining.decrementAndGet() == 0) {
                             runOnUiThread(() -> {
@@ -540,14 +581,23 @@ public class IgPublisherActivity extends AppCompatActivity {
         if (asReel) fb.add("media_type", "REELS");
         Request req = new Request.Builder().url("https://graph.instagram.com/" + API_VERSION + "/" + igId + "/media").post(fb.build()).build();
         http.newCall(req).enqueue(new Callback() {
-            @Override public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
-                runOnUiThread(() -> { if (terminal != null) terminal.onDone("Create video container failed: " + e.getMessage()); });
+            @Override
+            public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
+                runOnUiThread(() -> {
+                    if (terminal != null)
+                        terminal.onDone("Create video container failed: " + e.getMessage());
+                });
             }
-            @Override public void onResponse(@NonNull okhttp3.Call call, @NonNull Response response) throws IOException {
+
+            @Override
+            public void onResponse(@NonNull okhttp3.Call call, @NonNull Response response) throws IOException {
                 try {
                     if (!response.isSuccessful()) {
                         String body = response.body() != null ? response.body().string() : "";
-                        runOnUiThread(() -> { if (terminal != null) terminal.onDone("Create video container HTTP error: " + response.code() + " " + body); });
+                        runOnUiThread(() -> {
+                            if (terminal != null)
+                                terminal.onDone("Create video container HTTP error: " + response.code() + " " + body);
+                        });
                         return;
                     }
                     JSONObject jo = new JSONObject(response.body().string());
@@ -557,10 +607,15 @@ public class IgPublisherActivity extends AppCompatActivity {
                             if (terminal != null) terminal.onDone(err);
                         });
                     } else {
-                        runOnUiThread(() -> { if (terminal != null) terminal.onDone("Video container returned no id"); });
+                        runOnUiThread(() -> {
+                            if (terminal != null) terminal.onDone("Video container returned no id");
+                        });
                     }
                 } catch (Exception ex) {
-                    runOnUiThread(() -> { if (terminal != null) terminal.onDone("Parse error video container: " + ex.getMessage()); });
+                    runOnUiThread(() -> {
+                        if (terminal != null)
+                            terminal.onDone("Parse error video container: " + ex.getMessage());
+                    });
                 }
             }
         });
@@ -576,13 +631,22 @@ public class IgPublisherActivity extends AppCompatActivity {
                 .build();
         Request req = new Request.Builder().url("https://graph.instagram.com/" + API_VERSION + "/" + igId + "/media").post(fb).build();
         http.newCall(req).enqueue(new Callback() {
-            @Override public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
-                runOnUiThread(() -> { if (terminal != null) terminal.onDone("Create carousel failed: " + e.getMessage()); });
+            @Override
+            public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
+                runOnUiThread(() -> {
+                    if (terminal != null)
+                        terminal.onDone("Create carousel failed: " + e.getMessage());
+                });
             }
-            @Override public void onResponse(@NonNull okhttp3.Call call, @NonNull Response response) throws IOException {
+
+            @Override
+            public void onResponse(@NonNull okhttp3.Call call, @NonNull Response response) throws IOException {
                 try {
                     if (!response.isSuccessful()) {
-                        runOnUiThread(() -> { if (terminal != null) terminal.onDone("Create carousel HTTP error: " + response.code()); });
+                        runOnUiThread(() -> {
+                            if (terminal != null)
+                                terminal.onDone("Create carousel HTTP error: " + response.code());
+                        });
                         return;
                     }
                     JSONObject jo = new JSONObject(response.body().string());
@@ -592,10 +656,15 @@ public class IgPublisherActivity extends AppCompatActivity {
                             if (terminal != null) terminal.onDone(err);
                         });
                     } else {
-                        runOnUiThread(() -> { if (terminal != null) terminal.onDone("Carousel creation returned no id"); });
+                        runOnUiThread(() -> {
+                            if (terminal != null)
+                                terminal.onDone("Carousel creation returned no id");
+                        });
                     }
                 } catch (Exception ex) {
-                    runOnUiThread(() -> { if (terminal != null) terminal.onDone("Parse error: " + ex.getMessage()); });
+                    runOnUiThread(() -> {
+                        if (terminal != null) terminal.onDone("Parse error: " + ex.getMessage());
+                    });
                 }
             }
         });
@@ -605,30 +674,66 @@ public class IgPublisherActivity extends AppCompatActivity {
         RequestBody fb = new FormBody.Builder().add("creation_id", creationId).add("access_token", token).build();
         Request req = new Request.Builder().url("https://graph.instagram.com/" + API_VERSION + "/" + igId + "/media_publish").post(fb).build();
         http.newCall(req).enqueue(new Callback() {
-            @Override public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
-                runOnUiThread(() -> { if (terminal != null) terminal.onDone("Publish failed: " + e.getMessage()); });
+            @Override
+            public void onFailure(@NonNull okhttp3.Call call, @NonNull IOException e) {
+                runOnUiThread(() -> {
+                    if (terminal != null) terminal.onDone("Publish failed: " + e.getMessage());
+                });
             }
-            @Override public void onResponse(@NonNull okhttp3.Call call, @NonNull Response response) throws IOException {
+
+            @Override
+            public void onResponse(@NonNull okhttp3.Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     String body = response.body() != null ? response.body().string() : "";
-                    runOnUiThread(() -> { if (terminal != null) terminal.onDone("Publish HTTP error: " + response.code() + " " + body); });
+                    runOnUiThread(() -> {
+                        if (terminal != null)
+                            terminal.onDone("Publish HTTP error: " + response.code() + " " + body);
+                    });
                     return;
                 }
-                runOnUiThread(() -> { if (terminal != null) terminal.onDone(null); });
+                runOnUiThread(() -> {
+                    if (terminal != null) terminal.onDone(null);
+                });
             }
         });
     }
 
     private void showMsg(String s) {
-        try { Utility.showMessageBox(s, this); } catch (Exception e) { Toast.makeText(this, s, Toast.LENGTH_LONG).show(); }
+        try {
+            Utility.showMessageBox(s, this);
+        } catch (Exception e) {
+            Toast.makeText(this, s, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private interface UploadAllCallback {
+        void onDone(List<String> urls, String err);
+    }
+
+    private interface UploadVideoCallback {
+        void onDone(String videoUrl, String err);
+    }
+
+    private interface TerminalCallback {
+        void onDone(String error);
     }
 
     // ĐÃ XÓA SCHEDULED FEATURE SỬ DỤNG ALARM MANAGER
     // --------> DÙNG HÀM DATETIME
 
+    private static class PreviewVH extends RecyclerView.ViewHolder {
+        ImageView img;
+
+        PreviewVH(@NonNull View v) {
+            super(v);
+            img = (ImageView) v;
+        }
+    }
+
     // ---------------- preview adapter ----------------
     private class PreviewAdapter extends RecyclerView.Adapter<PreviewVH> {
-        @NonNull @Override
+        @NonNull
+        @Override
         public PreviewVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             ImageView iv = new ImageView(parent.getContext());
             int pad = 8;
@@ -638,7 +743,6 @@ public class IgPublisherActivity extends AppCompatActivity {
             iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
             return new PreviewVH(iv);
         }
-
 
 
         @Override
@@ -671,14 +775,6 @@ public class IgPublisherActivity extends AppCompatActivity {
         @Override
         public int getItemCount() {
             return selectedUris.size();
-        }
-    }
-
-    private static class PreviewVH extends RecyclerView.ViewHolder {
-        ImageView img;
-        PreviewVH(@NonNull View v) {
-            super(v);
-            img = (ImageView) v;
         }
     }
 }

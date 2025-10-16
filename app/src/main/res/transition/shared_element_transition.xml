@@ -4,7 +4,7 @@
     android:interpolator="@android:interpolator/fast_out_slow_in">
 
     <changeBounds />
-    <changeTransform/>
-    <changeImageTransform/>
+    <changeTransform />
+    <changeImageTransform />
 
 </transitionSet>

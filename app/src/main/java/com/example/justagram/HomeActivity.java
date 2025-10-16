@@ -17,9 +17,9 @@ public class HomeActivity extends AppCompatActivity {
         //ReelPostFragment test = new ReelPostFragment();
         LoadFragment(test);
     }
-    void LoadFragment(Fragment test)
-    {
+
+    void LoadFragment(Fragment test) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.add(R.id.test_fragment,test).commit();
+        transaction.add(R.id.test_fragment, test).commit();
     }
 }

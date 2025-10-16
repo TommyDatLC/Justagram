@@ -34,10 +34,20 @@ public class StatisticFragment extends Fragment {
     // Tu dong them vao mang
 
     ArrayList<StatisticData> AvalableRequest = new ArrayList<StatisticData>();
-    void InitAvalableRequest()
-    {
+    View thisLayout;
+    Spinner spn_metric, spn_timeFrame, spn_breakDown, spn_metricType;
+    BarChart barchart_totalvalue;
+    LineChart linechart_totalvalue;
+    TextView txtview_totalvalue;
+    TextView txtview_totaltitle;
+    LinearLayout card_ElementValueInfoDisplay;
+    View btn_refresh;
+    DateTime SinceTime = new DateTime(),
+            UntilTime = new DateTime();
+
+    void InitAvalableRequest() {
 // Reusable arrays
-        EnumTimeFrame[] TF_ALL_RANGE = new EnumTimeFrame[] {
+        EnumTimeFrame[] TF_ALL_RANGE = new EnumTimeFrame[]{
                 EnumTimeFrame.last_14_days,
                 EnumTimeFrame.last_30_days,
                 EnumTimeFrame.last_90_days,
@@ -46,34 +56,34 @@ public class StatisticFragment extends Fragment {
                 EnumTimeFrame.this_week
         };
 
-        EnumBreakDown[] BD_AGE_CITY_COUNTRY_GENDER = new EnumBreakDown[] {
+        EnumBreakDown[] BD_AGE_CITY_COUNTRY_GENDER = new EnumBreakDown[]{
                 EnumBreakDown.age,
                 EnumBreakDown.city,
                 EnumBreakDown.country,
                 EnumBreakDown.gender
         };
 
-        EnumBreakDown[] BD_MEDIA_PRODUCT_TYPE = new EnumBreakDown[] {
+        EnumBreakDown[] BD_MEDIA_PRODUCT_TYPE = new EnumBreakDown[]{
                 EnumBreakDown.media_product_type
         };
 
-        EnumBreakDown[] BD_FOLLOW_TYPE = new EnumBreakDown[] {
+        EnumBreakDown[] BD_FOLLOW_TYPE = new EnumBreakDown[]{
                 EnumBreakDown.follow_type
         };
 
-        EnumBreakDown[] BD_CONTACT_BUTTON = new EnumBreakDown[] {
+        EnumBreakDown[] BD_CONTACT_BUTTON = new EnumBreakDown[]{
                 EnumBreakDown.contact_button_type
         };
 
-        EnumMetricType[] MT_TOTAL = new EnumMetricType[] {
+        EnumMetricType[] MT_TOTAL = new EnumMetricType[]{
                 EnumMetricType.total_value
         };
 
-        EnumMetricType[] MT_TIME_SERIES = new EnumMetricType[] {
+        EnumMetricType[] MT_TIME_SERIES = new EnumMetricType[]{
                 EnumMetricType.time_series
         };
 
-        EnumMetricType[] MT_BOTH = new EnumMetricType[] {
+        EnumMetricType[] MT_BOTH = new EnumMetricType[]{
                 EnumMetricType.total_value,
                 EnumMetricType.time_series
         };
@@ -164,7 +174,7 @@ public class StatisticFragment extends Fragment {
                 "reach",
                 "day",
                 null,
-                new EnumBreakDown[] { EnumBreakDown.media_product_type, EnumBreakDown.follow_type },
+                new EnumBreakDown[]{EnumBreakDown.media_product_type, EnumBreakDown.follow_type},
                 MT_BOTH
         ));
 
@@ -215,19 +225,12 @@ public class StatisticFragment extends Fragment {
                 "day",
                 null,
                 // Table lists follower_type and media_product_type; enum has follow_type so we use that.
-                new EnumBreakDown[] { EnumBreakDown.follow_type, EnumBreakDown.media_product_type },
+                new EnumBreakDown[]{EnumBreakDown.follow_type, EnumBreakDown.media_product_type},
                 MT_TOTAL
         ));
 
     }
-    View thisLayout;
-    Spinner spn_metric,spn_timeFrame,spn_breakDown,spn_metricType;
-    BarChart barchart_totalvalue ;
-    LineChart linechart_totalvalue ;
-    TextView txtview_totalvalue ;
-    TextView txtview_totaltitle ;
-    LinearLayout card_ElementValueInfoDisplay;
-    View btn_refresh;
+
     private Boolean checkValidTime(DateTime t) {
         long since = SinceTime.ConvertToUnixTime();
         long until = UntilTime.ConvertToUnixTime();
@@ -236,18 +239,18 @@ public class StatisticFragment extends Fragment {
         boolean isTimeRangeValid = (since <= until && since <= now && until <= now);
 
 
-
         if (!isTimeRangeValid) {
             Utility.showMessageBox("The time you have set does not valid", getContext());
         }
 
         return isTimeRangeValid;
     }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        thisLayout = inflater.inflate(R.layout.fragment_statistic,container,false);
+        thisLayout = inflater.inflate(R.layout.fragment_statistic, container, false);
 
         card_ElementValueInfoDisplay = thisLayout.findViewById(R.id.container_ValueInfoDisplay);
         btn_refresh = thisLayout.findViewById(R.id.btn_refresh);
@@ -258,12 +261,11 @@ public class StatisticFragment extends Fragment {
         TextView txtview_ChooseDateSince = thisLayout.findViewById(R.id.txtview_dateSelectorSince),
                 txtview_ChooseDateUntil = thisLayout.findViewById(R.id.txtview_dateSelectorUntil);
 
-        TextView txtview_ChooseTimeSince= thisLayout.findViewById(R.id.txtview_timeSelectorSince)
-                ,txtview_ChooseTimeUntil = thisLayout.findViewById(R.id.txtview_timeSelectorUntil);
-             spn_metric = thisLayout.findViewById(R.id.spn_Metric);
-             spn_timeFrame = thisLayout.findViewById(R.id.spn_timeframe);
-             spn_breakDown = thisLayout.findViewById(R.id.spn_breakdown);
-             spn_metricType = thisLayout.findViewById(R.id.spn_metricType);
+        TextView txtview_ChooseTimeSince = thisLayout.findViewById(R.id.txtview_timeSelectorSince), txtview_ChooseTimeUntil = thisLayout.findViewById(R.id.txtview_timeSelectorUntil);
+        spn_metric = thisLayout.findViewById(R.id.spn_Metric);
+        spn_timeFrame = thisLayout.findViewById(R.id.spn_timeframe);
+        spn_breakDown = thisLayout.findViewById(R.id.spn_breakdown);
+        spn_metricType = thisLayout.findViewById(R.id.spn_metricType);
         btn_refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -273,7 +275,7 @@ public class StatisticFragment extends Fragment {
         txtview_ChooseDateSince.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DateTime.OpenDateSelector(getContext(),SinceTime,() -> {
+                DateTime.OpenDateSelector(getContext(), SinceTime, () -> {
                     onSpinnerChoosen(null);
                 });
 
@@ -282,7 +284,7 @@ public class StatisticFragment extends Fragment {
         txtview_ChooseDateUntil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DateTime.OpenDateSelector(getContext(),UntilTime ,() -> {
+                DateTime.OpenDateSelector(getContext(), UntilTime, () -> {
                     onSpinnerChoosen(null);
                 });
 
@@ -291,7 +293,7 @@ public class StatisticFragment extends Fragment {
         txtview_ChooseTimeSince.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DateTime.OpenTimeSelector(getContext(),SinceTime,() -> {
+                DateTime.OpenTimeSelector(getContext(), SinceTime, () -> {
                     onSpinnerChoosen(null);
                 });
 
@@ -300,7 +302,7 @@ public class StatisticFragment extends Fragment {
         txtview_ChooseTimeUntil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DateTime.OpenTimeSelector(getContext(),UntilTime,() -> {
+                DateTime.OpenTimeSelector(getContext(), UntilTime, () -> {
                     onSpinnerChoosen(null);
                 });
 
@@ -310,7 +312,7 @@ public class StatisticFragment extends Fragment {
             txtview_ChooseTimeSince.setText(SinceTime.GetTimeString());
             txtview_ChooseDateSince.setText(SinceTime.GetDateString());
         };
-        UntilTime.onTimeChange= (a) ->
+        UntilTime.onTimeChange = (a) ->
         {
             txtview_ChooseTimeUntil.setText(UntilTime.GetTimeString());
             txtview_ChooseDateUntil.setText(UntilTime.GetDateString());
@@ -333,16 +335,16 @@ public class StatisticFragment extends Fragment {
         UntilTime.isValid = (d) -> checkValidTime(d);
 
         // attach event for the spinner onClick
-        AttachEventSpinner(spn_metric,true);
-        AttachEventSpinner(spn_metricType,false);
-        AttachEventSpinner(spn_breakDown,false);
-        AttachEventSpinner(spn_timeFrame,false);
+        AttachEventSpinner(spn_metric, true);
+        AttachEventSpinner(spn_metricType, false);
+        AttachEventSpinner(spn_breakDown, false);
+        AttachEventSpinner(spn_timeFrame, false);
         // init the Avalable Request array
         InitAvalableRequest();
         // Get all the statistic data
         List<String> allMetricTitle = AvalableRequest.stream().map(item -> item.title).collect(Collectors.toList());
         //set all spinner text
-        SetSpinnerList(allMetricTitle,R.id.spn_Metric);
+        SetSpinnerList(allMetricTitle, R.id.spn_Metric);
         LoadNewMetric(0);
         return thisLayout;
 
@@ -352,12 +354,12 @@ public class StatisticFragment extends Fragment {
         // when change spn_Metric change all the timeFrame,spn_breakdown,spn_metricType
         // make the time selection working
         // Rendering Data out of the hand
-            // Rendering Total value data
-            // Rendering Time Series data
+        // Rendering Total value data
+        // Rendering Time Series data
         // Write all the value of the
     }
-    void AttachEventSpinner(Spinner spn,boolean isMetricSpinner)
-    {
+
+    void AttachEventSpinner(Spinner spn, boolean isMetricSpinner) {
         var onSelect = new Spinner.OnItemSelectedListener() {
 
             @Override
@@ -375,8 +377,8 @@ public class StatisticFragment extends Fragment {
         };
         spn.setOnItemSelectedListener(onSelect);
     }
-    void SetSpinnerList(List<String> list,int id)
-    {
+
+    void SetSpinnerList(List<String> list, int id) {
         Spinner spinner = thisLayout.findViewById(id);
         if (list == null || list.isEmpty()) {
             spinner.setAdapter(null);
@@ -391,10 +393,6 @@ public class StatisticFragment extends Fragment {
         spinner.setAdapter(adapter);
 
     }
-    DateTime SinceTime = new DateTime()  ,
-            UntilTime = new DateTime();
-
-
 
     void onSpinnerChoosen(StatisticData metricData) {
 
@@ -418,12 +416,12 @@ public class StatisticFragment extends Fragment {
             thisLayout.post(() -> {
                 if (selectedType == EnumMetricType.total_value) {
 
-                    ((View)linechart_totalvalue.getParent().getParent()).setVisibility(View.GONE);
-                    ((View)barchart_totalvalue.getParent().getParent()).setVisibility(View.VISIBLE);
+                    ((View) linechart_totalvalue.getParent().getParent()).setVisibility(View.GONE);
+                    ((View) barchart_totalvalue.getParent().getParent()).setVisibility(View.VISIBLE);
                     finalMetricData.DrawInTotalValue(barchart_totalvalue, txtview_totaltitle, txtview_totalvalue, card_ElementValueInfoDisplay);
                 } else { // time_series
-                    ((View)barchart_totalvalue.getParent().getParent()).setVisibility(View.GONE);
-                    ((View)linechart_totalvalue.getParent().getParent()).setVisibility(View.VISIBLE);
+                    ((View) barchart_totalvalue.getParent().getParent()).setVisibility(View.GONE);
+                    ((View) linechart_totalvalue.getParent().getParent()).setVisibility(View.VISIBLE);
                     finalMetricData.DrawInTimeSeries(linechart_totalvalue, txtview_totaltitle, txtview_totalvalue, card_ElementValueInfoDisplay);
                 }
             });
@@ -439,30 +437,26 @@ public class StatisticFragment extends Fragment {
                 onFinishCallback);
     }
 
-    void LoadNewMetric(int newIndex)
-    {
+    void LoadNewMetric(int newIndex) {
 
-        StatisticData metricReqInfo =  AvalableRequest.get(newIndex);
+        StatisticData metricReqInfo = AvalableRequest.get(newIndex);
 
-        TranslateAndSetSpinnerList(spn_breakDown,metricReqInfo.breakDowns,
-                (obj) -> StatisticRequestUtils.TranslateEnumBreakDownToRequest((EnumBreakDown)obj));
-        TranslateAndSetSpinnerList(spn_timeFrame,metricReqInfo.timeFrames,
-                (obj) -> StatisticRequestUtils.TranslateEnumTimeFrameToRequest((EnumTimeFrame)obj));
-        TranslateAndSetSpinnerList(spn_metricType,metricReqInfo.metricTypes,
+        TranslateAndSetSpinnerList(spn_breakDown, metricReqInfo.breakDowns,
+                (obj) -> StatisticRequestUtils.TranslateEnumBreakDownToRequest((EnumBreakDown) obj));
+        TranslateAndSetSpinnerList(spn_timeFrame, metricReqInfo.timeFrames,
+                (obj) -> StatisticRequestUtils.TranslateEnumTimeFrameToRequest((EnumTimeFrame) obj));
+        TranslateAndSetSpinnerList(spn_metricType, metricReqInfo.metricTypes,
                 (obj) -> StatisticRequestUtils.TranslateEnumMetricTypeToRequest((EnumMetricType) obj));
         onSpinnerChoosen(metricReqInfo);
 
     }
-    void TranslateAndSetSpinnerList(Spinner spinner,Object[] arr, Function<Object,String> translater)
-    {
-        if (arr != null)
-        {
+
+    void TranslateAndSetSpinnerList(Spinner spinner, Object[] arr, Function<Object, String> translater) {
+        if (arr != null) {
             spinner.setVisibility(View.VISIBLE);
             List<String> newMetrixType = Arrays.stream(arr).map(items -> translater.apply(items)).collect(Collectors.toList());
-            SetSpinnerList(newMetrixType,spinner.getId());
-        }
-        else
-        {
+            SetSpinnerList(newMetrixType, spinner.getId());
+        } else {
             spinner.setVisibility(View.GONE);
         }
     }

@@ -1,4 +1,5 @@
 package com.example.justagram.fragment.Statistic;
+
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -31,8 +32,18 @@ import java.util.function.Consumer;
 
 public class StatisticData {
 
-    public StatisticData(String title,String metric,String period, EnumTimeFrame[] timeFrames,EnumBreakDown[] breakDowns,EnumMetricType[] metricTypes)
-    {
+    public String title;
+    public String metric;
+    public String period;
+    public EnumTimeFrame[] timeFrames;
+    public EnumBreakDown[] breakDowns;
+    public EnumMetricType[] metricTypes;
+    public Hashtable<String, Object> cache;
+    int timeFrameID;
+    int breakDownID;
+    int MetricTypeID;
+    boolean CanSendReq = true;
+    public StatisticData(String title, String metric, String period, EnumTimeFrame[] timeFrames, EnumBreakDown[] breakDowns, EnumMetricType[] metricTypes) {
         this.title = title;
         this.metric = metric;
         this.period = period;
@@ -40,26 +51,14 @@ public class StatisticData {
         this.breakDowns = breakDowns;
         this.metricTypes = metricTypes;
     }
-    public String title;
-    public String metric;
-    public String period;
-    public EnumTimeFrame[] timeFrames;
-    public EnumBreakDown[] breakDowns;
-    public EnumMetricType[] metricTypes;
-    public Hashtable<String,Object> cache;
-    int timeFrameID;
-    int breakDownID;
-    int MetricTypeID;
-    boolean CanSendReq  =true   ;
-    public void SendRequest(View ctx, int timeFrameID,int breakDownID, int MetricTypeID, long since, long until,boolean refresh
-        ,Consumer<Object> onFinish
-    )
-    {
+
+    public void SendRequest(View ctx, int timeFrameID, int breakDownID, int MetricTypeID, long since, long until, boolean refresh
+            , Consumer<Object> onFinish
+    ) {
         this.timeFrameID = timeFrameID;
         this.breakDownID = breakDownID;
         this.MetricTypeID = MetricTypeID;
-        if (CanSendReq )
-        {
+        if (CanSendReq) {
             CanSendReq = false;
             Thread t = new Thread(Utility.CreateRunnable((a) -> {
                 try {
@@ -70,11 +69,10 @@ public class StatisticData {
                 }
             }));
             t.start();
-        }
-        else
+        } else
             return;
 
-        String endpoint = "https://graph.instagram.com/v24.0/" + LoginActivity.userInfo.UserID  + "/insights";
+        String endpoint = "https://graph.instagram.com/v24.0/" + LoginActivity.userInfo.UserID + "/insights";
         var Params = "?metric=" + metric;
         if (timeFrames != null)
             Params += "&timeframe=" + timeFrames[timeFrameID];
@@ -86,19 +84,17 @@ public class StatisticData {
                 "&since=" + since + "&until=" + until +
                 "&access_token=" + LoginActivity.userInfo.GetAccessToken();
         Utility.SimpleGetRequest(endpoint + Params, (json) -> {
-            if ((int)json.get("request_code") > 299)
-            {
+            if ((int) json.get("request_code") > 299) {
                 ctx.post(Utility.CreateRunnable((a) ->
-                      Utility.showMessageBox("Fail to request for the statistic. Please check the log for more info",ctx.getContext() ))  );
-            }
-            else
-            {
+                        Utility.showMessageBox("Fail to request for the statistic. Please check the log for more info", ctx.getContext())));
+            } else {
                 cache = json;
                 onFinish.accept(null);
             }
         });
     }
-//{
+
+    //{
 //  "data": [
 //    {
 //      "name": "reach",
@@ -136,7 +132,7 @@ public class StatisticData {
 
                 ArrayList<Map<String, Object>> data = (ArrayList<Map<String, Object>>) cache.get("data");
                 if (data == null || data.isEmpty()) {
-                    DontHaveDataToShow(chart,totalValue);
+                    DontHaveDataToShow(chart, totalValue);
                     return;
                 }
 
@@ -153,7 +149,7 @@ public class StatisticData {
                 ArrayList<String> dimensionKeys = (ArrayList<String>) firstBreakdown.get("dimension_keys");
                 ArrayList<Map<String, Object>> results = (ArrayList<Map<String, Object>>) firstBreakdown.get("results");
                 if (results == null || results.isEmpty()) {
-                    DontHaveDataToShow(chart,totalValue);
+                    DontHaveDataToShow(chart, totalValue);
                     return;
                 }
 
@@ -186,7 +182,7 @@ public class StatisticData {
                 totalValue.setText(String.valueOf(totalSum));
                 AddInfoIntoInfoDisplay(ElementValueInfoDisplay, labels, valuesList, totalSum);
                 // set the text below the right bottom corner of this ,title not being show because we not set that yet
-                BarDataSet dataSet = new BarDataSet(entries,this.title);
+                BarDataSet dataSet = new BarDataSet(entries, this.title);
                 dataSet.setValueTextSize(10f);
 
                 BarData barData = new BarData(dataSet);
@@ -194,7 +190,6 @@ public class StatisticData {
 
                 chart.setData(barData);
                 chart.setDrawGridBackground(false);
-
 
 
                 XAxis xAxis = chart.getXAxis();
@@ -217,7 +212,7 @@ public class StatisticData {
         }
     }
 
-//{
+    //{
 //  "data": [
 //    {
 //      "name": "reach",
@@ -259,7 +254,7 @@ public class StatisticData {
                 // get the array data in the first req
                 ArrayList<Map<String, Object>> data = (ArrayList<Map<String, Object>>) cache.get("data");
                 if (data == null || data.isEmpty()) {
-                    DontHaveDataToShow(chart,totalValue);
+                    DontHaveDataToShow(chart, totalValue);
                     return;
                 }
                 // get the first element in data
@@ -267,7 +262,7 @@ public class StatisticData {
 
                 ArrayList<Map<String, Object>> values = (ArrayList<Map<String, Object>>) firstDataElement.get("values");
                 if (values == null || values.isEmpty()) {
-                    DontHaveDataToShow(chart,totalValue);
+                    DontHaveDataToShow(chart, totalValue);
                     return;
                 }
 
@@ -318,6 +313,7 @@ public class StatisticData {
             chart.post(() -> Utility.showMessageBox("Failed to parse and display chart data.", chart.getContext()));
         }
     }
+
     void AddInfoIntoInfoDisplay(LinearLayout container, ArrayList<String> labels, ArrayList<Number> values, float totalSum) {
         if (container == null || labels == null || values == null || labels.size() != values.size()) {
             return;
@@ -361,12 +357,12 @@ public class StatisticData {
             }
         });
     }
-    void DontHaveDataToShow(Chart chart,TextView totalValue)
-    {
+
+    void DontHaveDataToShow(Chart chart, TextView totalValue) {
         totalValue.setText("0");
         chart.invalidate();
         // neu khong co data thi hien thong bao
-        Utility.showMessageBox("No content to show",chart.getContext());
+        Utility.showMessageBox("No content to show", chart.getContext());
     }
 
 }
