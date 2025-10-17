@@ -21,6 +21,7 @@ import java.util.function.Consumer;
 import okhttp3.Request;
 
 public class Utility {
+    public static final String SERVER_URL = "https://imperialistic-argentina-naturally.ngrok-free.dev";
     public static void showMessageBox(String content, Context t) {
 
         // 1. Instantiate an AlertDialog.Builder
