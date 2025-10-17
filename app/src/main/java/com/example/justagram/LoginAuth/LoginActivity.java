@@ -10,14 +10,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.example.justagram.DashboardActivity;
-import com.example.justagram.HomeActivity;
-import com.example.justagram.fragment.IgPublisherFragment;
 import com.example.justagram.fragment.InstagramAccountFragment;
 import com.example.justagram.R;
 import com.example.justagram.etc.TommyDatCallBack;
@@ -35,10 +32,10 @@ import okhttp3.Response;
 public class LoginActivity extends AppCompatActivity {
 
     public static OkHttpClient client = new OkHttpClient();
-    public static String OurBackendServer = "https://catechistical-questingly-na.ngrok-free.dev";
+
 
     public static Gson gson = new Gson();
-    public final String InstagramLoginAuthLink = "https://www.instagram.com/oauth/authorize?force_reauth=true&client_id=1326733148350430&redirect_uri=https://catechistical-questingly-na.ngrok-free.dev/returnCode&response_type=code&scope=instagram_business_basic%2Cinstagram_business_manage_messages%2Cinstagram_business_manage_comments%2Cinstagram_business_content_publish%2Cinstagram_business_manage_insights";
+    public final String InstagramLoginAuthLink = "https://www.instagram.com/oauth/authorize?force_reauth=true&client_id=1326733148350430&redirect_uri=https://imperialistic-argentina-naturally.ngrok-free.dev/returnCode&response_type=code&scope=instagram_business_basic%2Cinstagram_business_manage_messages%2Cinstagram_business_manage_comments%2Cinstagram_business_content_publish%2Cinstagram_business_manage_insights";
     public static UserInfo userInfo;
     public final String UserFileName = "UserInfo.json";
 
@@ -116,7 +113,7 @@ public class LoginActivity extends AppCompatActivity {
         req.Add("client_secret","7eaeafa2ad6e548c65b0bc79ae2457d1");
         req.Add("grant_type","authorization_code");
         req.Add("code",Code);
-        req.Add("redirect_uri",OurBackendServer + "/returnCode");
+        req.Add("redirect_uri",Utility.SERVER_URL + "/returnCode");
         final String[] Stoken = new String[1];
 
         req.onResponeJson = hash ->
@@ -159,20 +156,6 @@ public class LoginActivity extends AppCompatActivity {
             Utility.Save(this,userInfo,UserFileName);
         };
         Utility.SimpleGetRequest(endpoint_code2Stoken,t);
-    }
-    void TestInstagramAccountFragment()
-    {
-        setContentView(R.layout.activity_home_page);
-        InstagramAccountFragment test = new InstagramAccountFragment();
-        FragmentTransaction t = getSupportFragmentManager().beginTransaction();
-        t.add(R.id.test_fragment,test).commit();
-    }
-    void TestInstagramPostFragment()
-    {
-        setContentView(R.layout.activity_home_page);
-        IgPublisherFragment test = new IgPublisherFragment();
-        FragmentTransaction t = getSupportFragmentManager().beginTransaction();
-        t.add(R.id.test_fragment,test).commit();
     }
 
     void btn_LoginAction()
