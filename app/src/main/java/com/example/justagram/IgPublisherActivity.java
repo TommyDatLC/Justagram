@@ -52,7 +52,7 @@ public class IgPublisherActivity extends AppCompatActivity {
     private static final int REQUEST_PICK_MEDIA = 4001;
     private static final int MAX_IMAGES = 10;
 
-    private static final String SERVER_URL = "https://catechistical-questingly-na.ngrok-free.dev";
+    private static final String SERVER_URL = "https://imperialistic-argentina-naturally.ngrok-free.dev";
     private static final String ACCESS_TOKEN = "IGAAS2qCIE595BZAFJ0SmVNaHBUbFFCM0NqOFBOYkdNOHhBdC1PR1hNTHV6ZAEtLZAm5RVTNZAa3lweFdqM0xxNVcwY2xLVlBadFdDUm54QkFBd0Jvdl8zRkJEMFFBNEtMZAkhyX2hfQUtIZAzNnVGdSa2pVYmtoX1I2bkZAxOFZAuOGp6VQZDZD";
     private static final String IG_USER_ID = "17841474853201686";
     private static final String API_VERSION = "v23.0";
@@ -119,10 +119,12 @@ public class IgPublisherActivity extends AppCompatActivity {
             DateTime.OpenDateSelector(this, dateTime, () -> {
                 // Chọn giờ
                 DateTime.OpenTimeSelector(this, dateTime, () -> {
+                    long unixTime = dateTime.ConvertToUnixTime();
                     String readable = dateTime.GetDateString() + " " + dateTime.GetTimeString();
 
                     Toast.makeText(this, "Post scheduled for: " + readable, Toast.LENGTH_SHORT).show();
                     addScheduledJob("Post", readable);
+                    scheduleJob(unixTime, false);
                 });
             });
         });
@@ -137,6 +139,7 @@ public class IgPublisherActivity extends AppCompatActivity {
 
                     Toast.makeText(this, "Reel scheduled for: " + readable, Toast.LENGTH_SHORT).show();
                     addScheduledJob("Reel", readable);
+                    scheduleJob(unixTime, true);
                 });
             });
         });
@@ -241,7 +244,8 @@ public class IgPublisherActivity extends AppCompatActivity {
                  * 
                  * 
                  */
-                runOnUiThread(() -> showMsg("Successfully uploaded video to server"));
+                runOnUiThread(() -> Toast.makeText(this, "Successfully uploaded to server", Toast.LENGTH_SHORT).show()
+);
                 publishReelToInstagram(IG_USER_ID, videoUrl, caption, ACCESS_TOKEN, (url, error) -> {
                     runOnUiThread(() -> {
                         if (error != null) {
@@ -403,10 +407,10 @@ public class IgPublisherActivity extends AppCompatActivity {
     public void publishReelToInstagram(String igUserId, String videoUrl, String caption, String accessToken, UploadVideoCallback callback) {
         OkHttpClient client = new OkHttpClient();
 
-        // URL
+        // URL tạo container
         String createUrl = String.format("https://graph.instagram.com/v23.0/%s/media", igUserId);
 
-        // TAO BODY 
+        // TAO BODY
         RequestBody createBody = new FormBody.Builder(Charset.forName("UTF-8"))
                 .add("media_type", "REELS")
                 .add("video_url", videoUrl)
@@ -415,31 +419,26 @@ public class IgPublisherActivity extends AppCompatActivity {
                 .add("access_token", accessToken)
                 .build();
 
-        // hàm tổng thể để gửi request
+        // Hàm tổng thể để gửi request
         Request createRequest = new Request.Builder()
                 .url(createUrl)
                 .addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
                 .post(createBody)
                 .build();
 
-
         // Log để debug
         Log.e("IG_DEBUG", "Create URL: " + createUrl);
-
-        // lấy 20 ký tự đầu của access token
         Log.e("IG_DEBUG", "AccessToken (first 20): " + accessToken.substring(0, Math.min(20, accessToken.length())) + "...");
         Log.e("IG_DEBUG", "Video URL: " + videoUrl);
         Log.e("IG_DEBUG", "Caption: " + caption);
 
-
-
+        // Gửi request tạo container
         client.newCall(createRequest).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 callback.onDone(null, "Create failed: " + e.getMessage());
             }
 
-            // nếu phản hồi thành công
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseData = response.body().string();
@@ -449,7 +448,7 @@ public class IgPublisherActivity extends AppCompatActivity {
                     callback.onDone(null, "Create error: " + response.code() + " - " + responseData);
                     return;
                 }
-                // nếu phản hồi không có id -> lỗi
+
                 try {
                     JSONObject json = new JSONObject(responseData);
                     if (!json.has("id")) {
@@ -457,59 +456,130 @@ public class IgPublisherActivity extends AppCompatActivity {
                         return;
                     }
 
-
-                    // thành công lấy id -> log ra id
                     String creationId = json.getString("id");
                     Log.e("IG_DEBUG", "Creation ID: " + creationId);
-
-                    // đợi 20s trước khi post để instagram xử lí
-                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
-
-                        // link publish
-                        String publishUrl = String.format("https://graph.instagram.com/v23.0/%s/media_publish", igUserId);
-
-                        /**
-                         * @parameter creation_id: id sau khi tạo thành công container
-                         * @parameter access_token: very self explainatory
-                         */
-                        RequestBody publishBody = new FormBody.Builder(Charset.forName("UTF-8"))
-                                .add("creation_id", creationId)
-                                .add("access_token", accessToken)
-                                .build();
-
-                        Request publishRequest = new Request.Builder()
-                                .url(publishUrl)
-                                .addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
-                                .post(publishBody)
-                                .build();
-                        // log để debug
-                        Log.e("IG_DEBUG", "Publish URL: " + publishUrl);
-
-                        client.newCall(publishRequest).enqueue(new Callback() {
-                            @Override
-                            public void onFailure(Call call, IOException e) {
-                                callback.onDone(null, "Publish failed: " + e.getMessage());
-                            }
-
-
-                            // nếu phản hồi thành công
-                            @Override
-                            public void onResponse(Call call, Response response) throws IOException {
-                                String publishResponse = response.body().string();
-                                Log.e("IG_PUBLISH_RESPONSE", publishResponse);
-
-                                if (!response.isSuccessful()) {
-                                    callback.onDone(null, "Publish error: " + publishResponse);
-                                } else {
-                                    callback.onDone(publishResponse, null);
-                                }
-                            }
-                        });
-
-                    }, 20000); // delay 20s
+                    // hàm check xem container sẵn sáng publish chưa
+                    checkContainerStatus(client, creationId, igUserId, accessToken, 0, callback);
 
                 } catch (JSONException e) {
                     callback.onDone(null, "Invalid JSON: " + e.getMessage());
+                }
+            }
+        });
+    }
+    private void checkContainerStatus(OkHttpClient client, String creationId, String igUserId,
+                                      String accessToken, int attemptCount, UploadVideoCallback callback) {
+
+        // Giới hạn số lần check (20 lần x 5s = 1p40giây tối đa cho video)
+        if (attemptCount >= 20) {
+            callback.onDone(null, "Timeout: Container not ready after 1 minute 40 seconds");
+            return;
+        }
+
+        // GET request check status của container
+        String statusUrl = String.format(
+                "https://graph.instagram.com/v23.0/%s?fields=status_code&access_token=%s",
+                creationId,
+                accessToken
+        );
+
+        Request statusRequest = new Request.Builder()
+                .url(statusUrl)
+                .get()
+                .build();
+
+        Log.e("IG_DEBUG", "Checking status (attempt " + (attemptCount + 1) + ")...");
+
+        client.newCall(statusRequest).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e("IG_ERROR", "Status check failed: " + e.getMessage());
+                callback.onDone(null, "Status check failed: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String statusResponse = response.body().string();
+                Log.e("IG_STATUS", "Response: " + statusResponse);
+
+                try {
+                    JSONObject statusJson = new JSONObject(statusResponse);
+                    String statusCode = statusJson.optString("status_code", "IN_PROGRESS");
+
+                    Log.e("IG_DEBUG", "Status code: " + statusCode);
+
+                    switch (statusCode) {
+                        case "FINISHED":
+                            // Container đã sẵn sàng -> Tiến hành publish
+                            Log.e("IG_DEBUG", "Container ready! Publishing now...");
+                            publishMedia(client, creationId, igUserId, accessToken, callback);
+                            break;
+
+                        case "ERROR":
+                            // lỗi
+                            String errorMessage = statusJson.optString("error_message", "Unknown error");
+                            Log.e("IG_ERROR", "Container error: " + errorMessage);
+                            callback.onDone(null, "Container processing failed: " + errorMessage);
+                            break;
+
+                        case "IN_PROGRESS":
+                        case "PUBLISHED":
+                        default:
+                            // Vẫn đang xử lý -> Đợi 5 giây rồi check lại
+                            Log.e("IG_DEBUG", "Still processing, checking again in 5s...");
+                            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                                checkContainerStatus(client, creationId, igUserId, accessToken,
+                                        attemptCount + 1, callback);
+                            }, 5000);
+                            break;
+                    }
+
+                } catch (JSONException e) {
+                    Log.e("IG_ERROR", "JSON parse error: " + e.getMessage());
+                    callback.onDone(null, "Status parse error: " + e.getMessage());
+                }
+            }
+        });
+    }
+    private void publishMedia(OkHttpClient client, String creationId, String igUserId,
+                              String accessToken, UploadVideoCallback callback) {
+
+        String publishUrl = String.format(
+                "https://graph.instagram.com/v23.0/%s/media_publish",
+                igUserId
+        );
+
+        RequestBody publishBody = new FormBody.Builder(Charset.forName("UTF-8"))
+                .add("creation_id", creationId)
+                .add("access_token", accessToken)
+                .build();
+
+        Request publishRequest = new Request.Builder()
+                .url(publishUrl)
+                .addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
+                .post(publishBody)
+                .build();
+
+        Log.e("IG_DEBUG", "Publish URL: " + publishUrl);
+
+        client.newCall(publishRequest).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e("IG_ERROR", "Publish failed: " + e.getMessage());
+                callback.onDone(null, "Publish failed: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String publishResponse = response.body().string();
+                Log.e("IG_PUBLISH_RESPONSE", publishResponse);
+
+                if (!response.isSuccessful()) {
+                    Log.e("IG_ERROR", "Publish error: " + publishResponse);
+                    callback.onDone(null, "Publish error: " + publishResponse);
+                } else {
+                    Log.e("IG_SUCCESS", "Published successfully!");
+                    callback.onDone(publishResponse, null);
                 }
             }
         });
@@ -645,6 +715,20 @@ public class IgPublisherActivity extends AppCompatActivity {
         jobAdapter.notifyDataSetChanged();
 
     }
+    private void scheduleJob(long unixTime, boolean asReel) {
+    long delay = unixTime * 1000 - System.currentTimeMillis();
+    if (delay < 0) {
+        Toast.makeText(this, "Selected time is in the past!", Toast.LENGTH_SHORT).show();
+        return;
+    }
+
+    new android.os.Handler().postDelayed(() -> {
+        publishNow(asReel);
+        runOnUiThread(() ->
+            Toast.makeText(this, (asReel ? "Reel" : "Post") + " will be published now!", Toast.LENGTH_SHORT).show()
+        );
+    }, delay);
+}
     private void showMsg(String s) {
         try { Utility.showMessageBox(s, this); } catch (Exception e) { Toast.makeText(this, s, Toast.LENGTH_LONG).show(); }
     }
