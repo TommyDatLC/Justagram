@@ -1,5 +1,6 @@
 package com.example.justagram;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,11 +11,18 @@ import androidx.fragment.app.FragmentTransaction;
 
 
 import com.example.justagram.fragment.Statistic.StatisticFragment;
-public class HomeActivity extends AppCompatActivity
-{
+import com.example.justagram.IgPublisherActivity;
+public class HomeActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_home_page);
+        openIgPublisherActivity();
+    }
+
+    private void openIgPublisherActivity() {
+        Intent intent = new Intent(HomeActivity.this, IgPublisherActivity.class);
+        startActivity(intent);
         setContentView(R.layout.activity_login) ;// gán layout vào activity
         StatisticFragment test = new StatisticFragment();
         //ReelPostFragment test = new ReelPostFragment();
@@ -27,6 +35,4 @@ public class HomeActivity extends AppCompatActivity
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.add(R.id.test_fragment,test).commit();
     }
-
 }
-
