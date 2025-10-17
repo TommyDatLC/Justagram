@@ -73,7 +73,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:fontFamily="@font/sf_text_bold"
-                    android:text="Publish Reel Now" />
+                    android:text="Publish Reel Now"
+                    android:background="@drawable/bg_instagram_gradient"
+                    android:textColor="@color/white"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"/>
 
                 <Button
                     android:id="@+id/btnSchedule_reel"
@@ -136,7 +141,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:fontFamily="@font/sf_text_bold"
-                    android:text="Publish Post Now" />
+                    android:text="Publish Post Now"
+                    android:background="@drawable/bg_instagram_gradient"
+                    android:textColor="@color/white"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"/>
 
                 <Button
                     android:id="@+id/btnSchedule_post"

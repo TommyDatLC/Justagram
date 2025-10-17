@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.example.justagram.DashboardActivity;
-import com.example.justagram.HomeActivity;
 import com.example.justagram.fragment.IgPublisherFragment;
 import com.example.justagram.fragment.InstagramAccountFragment;
 import com.example.justagram.R;
@@ -159,20 +158,6 @@ public class LoginActivity extends AppCompatActivity {
             Utility.Save(this,userInfo,UserFileName);
         };
         Utility.SimpleGetRequest(endpoint_code2Stoken,t);
-    }
-    void TestInstagramAccountFragment()
-    {
-        setContentView(R.layout.activity_home_page);
-        InstagramAccountFragment test = new InstagramAccountFragment();
-        FragmentTransaction t = getSupportFragmentManager().beginTransaction();
-        t.add(R.id.test_fragment,test).commit();
-    }
-    void TestInstagramPostFragment()
-    {
-        setContentView(R.layout.activity_home_page);
-        IgPublisherFragment test = new IgPublisherFragment();
-        FragmentTransaction t = getSupportFragmentManager().beginTransaction();
-        t.add(R.id.test_fragment,test).commit();
     }
 
     void btn_LoginAction()

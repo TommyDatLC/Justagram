@@ -3,9 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/login_root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-
-    >
+    android:layout_height="match_parent">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -17,7 +15,9 @@
             android:layout_height="750dp"
             android:alpha="0.8"
             android:scaleType="centerCrop"
-            android:src="@mipmap/glow1"></ImageView>
+            android:src="@mipmap/glow1">
+
+        </ImageView>
 
         <ImageView
             android:id="@+id/glow2"
@@ -25,22 +25,10 @@
             android:layout_height="750dp"
             android:alpha="0.8"
             android:scaleType="centerCrop"
-            android:src="@mipmap/glow2"></ImageView>
+            android:src="@mipmap/glow2">
+        </ImageView>
+
     </FrameLayout>
-    <!--    <TextView-->
-    <!--        android:id="@+id/header"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_centerHorizontal="true"-->
-    <!--        android:gravity="center"-->
-    <!--        android:text="English (United States)"-->
-    <!--        android:fontFamily="@font/sf_pro_rounded_thin"-->
-    <!--        android:drawableEnd="@drawable/down_arrow_icon"-->
-    <!--        android:drawableTint="#9E9E9E"-->
-    <!--        android:textColor="#9E9E9E"-->
-    <!--        android:textSize="18sp"-->
-    <!--        android:textStyle="bold"-->
-    <!--        android:layout_marginTop="40dp"/>-->
 
     <ImageView
         android:id="@+id/justagram"
@@ -81,21 +69,21 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center"
                 android:orientation="horizontal"
+                android:gravity="center"
+                android:background="@drawable/bg_instagram_gradient"
                 android:padding="8dp">
 
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:layout_marginEnd="0dp"
+                    android:layout_marginEnd="8dp"
                     android:src="@drawable/instagram_logo" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/sf_text_bold"
-                    android:paddingBottom="4dp"
                     android:text="Continue with Instagram"
                     android:textColor="@android:color/white"
                     android:textSize="16sp"
@@ -108,32 +96,21 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center_vertical"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:gravity="center"
             android:orientation="horizontal"
             android:paddingLeft="24dp"
             android:paddingRight="24dp">
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="#E7E7E7" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_marginEnd="12dp"
                 android:text="OR"
-                android:textColor="#9E9E9E"
-                android:textSize="14sp" />
+                android:textColor="#BDBDBD"
+                android:textSize="16sp"
+                android:layout_gravity="center" />
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="#E7E7E7" />
 
         </LinearLayout>
 
@@ -156,12 +133,15 @@
                 android:layout_width="300dp"
                 android:layout_height="50dp"
                 android:background="@null"
-                android:fontFamily="@font/sf_pro_rounded_thin"
+                android:fontFamily="@font/sf_text_bold"
                 android:hint="Token"
-                android:padding="12dp"
-                android:textColor="@color/hint_text"
-                android:textColorHint="@color/hint_gray"
-                android:textSize="14dp" />
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:gravity="start|center_vertical"
+                android:textColor="#212121"
+                android:textColorHint="#9E9E9E"
+                android:textSize="17sp"
+                android:inputType="text" />
 
         </androidx.cardview.widget.CardView>
 
@@ -240,7 +220,7 @@
                     android:fontFamily="@font/sf_text_bold"
                     android:text="Log in"
                     android:textColor="@android:color/white"
-                    android:textSize="16sp"
+                    android:textSize="17sp"
 
                     android:textStyle="bold">
 
