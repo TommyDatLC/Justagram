@@ -751,7 +751,7 @@ public class IgPublisherActivity extends AppCompatActivity {
             Uri uri = selectedUris.get(position);
             String type = getContentResolver().getType(uri);
 
-            // Nếu là video, lấy frame đầu tiên
+            // Nếu là video, lấy frame đầu tiên cho thấy
             if (type != null && type.startsWith("video/")) {
                 try {
                     android.media.MediaMetadataRetriever retriever = new android.media.MediaMetadataRetriever();
