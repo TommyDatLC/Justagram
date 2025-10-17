@@ -1,6 +1,5 @@
 package com.example.justagram.fragment;
 
-
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,11 +23,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.example.justagram.Helper.ScrollAwareFragment;
 import com.example.justagram.InstagramService;
 import com.example.justagram.R;
 import com.example.justagram.Reel_video;
 
-public class ReelPostFragment extends Fragment {
+public class ReelPostFragment extends Fragment implements ScrollAwareFragment {
+
+    public static ReelPostFragment newInstance() {
+        return new ReelPostFragment();
+    }
+
+    private ScrollAwareFragment.OnScrollChangeListener scrollChangeListener;
     private static final String TAG = "ReelPostFragment";
     private RecyclerView recyclerView;
     private ReelVideoAdapter adapter;
@@ -36,17 +42,30 @@ public class ReelPostFragment extends Fragment {
 
     private static final String ACCESS_TOKEN = "IGAAS2qCIE595BZAFJ0SmVNaHBUbFFCM0NqOFBOYkdNOHhBdC1PR1hNTHV6ZAEtLZAm5RVTNZAa3lweFdqM0xxNVcwY2xLVlBadFdDUm54QkFBd0Jvdl8zRkJEMFFBNEtMZAkhyX2hfQUtIZAzNnVGdSa2pVYmtoX1I2bkZAxOFZAuOGp6VQZDZD";
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_reel_post, container, false);
+        RecyclerView recyclerView = view.findViewById(R.id.reelsRecyclerView);
 
         initViews(view);
         setupRecyclerView();
         loadReelsFromInstagram();
 
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (scrollChangeListener == null) return;
+
+                if (dy > 10) {
+                    scrollChangeListener.onScrollDown();
+                } else if (dy < -10) {
+                    scrollChangeListener.onScrollUp();
+                }
+            }
+        });
         return view;
     }
 
@@ -125,6 +144,18 @@ public class ReelPostFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (scrollChangeListener != null) {
+            scrollChangeListener.onScrollUp();
+        }
+    }
+    @Override
+    public void setOnScrollChangeListener(OnScrollChangeListener listener) {
+        this.scrollChangeListener = listener;
+    }
+
     // Inner Adapter Class
     private static class ReelVideoAdapter extends RecyclerView.Adapter<ReelVideoAdapter.ReelViewHolder> {
         private final android.content.Context context;
@@ -151,7 +182,7 @@ public class ReelPostFragment extends Fragment {
             holder.reelTitle.setText(reel.getTitle());
             holder.reelDate.setText(reel.getDate());
             holder.reelLikes.setText(reel.getFormattedLikes());
-            holder.reelComments.setText( reel.getFormattedComments());
+            holder.reelComments.setText(reel.getFormattedComments());
             holder.reelViews.setText(reel.getFormattedViews());
             holder.reelDescription.setText(reel.getDescription());
 

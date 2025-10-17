@@ -40,7 +40,7 @@ import okhttp3.Response;
  * - Thêm permission INTERNET vào AndroidManifest.xml
  * - Thêm dependencies: okhttp, gson, glide, androidx.cardview
  */
-public class InstagramAccountFragment extends Fragment {
+public class InstagramAccountFragment extends Fragment implements ScrollAwareFragment{
 
     // TODO: điền vào đây
     // IGAAS2qCIE595BZAFJ0SmVNaHBUbFFCM0NqOFBOYkdNOHhBdC1PR1hNTHV6ZAEtLZAm5RVTNZAa3lweFdqM0xxNVcwY2xLVlBadFdDUm54QkFBd0Jvdl8zRkJEMFFBNEtMZAkhyX2hfQUtIZAzNnVGdSa2pVYmtoX1I2bkZAxOFZAuOGp6VQZDZD
@@ -227,5 +227,12 @@ public class InstagramAccountFragment extends Fragment {
 
         @SerializedName("media_count")
         Integer mediaCount;
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (scrollChangeListener != null) {
+            scrollChangeListener.onScrollUp();
+        }
     }
 }

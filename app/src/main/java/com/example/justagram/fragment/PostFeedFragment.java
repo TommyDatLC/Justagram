@@ -7,15 +7,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.justagram.Helper.ScrollAwareFragment;
 import com.example.justagram.R;
 import com.example.justagram.PostFeedActivity;
 import com.example.justagram.fragment.PostFeed.PostAdapter;
@@ -35,8 +38,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class PostFeedFragment extends Fragment {
-
+public class PostFeedFragment extends Fragment implements ScrollAwareFragment{
+    public static PostFeedFragment newInstance() {
+        return new PostFeedFragment();
+    }
+    private ScrollAwareFragment.OnScrollChangeListener scrollChangeListener;
     private TextView totalStats;
     private PostAdapter adapter;
     private List<PostItem> postList;
@@ -67,6 +73,22 @@ public class PostFeedFragment extends Fragment {
         // 🆕 Gọi API để lấy data thật
         fetchInstagramPosts();
 
+        recyclerView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            private int lastY = 0;
+
+            @Override
+            public void onScrollChanged() {
+                int currentY = recyclerView.getScrollY();
+                if (scrollChangeListener == null) return;
+
+                if (currentY > lastY + 10) {
+                    scrollChangeListener.onScrollDown();
+                } else if (currentY < lastY - 10) {
+                    scrollChangeListener.onScrollUp();
+                }
+                lastY = currentY;
+            }
+        });
         return view;
     }
 
@@ -146,5 +168,17 @@ public class PostFeedFragment extends Fragment {
         int totalLikes = adapter.getTotalLikes();
         int totalComments = adapter.getTotalComments();
         totalStats.setText("♥ " + totalLikes + "  💬 " + totalComments);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (scrollChangeListener != null) {
+            scrollChangeListener.onScrollUp();
+        }
+    }
+    @Override
+    public void setOnScrollChangeListener(ScrollAwareFragment.OnScrollChangeListener listener) {
+        this.scrollChangeListener = listener;
     }
 }

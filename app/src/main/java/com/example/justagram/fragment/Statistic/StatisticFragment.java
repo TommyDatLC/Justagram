@@ -502,6 +502,14 @@ public class StatisticFragment extends Fragment implements ScrollAwareFragment {
         }
     }
     @Override
+    public void onResume() {
+        super.onResume();
+        if (scrollChangeListener != null) {
+            scrollChangeListener.onScrollUp();
+        }
+    }
+
+    @Override
     public void setOnScrollChangeListener(ScrollAwareFragment.OnScrollChangeListener listener) {
         this.scrollChangeListener = listener;
     }
