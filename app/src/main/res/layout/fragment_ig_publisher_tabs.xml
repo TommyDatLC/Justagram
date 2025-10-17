@@ -170,16 +170,11 @@
                     android:text="Scheduled Jobs"
                     android:textSize="16sp" />
 
-                <ListView
-                    android:id="@+id/scheduled_jobs_listview"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvScheduled"
                     android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:divider="@android:color/darker_gray"
-                    android:dividerHeight="1dp"
-                    android:padding="8dp"
-
-                    />
-
+                    android:layout_height="200dp"
+                    android:layout_marginTop="8dp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 

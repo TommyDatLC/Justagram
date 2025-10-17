@@ -1,86 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:layout_marginBottom="8dp">
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        app:cardCornerRadius="10dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_height="250dp"
+        >
+        <!-- IMAGE OR VIDEO PREVIEW -->
+        <ImageView
+            android:id="@+id/postImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:background="#E0E0E0" />
 
-    <!-- Ảnh post -->
-    <ImageView
-        android:id="@+id/postImage"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:scaleType="centerCrop"
-        android:src="@mipmap/picture_1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="1:2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <androidx.media3.ui.PlayerView
+            android:id="@+id/postVideo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            app:use_controller="false" />
 
-    <!-- 🆕 ExoPlayer View thay cho VideoView -->
-    <com.google.android.exoplayer2.ui.PlayerView
-        android:id="@+id/postVideo"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="1:2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:use_controller="false" />
-
-    <!-- Text hiển thị tim ❤️ -->
-    <TextView
-        android:id="@+id/likeCount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"
-        android:padding="6dp"
-        android:text="♥ 123"
-        android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <!-- Text hiển thị bình luận 💬 -->
-    <TextView
-        android:id="@+id/commentCount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:padding="6dp"
-        android:text="💬 42"
-        android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- Overlay mờ khi click -->
-    <FrameLayout
-        android:id="@+id/overlay"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="#80000000"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <!-- Tim ở giữa khi click -->
-        <TextView
-            android:id="@+id/centerHeart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="#FFFFFF"
-            android:textSize="48sp"
+        <!-- OVERLAY SELECTION -->
+        <FrameLayout
+            android:id="@+id/overlay"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:background="#88000000"
             android:visibility="gone" />
-    </FrameLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- HEART ICON IN CENTER -->
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            app:contentPadding="5dp"
+
+            app:cardCornerRadius="0dp"
+            app:cardBackgroundColor="#DDFFFFFF"
+            app:cardElevation="8dp"
+            android:gravity="center_vertical"
+            android:layout_gravity="bottom"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginEnd="6dp"
+                    android:src="@mipmap/ic_heart"
+                    android:backgroundTint="#FF000000"
+                    android:layout_gravity="center"
+                    />
+
+                <TextView
+                    android:id="@+id/likeCount"
+                    android:fontFamily="@font/sf_pro_rounded_thin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="806"
+
+                    android:textSize="13sp"
+                    android:layout_marginRight="20px"
+                    />
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginEnd="6dp"
+                    android:src="@mipmap/ic_comment"
+                    android:backgroundTint="#FFFFFFFF"
+                    android:layout_gravity="center"
+                    />
+
+                <TextView
+                    android:id="@+id/commentCount"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="806"
+                    android:fontFamily="@font/sf_pro_rounded_thin"
+
+                    android:backgroundTint="#FFFFFFFF"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+        <!-- FOOTER BAR -->
+    </androidx.cardview.widget.CardView>
+
+
+
+</FrameLayout>

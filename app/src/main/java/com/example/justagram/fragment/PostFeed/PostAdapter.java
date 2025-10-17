@@ -1,11 +1,13 @@
 package com.example.justagram.fragment.PostFeed;
+
+import com.example.justagram.R;
 // if u need to change something, here r the related files
 // postItem.java
 // layout : items_post_feed, fragment_post_feed, activity_main, activity_post_detail
-
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +19,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.justagram.R;
-import com.google.android.exoplayer2.ui.PlayerView;
+import com.example.justagram.fragment.Statistic.PostItem;
+
+import androidx.media3.ui.PlayerView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +32,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     private final List<PostItem> postList;
     private final String accessToken;
     private OnSelectionChangedListener selectionListener;
+
+    public interface OnSelectionChangedListener {
+        void onSelectionChanged();
+    }
 
     public PostAdapter(Context context, List<PostItem> postList, String accessToken) {
         this.context = context;
@@ -43,7 +50,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     @NonNull
     @Override
     public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.items_post_feed, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_post_feed, parent, false);
         return new PostViewHolder(view);
     }
 
@@ -51,15 +58,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
         PostItem post = postList.get(position);
 
-        holder.likeCount.setText("♥ " + post.getLikeCount());
-        holder.commentCount.setText("💬 " + post.getCommentCount());
+        holder.likeCount.setText( Integer.toString(post.getLikeCount()));
+        holder.commentCount.setText(Integer.toString(post.getCommentCount()));
 
         String mediaUrl = post.getMediaUrl();
         String mediaType = post.getMediaType();
 
         // Hiển thị overlay nếu đã chọn
         holder.overlay.setVisibility(post.isSelected() ? View.VISIBLE : View.GONE);
-        holder.centerHeart.setVisibility(post.isSelected() ? View.VISIBLE : View.GONE);
+
 
         if (mediaUrl == null) return;
 
@@ -148,14 +155,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         return total;
     }
 
-    public interface OnSelectionChangedListener {
-        void onSelectionChanged();
-    }
-
     public static class PostViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
         PlayerView playerView;
-        TextView likeCount, commentCount, centerHeart;
+        TextView likeCount, commentCount;
         FrameLayout overlay;
 
         public PostViewHolder(@NonNull View itemView) {
@@ -165,7 +168,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             likeCount = itemView.findViewById(R.id.likeCount);
             commentCount = itemView.findViewById(R.id.commentCount);
             overlay = itemView.findViewById(R.id.overlay);
-            centerHeart = itemView.findViewById(R.id.centerHeart);
+
         }
     }
 }

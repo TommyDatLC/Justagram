@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:elevation="4dp"
+    app:cardCornerRadius="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:orientation="vertical">
+
+        <!-- Thumbnail video -->
+        <androidx.media3.ui.PlayerView
+            android:id="@+id/reelPlayerView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="#E0E0E0"
+            app:resize_mode="zoom"
+            app:use_controller="true" />
+
+        <!-- Phần thông tin dưới thumbnail -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <!-- Tiêu đề và ngày -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/reelTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.7"
+                    android:fontFamily="@font/sf_text_bold"
+                    android:text="Video Title Here"
+                    android:textColor="#000000"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/reelDate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.3"
+                    android:gravity="end"
+                    android:text="Aug 8, 2023"
+                    android:fontFamily="@font/sf_pro_rounded_thin"
+                    android:textColor="#666666"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <!-- Like - Comment - View -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
+
+<!--                <TextView-->
+<!--                    android:id="@+id/reelLikes"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="♥ 123"-->
+<!--                    android:layout_marginEnd="12dp"-->
+<!--                    android:textColor="#E91E63"-->
+<!--                    android:textSize="14sp" />-->
+<!--                -->
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_gravity="center"
+                    android:src="@mipmap/ic_heart"
+                    android:backgroundTint="#FFFFFFFF"
+                    />
+                <TextView
+                    android:id="@+id/reelLikes"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/sf_pro_rounded_thin"
+
+                    android:text="806"
+                    android:textSize="13sp"
+                    android:layout_marginRight="20px"
+                    />
+
+
+
+<!--                <TextView-->
+<!--                    android:id="@+id/reelComments"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="💬 42"-->
+<!--                    android:layout_marginEnd="12dp"-->
+<!--                    android:textColor="#2196F3"-->
+<!--                    android:textSize="14sp" />-->
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_gravity="center"
+                    android:src="@mipmap/ic_comment"
+                    android:backgroundTint="#FFFFFFFF"
+                    />
+                <TextView
+                    android:id="@+id/reelComments"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="806"
+                    android:fontFamily="@font/sf_pro_rounded_thin"
+                    android:textSize="13sp"
+                    android:layout_marginRight="20px"
+                    />
+
+
+
+
+<!--                <TextView-->
+<!--                    android:id="@+id/reelViews"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="▶ 46.5K"-->
+<!--                    android:textColor="#4CAF50"-->
+<!--                    android:textSize="14sp" />-->
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginEnd="6dp"
+                    android:src="@mipmap/ic_play"
+                    android:layout_gravity="center"
+                    android:backgroundTint="#FFFFFFFF"
+                    />
+                <TextView
+                    android:id="@+id/reelViews"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="806"
+                    android:fontFamily="@font/sf_pro_rounded_thin"
+                    android:textSize="13sp"
+                    android:layout_marginRight="20px"
+                    />
+            </LinearLayout>
+
+            <!-- Mô tả ngắn -->
+            <TextView
+                android:id="@+id/reelDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Description here..."
+                android:fontFamily="@font/sf_pro_rounded_thin"
+                android:layout_marginTop="4dp"
+                android:textColor="#555555"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textSize="13sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

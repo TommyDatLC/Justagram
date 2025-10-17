@@ -10,8 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.justagram.fragment.PostFeed.PostAdapter;
-import com.example.justagram.fragment.PostFeed.PostItem;
+import com.example.justagram.fragment.Statistic.PostItem;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -150,4 +149,3 @@ public class Activity extends AppCompatActivity {
         totalStats.setText("♥ " + totalLikes + "  💬 " + totalComments);
     }
 }
-

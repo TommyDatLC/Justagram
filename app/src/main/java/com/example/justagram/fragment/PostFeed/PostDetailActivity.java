@@ -2,6 +2,7 @@ package com.example.justagram.fragment.PostFeed;
 // if u need to change something, here r the related files
 // postItem.java
 // layout : items_post_feed, fragment_post_feed, activity_main, activity_post_detail
+import static android.content.Intent.getIntent;
 
 import android.os.Bundle;
 import android.view.View;
@@ -9,12 +10,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.ui.PlayerView;
 
 import com.bumptech.glide.Glide;
 import com.example.justagram.R;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.ui.PlayerView;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.common.MediaItem;
+import androidx.media3.ui.PlayerView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

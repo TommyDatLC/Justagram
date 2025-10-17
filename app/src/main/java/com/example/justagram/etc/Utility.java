@@ -51,7 +51,6 @@ public class Utility {
 
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(URL));
         ctx.startActivity(browserIntent);
-
     }
 
     public static void SimpleGetRequest(String URL, TommyDatCallBack callback) {
