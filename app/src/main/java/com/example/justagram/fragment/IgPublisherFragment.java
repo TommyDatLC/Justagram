@@ -92,10 +92,6 @@ public class IgPublisherFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup parent, Bundle saved) {
         View v = inflater.inflate(R.layout.fragment_ig_publisher_tabs, parent, false);
 
-        tabLayout = v.findViewById(R.id.tabLayout);
-        tabLayout.addTab(tabLayout.newTab().setText("Reel"));
-        tabLayout.addTab(tabLayout.newTab().setText("Post"));
-
         // Reel views
         btnPickMedia_reel = v.findViewById(R.id.btnPickMedia_reel);
         btnPublishNow_reel = v.findViewById(R.id.btnPublishNow_reel);

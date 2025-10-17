@@ -25,8 +25,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.tabs.TabLayout;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -55,7 +53,6 @@ public class IgPublisherActivity extends AppCompatActivity {
     private static final String IG_USER_ID = "17841474853201686";
     private static final String API_VERSION = "v23.0";
 
-    private TabLayout tabLayout;
     private Button btnPickMedia_reel, btnPublishNow_reel;
     private Button btnPickMedia_post, btnPublishNow_post;
     private Button btnSchedule_reel, btnSchedule_post;
@@ -74,10 +71,6 @@ public class IgPublisherActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_ig_publisher_tabs);
 
-        tabLayout = findViewById(R.id.tabLayout);
-        tabLayout.addTab(tabLayout.newTab().setText("Reel"));
-        tabLayout.addTab(tabLayout.newTab().setText("Post"));
-
         btnPickMedia_reel = findViewById(R.id.btnPickMedia_reel);
         btnPublishNow_reel = findViewById(R.id.btnPublishNow_reel);
         etCaption_reel = findViewById(R.id.etCaption_reel);
@@ -87,8 +80,6 @@ public class IgPublisherActivity extends AppCompatActivity {
         btnPublishNow_post = findViewById(R.id.btnPublishNow_post);
         etCaption_post = findViewById(R.id.etCaption_post);
         rvPreview_post = findViewById(R.id.rvPreview_post);
-        btnSchedule_reel = findViewById(R.id.btnSchedule_reel);
-        btnSchedule_post = findViewById(R.id.btnSchedule_post);
 
         rvPreview_reel.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         rvPreview_post.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));

@@ -5,32 +5,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F2F5F7"
-    android:padding="12dp">
+    android:padding="12dp"
+    android:overScrollMode="never"
+    android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <!-- Tabs -->
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            app:tabIndicatorColor="#FF5722"
-            app:tabSelectedTextColor="#000"
-            app:tabTextColor="#666" />
+        android:orientation="vertical"
+        android:paddingBottom="24dp"
+        android:layout_marginTop="20dp">
 
         <!-- Reel tab -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardReel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginVertical="12dp"
             android:backgroundTint="@android:color/white"
             card_view:cardCornerRadius="12dp"
-            card_view:cardElevation="6dp">
+            card_view:cardElevation="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -75,13 +69,6 @@
                     android:fontFamily="@font/sf_text_bold"
                     android:text="Publish Reel Now" />
 
-                <Button
-                    android:id="@+id/btnSchedule_reel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:fontFamily="@font/sf_pro_rounded_thin"
-                    android:text="Schedule Reel" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -90,10 +77,10 @@
             android:id="@+id/cardPost"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginVertical="12dp"
             android:backgroundTint="@android:color/white"
             card_view:cardCornerRadius="12dp"
-            card_view:cardElevation="6dp">
+            card_view:cardElevation="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -138,43 +125,6 @@
                     android:fontFamily="@font/sf_text_bold"
                     android:text="Publish Post Now" />
 
-                <Button
-                    android:id="@+id/btnSchedule_post"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:fontFamily="@font/sf_pro_rounded_thin"
-                    android:text="Schedule Post" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- Scheduled list -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:backgroundTint="@android:color/white"
-            card_view:cardCornerRadius="12dp"
-            card_view:cardElevation="6dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="12dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/sf_text_bold"
-                    android:text="Scheduled Jobs"
-                    android:textSize="16sp" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvScheduled"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_marginTop="8dp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
