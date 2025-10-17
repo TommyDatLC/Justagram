@@ -1,4 +1,4 @@
-package com.example.justagram;
+package com.example.justagram.Activity;
 
 import android.content.ClipData;
 import android.content.Context;
@@ -18,13 +18,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
+
+import com.example.justagram.R;
+import com.example.justagram.Services.Validation;
 import com.example.justagram.etc.Utility;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.justagram.etc.DateTime;
+
 import java.util.ArrayList;
 
 import com.google.android.material.tabs.TabLayout;
@@ -35,7 +37,6 @@ import org.json.JSONObject;
 import java.io.InputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import okhttp3.Call;
@@ -47,7 +48,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.HttpUrl;
+
 public class IgPublisherActivity extends AppCompatActivity {
     private static final int REQUEST_PICK_MEDIA = 4001;
     private static final int MAX_IMAGES = 10;
@@ -76,10 +77,6 @@ public class IgPublisherActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_ig_publisher_tabs);
-
-        tabLayout = findViewById(R.id.tabLayout);
-        tabLayout.addTab(tabLayout.newTab().setText("Reel"));
-        tabLayout.addTab(tabLayout.newTab().setText("Post"));
 
         btnPickMedia_reel = findViewById(R.id.btnPickMedia_reel);
         btnPublishNow_reel = findViewById(R.id.btnPublishNow_reel);

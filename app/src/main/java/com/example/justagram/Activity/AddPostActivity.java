@@ -1,7 +1,9 @@
-package com.example.justagram;
+package com.example.justagram.Activity;
 
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.justagram.R;
 
 public class AddPostActivity extends AppCompatActivity {
     @Override

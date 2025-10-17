@@ -1,4 +1,4 @@
-package com.example.justagram;
+package com.example.justagram.Activity;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.justagram.R;
+import com.example.justagram.fragment.PostFeed.PostAdapter;
 import com.example.justagram.fragment.Statistic.PostItem;
 
 import org.json.JSONArray;
@@ -26,16 +28,17 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class Activity extends AppCompatActivity {
+public class PostFeedActivity extends AppCompatActivity {
 
-    // ⚠️ Token thật của cậu
-    public static final String ACCESS_TOKEN = "IGAAS2qCIE595BZAFJ0SmVNaHBUbFFCM0NqOFBOYkdNOHhBdC1PR1hNTHV6ZAEtLZAm5RVTNZAa3lweFdqM0xxNVcwY2xLVlBadFdDUm54QkFBd0Jvdl8zRkJEMFFBNEtMZAkhyX2hfQUtIZAzNnVGdSa2pVYmtoX1I2bkZAxOFZAuOGp6VQZDZD";
     private RecyclerView recyclerView;
     private PostAdapter postAdapter;
     private List<PostItem> postList;
     private Button btnReload;
     private TextView totalStats; // 🆕 Added this
     private OkHttpClient client = new OkHttpClient();
+
+    // ⚠️ Token thật của cậu
+    public static final String ACCESS_TOKEN = "IGAAS2qCIE595BZAFJ0SmVNaHBUbFFCM0NqOFBOYkdNOHhBdC1PR1hNTHV6ZAEtLZAm5RVTNZAa3lweFdqM0xxNVcwY2xLVlBadFdDUm54QkFBd0Jvdl8zRkJEMFFBNEtMZAkhyX2hfQUtIZAzNnVGdSa2pVYmtoX1I2bkZAxOFZAuOGp6VQZDZD";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +73,7 @@ public class Activity extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(() -> {
-                    Toast.makeText(Activity.this, "Lỗi khi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(PostFeedActivity.this, "Lỗi khi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     btnReload.setEnabled(true);
                     btnReload.setText("🔄 Làm mới bài viết");
                 });
@@ -80,7 +83,7 @@ public class Activity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     runOnUiThread(() -> {
-                        Toast.makeText(Activity.this, "Lỗi kết nối API!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PostFeedActivity.this, "Lỗi kết nối API!", Toast.LENGTH_SHORT).show();
                         btnReload.setEnabled(true);
                         btnReload.setText("🔄 Làm mới bài viết");
                     });
@@ -132,7 +135,7 @@ public class Activity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                     runOnUiThread(() -> {
-                        Toast.makeText(Activity.this, "Lỗi parse JSON: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(PostFeedActivity.this, "Lỗi parse JSON: " + e.getMessage(), Toast.LENGTH_LONG).show();
                         btnReload.setEnabled(true);
                         btnReload.setText("🔄 Làm mới bài viết");
                     });

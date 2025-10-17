@@ -1,4 +1,4 @@
-package com.example.justagram;
+package com.example.justagram.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.justagram.R;
 import com.example.justagram.fragment.DashboardFragment;
 import com.example.justagram.Helper.ScrollAwareFragment;
 import com.example.justagram.Helper.TabAnimationHelper;

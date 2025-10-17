@@ -13,14 +13,13 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.justagram.Helper.ScrollAwareFragment;
 import com.example.justagram.R;
-import com.example.justagram.PostFeedActivity;
+import com.example.justagram.Activity.PostFeedActivity;
 import com.example.justagram.fragment.PostFeed.PostAdapter;
 import com.example.justagram.fragment.Statistic.PostItem;
 
@@ -47,7 +46,6 @@ public class PostFeedFragment extends Fragment implements ScrollAwareFragment{
     private PostAdapter adapter;
     private List<PostItem> postList;
     private OkHttpClient client = new OkHttpClient();
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,

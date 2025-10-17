@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.justagram.Helper.ScrollAwareFragment;
-import com.example.justagram.InstagramService;
+import com.example.justagram.Services.InstagramService;
 import com.example.justagram.R;
-import com.example.justagram.Reel_video;
+import com.example.justagram.Services.Reel_video;
 
 public class ReelPostFragment extends Fragment implements ScrollAwareFragment {
 

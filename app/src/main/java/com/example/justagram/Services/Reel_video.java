@@ -1,4 +1,4 @@
-package com.example.justagram;
+package com.example.justagram.Services;
 
 import java.io.Serializable;
 

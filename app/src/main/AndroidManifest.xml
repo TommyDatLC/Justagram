@@ -24,9 +24,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".DashboardActivity"/>
-        <activity android:name=".AddPostActivity" />
-        <activity android:name=".IgPublisherActivity"/>
+        <activity android:name=".Activity.DashboardActivity"/>
+        <activity android:name=".Activity.AddPostActivity" />
+        <activity android:name=".Activity.IgPublisherActivity"/>
 
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>

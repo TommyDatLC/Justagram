@@ -3,11 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     android:background="@color/white">
-
-
-        <!-- BODY -->
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
@@ -29,10 +25,6 @@
             android:layout_gravity="bottom"
             android:clipChildren="false"
             android:clipToPadding="false">
-
-
-
-
 
             <!-- TabLayout for tabs/icons -->
             <com.google.android.material.tabs.TabLayout

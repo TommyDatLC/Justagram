@@ -13,120 +13,128 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="24dp"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="30dp">
 
-        <!-- Reel tab -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardReel"
+        <!-- Content below header -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="12dp"
-            android:backgroundTint="@android:color/white"
-            card_view:cardCornerRadius="12dp"
-            card_view:cardElevation="4dp">
+            android:orientation="vertical"
+            android:paddingBottom="24dp">
 
-            <LinearLayout
+            <!-- Reel tab -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardReel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="12dp">
+                android:layout_marginVertical="12dp"
+                android:backgroundTint="@android:color/white"
+                card_view:cardCornerRadius="12dp"
+                card_view:cardElevation="4dp">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/sf_text_bold"
-                    android:text="Reel Creator"
-                    android:textSize="16sp" />
+                    android:orientation="vertical"
+                    android:padding="12dp">
 
-                <Button
-                    android:id="@+id/btnPickMedia_reel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:fontFamily="@font/sf_pro_rounded_thin"
-                    android:text="Pick images (max 10)" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sf_text_bold"
+                        android:text="Reel Creator"
+                        android:textSize="16sp" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvPreview_reel"
-                    android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:layout_marginTop="8dp" />
+                    <Button
+                        android:id="@+id/btnPickMedia_reel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/sf_pro_rounded_thin"
+                        android:text="Pick images (max 10)" />
 
-                <EditText
-                    android:id="@+id/etCaption_reel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:fontFamily="@font/sf_pro_rounded_thin"
-                    android:hint="Caption (optional)" />
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvPreview_reel"
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:layout_marginTop="8dp" />
 
-                <Button
-                    android:id="@+id/btnPublishNow_reel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:fontFamily="@font/sf_text_bold"
-                    android:text="Publish Reel Now" />
+                    <EditText
+                        android:id="@+id/etCaption_reel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/sf_pro_rounded_thin"
+                        android:hint="Caption (optional)" />
 
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+                    <Button
+                        android:id="@+id/btnPublishNow_reel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/sf_text_bold"
+                        android:text="Publish Reel Now" />
 
-        <!-- Post tab -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardPost"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="12dp"
-            android:backgroundTint="@android:color/white"
-            card_view:cardCornerRadius="12dp"
-            card_view:cardElevation="4dp">
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-            <LinearLayout
+            <!-- Post tab -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardPost"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="12dp">
+                android:layout_marginVertical="12dp"
+                android:backgroundTint="@android:color/white"
+                card_view:cardCornerRadius="12dp"
+                card_view:cardElevation="4dp">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/sf_text_bold"
-                    android:text="Post Creator"
-                    android:textSize="16sp" />
+                    android:orientation="vertical"
+                    android:padding="12dp">
 
-                <Button
-                    android:id="@+id/btnPickMedia_post"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:fontFamily="@font/sf_pro_rounded_thin"
-                    android:text="Pick images (max 10)" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sf_text_bold"
+                        android:text="Post Creator"
+                        android:textSize="16sp" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvPreview_post"
-                    android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:layout_marginTop="8dp" />
+                    <Button
+                        android:id="@+id/btnPickMedia_post"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/sf_pro_rounded_thin"
+                        android:text="Pick images (max 10)" />
 
-                <EditText
-                    android:id="@+id/etCaption_post"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:fontFamily="@font/sf_pro_rounded_thin"
-                    android:hint="Caption (optional)" />
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvPreview_post"
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:layout_marginTop="8dp" />
 
-                <Button
-                    android:id="@+id/btnPublishNow_post"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:fontFamily="@font/sf_text_bold"
-                    android:text="Publish Post Now" />
+                    <EditText
+                        android:id="@+id/etCaption_post"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/sf_pro_rounded_thin"
+                        android:hint="Caption (optional)" />
 
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+                    <Button
+                        android:id="@+id/btnPublishNow_post"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/sf_text_bold"
+                        android:text="Publish Post Now" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

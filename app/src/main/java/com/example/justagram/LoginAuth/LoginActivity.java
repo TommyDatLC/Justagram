@@ -7,15 +7,14 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.example.justagram.DashboardActivity;
-import com.example.justagram.fragment.InstagramAccountFragment;
+import  com.example.justagram.Activity.DashboardActivity;
+
 import com.example.justagram.R;
 import com.example.justagram.etc.TommyDatCallBack;
 import com.example.justagram.etc.Utility;
