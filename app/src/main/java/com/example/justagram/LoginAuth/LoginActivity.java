@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -48,7 +49,6 @@ public class LoginActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         login_actvity();
-
     }
     // Exchange the short term code for the the long term code
     // Save the code into the device disk
@@ -103,7 +103,6 @@ public class LoginActivity extends AppCompatActivity {
                 Utility.OpenWebsite(thisContext,InstagramLoginAuthLink);
             }
         });
-
     }
 
     void ExchangeForToken(String Code)
@@ -173,7 +172,6 @@ public class LoginActivity extends AppCompatActivity {
         IgPublisherFragment test = new IgPublisherFragment();
         FragmentTransaction t = getSupportFragmentManager().beginTransaction();
         t.add(R.id.test_fragment,test).commit();
-
     }
 
     void btn_LoginAction()
@@ -192,7 +190,6 @@ public class LoginActivity extends AppCompatActivity {
             {
                 userInfo.UserID =  hashTable.get("id").toString();
                 OpenHomeActivity();
-
             }
         };
         // Sending request to the server
