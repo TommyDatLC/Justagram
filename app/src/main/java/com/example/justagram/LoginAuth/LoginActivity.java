@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.example.justagram.DashboardActivity;
 import com.example.justagram.HomeActivity;
 import com.example.justagram.fragment.IgPublisherFragment;
 import com.example.justagram.fragment.InstagramAccountFragment;
@@ -75,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
 
         txtbox_accessToken = findViewById(R.id.txtbox_accessToken);
         ImageView logo = findViewById(R.id.justagram);
-        ImageView glow1 = findViewById(R.id.glow1);
+        ImageView glow1 = findViewById(R.id.glow5);
         ImageView glow2 = findViewById(R.id.glow2);
         var forget = findViewById(R.id.tvForgot);
         var signUp = findViewById(R.id.signUp);
@@ -200,7 +201,7 @@ public class LoginActivity extends AppCompatActivity {
     }
     void OpenHomeActivity()
     {
-        Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+        Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
         startActivity(i);
     }
 }

@@ -1,8 +1,6 @@
 package com.example.justagram.etc;
 
 
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,7 +15,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.function.Consumer;
 

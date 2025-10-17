@@ -1,86 +1,180 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="12dp"
-    android:background="#F2F5F7">
+    android:background="#F2F5F7"
+    android:padding="12dp">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <!-- Tabs -->
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
             app:tabIndicatorColor="#FF5722"
             app:tabSelectedTextColor="#000"
-            app:tabTextColor="#666"
-            android:background="@android:color/transparent"/>
+            app:tabTextColor="#666" />
 
         <!-- Reel tab -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardReel"
-            card_view:cardCornerRadius="12dp"
-            card_view:cardElevation="6dp"
-            android:layout_marginTop="12dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@android:color/white">
-            <LinearLayout android:orientation="vertical" android:padding="12dp" android:layout_width="match_parent" android:layout_height="wrap_content">
-                <TextView android:text="Reel Creator" android:fontFamily="@font/sf_text_bold" android:textSize="16sp"  android:layout_width="match_parent" android:layout_height="wrap_content"/>
-                <Button  android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/btnPickMedia_reel" android:text="Pick images (max 10)" android:layout_marginTop="8dp" android:fontFamily="@font/sf_pro_rounded_thin"/>
-                <androidx.recyclerview.widget.RecyclerView android:id="@+id/rvPreview_reel" android:layout_marginTop="8dp" android:layout_width="match_parent" android:layout_height="120dp"/>
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@android:color/white"
+            card_view:cardCornerRadius="12dp"
+            card_view:cardElevation="6dp">
 
-                <EditText  android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/etCaption_reel" android:hint="Caption (optional)" android:layout_marginTop="8dp" android:fontFamily="@font/sf_pro_rounded_thin"/>
-                <Button  android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/btnPublishNow_reel" android:text="Publish Reel Now" android:layout_marginTop="8dp" android:fontFamily="@font/sf_text_bold"/>
-                <Button  android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/btnSchedule_reel" android:text="Schedule Reel" android:layout_marginTop="8dp" android:fontFamily="@font/sf_pro_rounded_thin"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/sf_text_bold"
+                    android:text="Reel Creator"
+                    android:textSize="16sp" />
+
+                <Button
+                    android:id="@+id/btnPickMedia_reel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/sf_pro_rounded_thin"
+                    android:text="Pick images (max 10)" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvPreview_reel"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:layout_marginTop="8dp" />
+
+                <EditText
+                    android:id="@+id/etCaption_reel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/sf_pro_rounded_thin"
+                    android:hint="Caption (optional)" />
+
+                <Button
+                    android:id="@+id/btnPublishNow_reel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/sf_text_bold"
+                    android:text="Publish Reel Now" />
+
+                <Button
+                    android:id="@+id/btnSchedule_reel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/sf_pro_rounded_thin"
+                    android:text="Schedule Reel" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
         <!-- Post tab -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardPost"
-            card_view:cardCornerRadius="12dp"
-            card_view:cardElevation="6dp"
-            android:layout_marginTop="12dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@android:color/white">
-            <LinearLayout android:orientation="vertical" android:padding="12dp" android:layout_width="match_parent" android:layout_height="wrap_content">
-                <TextView  android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Post Creator" android:fontFamily="@font/sf_text_bold" android:textSize="16sp"/>
-                <Button  android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/btnPickMedia_post" android:text="Pick images (max 10)" android:layout_marginTop="8dp" android:fontFamily="@font/sf_pro_rounded_thin"/>
-                <androidx.recyclerview.widget.RecyclerView android:id="@+id/rvPreview_post" android:layout_marginTop="8dp" android:layout_width="match_parent" android:layout_height="120dp"/>
-                <EditText  android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/etCaption_post" android:hint="Caption (optional)" android:layout_marginTop="8dp" android:fontFamily="@font/sf_pro_rounded_thin"/>
-                <Button  android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/btnPublishNow_post" android:text="Publish Post Now" android:layout_marginTop="8dp" android:fontFamily="@font/sf_text_bold"/>
-                <Button  android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/btnSchedule_post" android:text="Schedule Post" android:layout_marginTop="8dp" android:fontFamily="@font/sf_pro_rounded_thin"/>
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@android:color/white"
+            card_view:cardCornerRadius="12dp"
+            card_view:cardElevation="6dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/sf_text_bold"
+                    android:text="Post Creator"
+                    android:textSize="16sp" />
+
+                <Button
+                    android:id="@+id/btnPickMedia_post"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/sf_pro_rounded_thin"
+                    android:text="Pick images (max 10)" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvPreview_post"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:layout_marginTop="8dp" />
+
+                <EditText
+                    android:id="@+id/etCaption_post"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/sf_pro_rounded_thin"
+                    android:hint="Caption (optional)" />
+
+                <Button
+                    android:id="@+id/btnPublishNow_post"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/sf_text_bold"
+                    android:text="Publish Post Now" />
+
+                <Button
+                    android:id="@+id/btnSchedule_post"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/sf_pro_rounded_thin"
+                    android:text="Schedule Post" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
         <!-- Scheduled list -->
         <androidx.cardview.widget.CardView
-            card_view:cardCornerRadius="12dp"
-            card_view:cardElevation="6dp"
-            android:layout_marginTop="12dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@android:color/white">
-            <LinearLayout android:orientation="vertical" android:padding="12dp" android:layout_width="match_parent" android:layout_height="wrap_content">
-                <TextView  android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Scheduled Jobs" android:fontFamily="@font/sf_text_bold" android:textSize="16sp"/>
-                <ListView
-                    android:id="@+id/scheduled_jobs_listview"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@android:color/white"
+            card_view:cardCornerRadius="12dp"
+            card_view:cardElevation="6dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:divider="@android:color/darker_gray"
-                    android:dividerHeight="1dp"
-                    android:padding="8dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/sf_text_bold"
+                    android:text="Scheduled Jobs"
+                    android:textSize="16sp" />
 
-                    />
-
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvScheduled"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_marginTop="8dp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
