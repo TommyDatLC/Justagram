@@ -1,4 +1,4 @@
-package com.example.justagram.Statistic;
+package com.example.justagram.fragment.Statistic;
 
 public class PostItem {
 

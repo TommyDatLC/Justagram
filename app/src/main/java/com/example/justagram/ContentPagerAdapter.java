@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import com.example.justagram.fragment.ReelPostFragment;
+
 public class ContentPagerAdapter extends FragmentStateAdapter {
 
     public ContentPagerAdapter(@NonNull Fragment fragment) {

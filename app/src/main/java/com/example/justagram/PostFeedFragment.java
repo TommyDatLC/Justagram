@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.justagram.Statistic.PostItem;
+import com.example.justagram.fragment.Statistic.PostItem;
 
 import org.json.JSONArray;
 import org.json.JSONException;

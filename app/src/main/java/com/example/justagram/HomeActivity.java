@@ -19,10 +19,7 @@ public class HomeActivity extends AppCompatActivity
         StatisticFragment test = new StatisticFragment();
         //ReelPostFragment test = new ReelPostFragment();
         LoadFragment(test);
-        Button a = new Button(this);
-        a.setOnClickListener((v) -> {
 
-        });
     }
 
     void LoadFragment(Fragment test)

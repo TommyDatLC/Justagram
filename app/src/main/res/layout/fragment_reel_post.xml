@@ -28,32 +28,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
-
-        <ImageView
-            android:id="@+id/searchIcon"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginEnd="12dp"
-            android:contentDescription="Search"
-            android:src="@drawable/magnifying_glass_icon" />
-
-        <ImageView
-            android:id="@+id/notificationIcon"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginEnd="12dp"
-            android:contentDescription="Notifications"
-            android:src="@drawable/bell_mobile_icon" />
-
-        <ImageView
-            android:id="@+id/avatar_logo"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="@drawable/avatar_circle_mask"
-            android:clipToOutline="true"
-            android:contentDescription="Avatar"
-            android:scaleType="centerCrop"
-            android:src="@mipmap/avatar_logo" />
     </LinearLayout>
 
     <!-- RecyclerView chứa các video reels -->

@@ -17,8 +17,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.justagram.Statistic.PostItem;
-import com.google.android.exoplayer2.ui.PlayerView;
+import com.example.justagram.fragment.Statistic.PostItem;
+
+import androidx.media3.common.MediaItem;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.ui.PlayerView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +46,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     @NonNull
     @Override
     public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.items_post_feed, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_post_feed, parent, false);
         return new PostViewHolder(view);
     }
 
