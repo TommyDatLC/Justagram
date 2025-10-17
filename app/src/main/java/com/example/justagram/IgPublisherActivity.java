@@ -60,15 +60,15 @@ public class IgPublisherActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private Button btnPickMedia_reel, btnPublishNow_reel;
     private Button btnPickMedia_post, btnPublishNow_post;
-    private Button btnSchedule_reel, btnSchedule_post;
+    //private Button btnSchedule_reel, btnSchedule_post;
     private EditText etCaption_reel, etCaption_post;
     private RecyclerView rvPreview_reel, rvPreview_post;
 
     private final List<Uri> selectedUris = new ArrayList<>();
     private final List<String> selectedNames = new ArrayList<>();
     private final OkHttpClient http = new OkHttpClient();
-    private ArrayAdapter<String> scheduledAdapter;
-    private ArrayList<String> scheduledJobs = new ArrayList<>();
+    //private ArrayAdapter<String> scheduledAdapter;
+    //private ArrayList<String> scheduledJobs = new ArrayList<>();
 
     private ArrayAdapter<String> jobAdapter;
     private ArrayList<String> jobList;
@@ -90,8 +90,8 @@ public class IgPublisherActivity extends AppCompatActivity {
         btnPublishNow_post = findViewById(R.id.btnPublishNow_post);
         etCaption_post = findViewById(R.id.etCaption_post);
         rvPreview_post = findViewById(R.id.rvPreview_post);
-        btnSchedule_reel = findViewById(R.id.btnSchedule_reel);
-        btnSchedule_post = findViewById(R.id.btnSchedule_post);
+        //btnSchedule_reel = findViewById(R.id.btnSchedule_reel);
+        //btnSchedule_post = findViewById(R.id.btnSchedule_post);
 
         rvPreview_reel.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         rvPreview_post.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -104,62 +104,62 @@ public class IgPublisherActivity extends AppCompatActivity {
 
         btnPublishNow_reel.setOnClickListener(ch -> publishNow(true));
         btnPublishNow_post.setOnClickListener(ch -> publishNow(false));
-        ListView scheduledListView = findViewById(R.id.scheduled_jobs_listview);
-        scheduledAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, scheduledJobs);
+        //ListView scheduledListView = findViewById(R.id.scheduled_jobs_listview);
+        //scheduledAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, scheduledJobs);
 
-        Button btnSchedulePost = findViewById(R.id.btnSchedule_post);
-        Button btnScheduleReel = findViewById(R.id.btnSchedule_reel);
-        // tạo 1 list chứa schedules
-        initScheduledList();
-        // SCHEDULE POST HANDLER
-        btnSchedulePost.setOnClickListener(v -> {
-            DateTime dateTime = new DateTime();
-
-            // Dùng hàm chọn ngày của DateTIme
-            DateTime.OpenDateSelector(this, dateTime, () -> {
-                // Chọn giờ
-                DateTime.OpenTimeSelector(this, dateTime, () -> {
-                    long unixTime = dateTime.ConvertToUnixTime();
-                    String readable = dateTime.GetDateString() + " " + dateTime.GetTimeString();
-
-                    Toast.makeText(this, "Post scheduled for: " + readable, Toast.LENGTH_SHORT).show();
-                    addScheduledJob("Post", readable);
-                    scheduleJob(unixTime, false);
-                });
-            });
-        });
-        // SCHEDULE REEL HANDLER
-        btnScheduleReel.setOnClickListener(v -> {
-            DateTime dateTime = new DateTime();
-
-            DateTime.OpenDateSelector(this, dateTime, () -> {
-                DateTime.OpenTimeSelector(this, dateTime, () -> {
-                    long unixTime = dateTime.ConvertToUnixTime();
-                    String readable = dateTime.GetDateString() + " " + dateTime.GetTimeString();
-
-                    Toast.makeText(this, "Reel scheduled for: " + readable, Toast.LENGTH_SHORT).show();
-                    addScheduledJob("Reel", readable);
-                    scheduleJob(unixTime, true);
-                });
-            });
-        });
-        // NÚT GIỮ ĐỂ XÓA
-        scheduledListView.setOnItemLongClickListener((parent, view, position, id) -> {
-            String job = jobList.get(position);
-
-            new android.app.AlertDialog.Builder(this)
-                    .setTitle("Delete scheduled job")
-                    .setMessage("Do you want to delete this job?\n\n" + job)
-                    .setPositiveButton("Delete", (dialog, which) -> {
-                        jobList.remove(position);
-                        jobAdapter.notifyDataSetChanged();
-                        android.widget.Toast.makeText(this, "Job deleted", android.widget.Toast.LENGTH_SHORT).show();
-                    })
-                    .setNegativeButton("Cancel", null)
-                    .show();
-
-            return true;
-        });
+//        Button btnSchedulePost = findViewById(R.id.btnSchedule_post);
+//        Button btnScheduleReel = findViewById(R.id.btnSchedule_reel);
+//        // tạo 1 list chứa schedules
+//        initScheduledList();
+//        // SCHEDULE POST HANDLER
+//        btnSchedulePost.setOnClickListener(v -> {
+//            DateTime dateTime = new DateTime();
+//
+//            // Dùng hàm chọn ngày của DateTIme
+//            DateTime.OpenDateSelector(this, dateTime, () -> {
+//                // Chọn giờ
+//                DateTime.OpenTimeSelector(this, dateTime, () -> {
+//                    long unixTime = dateTime.ConvertToUnixTime();
+//                    String readable = dateTime.GetDateString() + " " + dateTime.GetTimeString();
+//
+//                    Toast.makeText(this, "Post scheduled for: " + readable, Toast.LENGTH_SHORT).show();
+//                    addScheduledJob("Post", readable);
+//                    scheduleJob(unixTime, false);
+//                });
+//            });
+//        });
+//        // SCHEDULE REEL HANDLER
+//        btnScheduleReel.setOnClickListener(v -> {
+//            DateTime dateTime = new DateTime();
+//
+//            DateTime.OpenDateSelector(this, dateTime, () -> {
+//                DateTime.OpenTimeSelector(this, dateTime, () -> {
+//                    long unixTime = dateTime.ConvertToUnixTime();
+//                    String readable = dateTime.GetDateString() + " " + dateTime.GetTimeString();
+//
+//                    Toast.makeText(this, "Reel scheduled for: " + readable, Toast.LENGTH_SHORT).show();
+//                    addScheduledJob("Reel", readable);
+//                    scheduleJob(unixTime, true);
+//                });
+//            });
+//        });
+//        // NÚT GIỮ ĐỂ XÓA
+//        scheduledListView.setOnItemLongClickListener((parent, view, position, id) -> {
+//            String job = jobList.get(position);
+//
+//            new android.app.AlertDialog.Builder(this)
+//                    .setTitle("Delete scheduled job")
+//                    .setMessage("Do you want to delete this job?\n\n" + job)
+//                    .setPositiveButton("Delete", (dialog, which) -> {
+//                        jobList.remove(position);
+//                        jobAdapter.notifyDataSetChanged();
+//                        android.widget.Toast.makeText(this, "Job deleted", android.widget.Toast.LENGTH_SHORT).show();
+//                    })
+//                    .setNegativeButton("Cancel", null)
+//                    .show();
+//
+//            return true;
+//        });
 
     }
 
@@ -279,9 +279,7 @@ public class IgPublisherActivity extends AppCompatActivity {
             });
         }
     }
-    private void publishToInstagram(){
 
-    }
     private void setAllPublishButtonsEnabled(boolean enabled) {
         runOnUiThread(() -> {
             if (btnPublishNow_post != null) btnPublishNow_post.setEnabled(enabled);
@@ -399,11 +397,8 @@ public class IgPublisherActivity extends AppCompatActivity {
             runOnUiThread(() -> cb.onDone(null, e.getMessage()));
         }
     }
-    // function to upload instagram 123
-    // check 6-7 charr moi cho up
-    // dung dateTime lay schedule
-    // hiện thông báo khi upload thành công lên server
 
+    // hàm này để gửi POST và publish
     public void publishReelToInstagram(String igUserId, String videoUrl, String caption, String accessToken, UploadVideoCallback callback) {
         OkHttpClient client = new OkHttpClient();
 
@@ -701,34 +696,34 @@ public class IgPublisherActivity extends AppCompatActivity {
         });
     }
     // Khởi tạo danh sách Schedule
-    private void initScheduledList() {
-        ListView listView = findViewById(R.id.scheduled_jobs_listview);
-        jobList = new ArrayList<>();
-        jobAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, jobList);
-        listView.setAdapter(jobAdapter);
-    }
+//    private void initScheduledList() {
+//        ListView listView = findViewById(R.id.scheduled_jobs_listview);
+//        jobList = new ArrayList<>();
+//        jobAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, jobList);
+//        listView.setAdapter(jobAdapter);
+//    }
+//
+//    // Thêm job mới vào danh sách
+//    private void addScheduledJob(String type, String readableTime) {
+//        String jobInfo = type + " scheduled at " + readableTime;
+//        jobList.add(jobInfo);
+//        jobAdapter.notifyDataSetChanged();
+//
+//    }
+//    private void scheduleJob(long unixTime, boolean asReel) {
+//    long delay = unixTime * 1000 - System.currentTimeMillis();
+//    if (delay < 0) {
+//        Toast.makeText(this, "Selected time is in the past!", Toast.LENGTH_SHORT).show();
+//        return;
+//    }
 
-    // Thêm job mới vào danh sách
-    private void addScheduledJob(String type, String readableTime) {
-        String jobInfo = type + " scheduled at " + readableTime;
-        jobList.add(jobInfo);
-        jobAdapter.notifyDataSetChanged();
-
-    }
-    private void scheduleJob(long unixTime, boolean asReel) {
-    long delay = unixTime * 1000 - System.currentTimeMillis();
-    if (delay < 0) {
-        Toast.makeText(this, "Selected time is in the past!", Toast.LENGTH_SHORT).show();
-        return;
-    }
-
-    new android.os.Handler().postDelayed(() -> {
-        publishNow(asReel);
-        runOnUiThread(() ->
-            Toast.makeText(this, (asReel ? "Reel" : "Post") + " will be published now!", Toast.LENGTH_SHORT).show()
-        );
-    }, delay);
-}
+//    new android.os.Handler().postDelayed(() -> {
+//        publishNow(asReel);
+//        runOnUiThread(() ->
+//            Toast.makeText(this, (asReel ? "Reel" : "Post") + " will be published now!", Toast.LENGTH_SHORT).show()
+//        );
+//    }, delay);
+//}
     private void showMsg(String s) {
         try { Utility.showMessageBox(s, this); } catch (Exception e) { Toast.makeText(this, s, Toast.LENGTH_LONG).show(); }
     }
@@ -756,7 +751,7 @@ public class IgPublisherActivity extends AppCompatActivity {
             Uri uri = selectedUris.get(position);
             String type = getContentResolver().getType(uri);
 
-            // Nếu là video, lấy frame đầu tiên
+            // Nếu là video, lấy frame đầu tiên cho thấy
             if (type != null && type.startsWith("video/")) {
                 try {
                     android.media.MediaMetadataRetriever retriever = new android.media.MediaMetadataRetriever();
