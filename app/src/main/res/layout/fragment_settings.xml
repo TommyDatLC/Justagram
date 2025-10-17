@@ -73,14 +73,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <!-- Tim ở giữa khi click -->
-        <TextView
-            android:id="@+id/centerHeart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="#FFFFFF"
-            android:textSize="48sp"
-            android:visibility="gone" />
+
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

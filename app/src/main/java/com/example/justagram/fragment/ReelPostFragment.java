@@ -150,9 +150,9 @@ public class ReelPostFragment extends Fragment {
 
             holder.reelTitle.setText(reel.getTitle());
             holder.reelDate.setText(reel.getDate());
-            holder.reelLikes.setText("♥ " + reel.getFormattedLikes());
-            holder.reelComments.setText("💬 " + reel.getFormattedComments());
-            holder.reelViews.setText("▶ " + reel.getFormattedViews());
+            holder.reelLikes.setText(reel.getFormattedLikes());
+            holder.reelComments.setText( reel.getFormattedComments());
+            holder.reelViews.setText(reel.getFormattedViews());
             holder.reelDescription.setText(reel.getDescription());
 
             // Reuse player nếu đã có, hoặc tạo mới

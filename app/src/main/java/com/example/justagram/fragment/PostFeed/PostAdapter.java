@@ -58,15 +58,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
         PostItem post = postList.get(position);
 
-        holder.likeCount.setText("♥ " + post.getLikeCount());
-        holder.commentCount.setText("💬 " + post.getCommentCount());
+        holder.likeCount.setText( Integer.toString(post.getLikeCount()));
+        holder.commentCount.setText(Integer.toString(post.getCommentCount()));
 
         String mediaUrl = post.getMediaUrl();
         String mediaType = post.getMediaType();
 
         // Hiển thị overlay nếu đã chọn
         holder.overlay.setVisibility(post.isSelected() ? View.VISIBLE : View.GONE);
-        holder.centerHeart.setVisibility(post.isSelected() ? View.VISIBLE : View.GONE);
+
 
         if (mediaUrl == null) return;
 
@@ -158,7 +158,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     public static class PostViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
         PlayerView playerView;
-        TextView likeCount, commentCount, centerHeart;
+        TextView likeCount, commentCount;
         FrameLayout overlay;
 
         public PostViewHolder(@NonNull View itemView) {
@@ -168,7 +168,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             likeCount = itemView.findViewById(R.id.likeCount);
             commentCount = itemView.findViewById(R.id.commentCount);
             overlay = itemView.findViewById(R.id.overlay);
-            centerHeart = itemView.findViewById(R.id.centerHeart);
+
         }
     }
 }

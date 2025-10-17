@@ -28,8 +28,8 @@ public class DashboardActivity extends AppCompatActivity {
     private final int[] TAB_ICONS = {
             R.mipmap.ic_overview,
             R.mipmap.ic_statistics,
-            R.mipmap.ic_post1,
-            R.mipmap.ic_reel
+            R.mipmap.ic_reel,
+            R.mipmap.ic_post1
     };
 
     private TabLayout tabLayout;

@@ -168,7 +168,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             likeCount = itemView.findViewById(R.id.likeCount);
             commentCount = itemView.findViewById(R.id.commentCount);
             overlay = itemView.findViewById(R.id.overlay);
-            centerHeart = itemView.findViewById(R.id.centerHeart);
+
         }
     }
 }
