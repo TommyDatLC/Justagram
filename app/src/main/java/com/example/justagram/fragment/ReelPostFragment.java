@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.justagram.Helper.ScrollAwareFragment;
+import com.example.justagram.LoginAuth.LoginActivity;
 import com.example.justagram.Services.InstagramService;
 import com.example.justagram.R;
 import com.example.justagram.Services.Reel_video;
@@ -40,12 +41,13 @@ public class ReelPostFragment extends Fragment implements ScrollAwareFragment {
     private ReelVideoAdapter adapter;
     private InstagramService instagramService;
 
-    private static final String ACCESS_TOKEN = "IGAAS2qCIE595BZAFJ0SmVNaHBUbFFCM0NqOFBOYkdNOHhBdC1PR1hNTHV6ZAEtLZAm5RVTNZAa3lweFdqM0xxNVcwY2xLVlBadFdDUm54QkFBd0Jvdl8zRkJEMFFBNEtMZAkhyX2hfQUtIZAzNnVGdSa2pVYmtoX1I2bkZAxOFZAuOGp6VQZDZD";
+    private static  String ACCESS_TOKEN = "IGAAS2qCIE595BZAFJ0SmVNaHBUbFFCM0NqOFBOYkdNOHhBdC1PR1hNTHV6ZAEtLZAm5RVTNZAa3lweFdqM0xxNVcwY2xLVlBadFdDUm54QkFBd0Jvdl8zRkJEMFFBNEtMZAkhyX2hfQUtIZAzNnVGdSa2pVYmtoX1I2bkZAxOFZAuOGp6VQZDZD";
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        ACCESS_TOKEN = LoginActivity.userInfo.GetAccessToken();
         View view = inflater.inflate(R.layout.fragment_reel_post, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.reelsRecyclerView);
 

@@ -152,7 +152,7 @@
                 android:layout_width="300dp"
                 android:layout_height="50dp"
                 android:background="@null"
-                android:fontFamily="@font/sf_text_bold"
+                android:fontFamily="@font/sf_pro_rounded_thin"
                 android:hint="Token"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
@@ -208,7 +208,7 @@
             android:gravity="end"
             android:text="Forgot password?"
 
-            android:textColor="#1877F2"
+            android:textColor="#FF777777"
             android:textSize="14sp"
             android:textStyle="bold" />
 
@@ -255,7 +255,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/sf_text_bold"
+                android:fontFamily="@font/sf_pro_rounded_thin"
                 android:text="Don't have an account?"
                 android:textColor="@color/black"
                 android:textSize="14sp" />
@@ -269,7 +269,7 @@
                 android:fontFamily="@font/sf_text_bold"
                 android:foreground="?attr/selectableItemBackground"
                 android:text=" Sign up"
-                android:textColor="#1877F2"
+                android:textColor="#FF777777"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 

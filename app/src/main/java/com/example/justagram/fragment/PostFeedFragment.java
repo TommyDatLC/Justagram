@@ -68,7 +68,7 @@ public class PostFeedFragment extends Fragment implements ScrollAwareFragment{
 
         adapter.setOnSelectionChangedListener(this::updateTotalStats);
 
-        // 🆕 Gọi API để lấy data thật
+        // Gọi API để lấy data thật
         fetchInstagramPosts();
 
         recyclerView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
@@ -90,7 +90,7 @@ public class PostFeedFragment extends Fragment implements ScrollAwareFragment{
         return view;
     }
 
-    // 🆕 Method gọi Instagram API
+    // Method gọi Instagram API
     private void fetchInstagramPosts() {
         String apiUrl = "https://graph.instagram.com/me/media?fields=id,caption,media_url,media_type,like_count,comments_count&access_token=" + PostFeedActivity.ACCESS_TOKEN;
 
@@ -137,7 +137,7 @@ public class PostFeedFragment extends Fragment implements ScrollAwareFragment{
                         int likeCount = postObj.optInt("like_count", 0);
                         int commentCount = postObj.optInt("comments_count", 0);
 
-                        // 🧩 CHỈ LẤY ẢNH - BỎ VIDEO / REELS
+                        //  CHỈ LẤY ẢNH - BỎ VIDEO / REELS
                         if (mediaType.equalsIgnoreCase("IMAGE")) {
                             postList.add(new PostItem(id, mediaUrl, mediaType, likeCount, commentCount));
                         }
