@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.justagram.LoginAuth.LoginActivity;
 import com.example.justagram.R;
 import com.example.justagram.fragment.PostFeed.PostAdapter;
 import com.example.justagram.fragment.Statistic.PostItem;
@@ -44,7 +45,7 @@ public class PostFeedActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        ACCESS_TOKEN = LoginActivity.userInfo.GetAccessToken();
         recyclerView = findViewById(R.id.recyclerView);
         btnReload = findViewById(R.id.btnReload);
         totalStats = findViewById(R.id.totalStats);

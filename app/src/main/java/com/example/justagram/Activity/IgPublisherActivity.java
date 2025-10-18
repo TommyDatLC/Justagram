@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ArrayAdapter;
 
+import com.example.justagram.LoginAuth.LoginActivity;
 import com.example.justagram.R;
 import com.example.justagram.Services.Validation;
 import com.example.justagram.etc.Utility;
@@ -54,7 +55,7 @@ public class IgPublisherActivity extends AppCompatActivity {
     private static final int MAX_IMAGES = 10;
 
     private static final String SERVER_URL = "https://imperialistic-argentina-naturally.ngrok-free.dev";
-    private static final String ACCESS_TOKEN = "IGAAS2qCIE595BZAFJ0SmVNaHBUbFFCM0NqOFBOYkdNOHhBdC1PR1hNTHV6ZAEtLZAm5RVTNZAa3lweFdqM0xxNVcwY2xLVlBadFdDUm54QkFBd0Jvdl8zRkJEMFFBNEtMZAkhyX2hfQUtIZAzNnVGdSa2pVYmtoX1I2bkZAxOFZAuOGp6VQZDZD";
+    private static String ACCESS_TOKEN = "IGAAS2qCIE595BZAFJ0SmVNaHBUbFFCM0NqOFBOYkdNOHhBdC1PR1hNTHV6ZAEtLZAm5RVTNZAa3lweFdqM0xxNVcwY2xLVlBadFdDUm54QkFBd0Jvdl8zRkJEMFFBNEtMZAkhyX2hfQUtIZAzNnVGdSa2pVYmtoX1I2bkZAxOFZAuOGp6VQZDZD";
     private static final String IG_USER_ID = "17841474853201686";
     private static final String API_VERSION = "v23.0";
 
@@ -77,7 +78,7 @@ public class IgPublisherActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_ig_publisher_tabs);
-
+        ACCESS_TOKEN = LoginActivity.userInfo.GetAccessToken();
         btnPickMedia_reel = findViewById(R.id.btnPickMedia_reel);
         btnPublishNow_reel = findViewById(R.id.btnPublishNow_reel);
         etCaption_reel = findViewById(R.id.etCaption_reel);
