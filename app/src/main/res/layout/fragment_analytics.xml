@@ -254,6 +254,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_gravity="center"
+                    android:background="@drawable/bg_instagram_gradient"
                     >
                     <TextView
                         android:layout_width="wrap_content"
@@ -261,6 +262,7 @@
                         android:text="total"
                         android:id="@+id/txtview_totaltitle"
                         android:fontFamily="@font/sf_text_bold"
+                        android:textColor="@color/white"
                         android:textSize="20dp"
                         android:paddingLeft ="20px"
                         />
@@ -270,6 +272,7 @@
                         android:text="30"
                         android:id="@+id/txtview_totalvalue"
                         android:fontFamily="@font/sf_text_bold"
+                        android:textColor="@color/white"
                         android:textSize="30dp"
                         android:paddingLeft ="30px"
                         android:layout_gravity="center"
