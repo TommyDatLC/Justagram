@@ -63,7 +63,6 @@
             app:cardBackgroundColor="@color/instagram_main"
             app:cardCornerRadius="40px"
             app:cardElevation="9dp"
-
             >
 
             <LinearLayout
@@ -172,7 +171,6 @@
             android:foreground="?attr/selectableItemBackground"
             android:gravity="end"
             android:text="Forgot password?"
-
             android:textColor="#FF777777"
             android:textSize="14sp"
             android:textStyle="bold" />
