@@ -70,7 +70,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
         if (mediaUrl == null) return;
 
-        // 👉 Nếu là VIDEO → chỉ hiển thị thumbnail
+        // Nếu là VIDEO → chỉ hiển thị thumbnail
         if (mediaType != null && mediaType.equalsIgnoreCase("VIDEO")) {
             holder.playerView.setVisibility(View.GONE);
             holder.imageView.setVisibility(View.VISIBLE);
@@ -84,7 +84,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                         .centerCrop()
                         .into(holder.imageView);
             } else {
-                // 🔥 Nếu không có, tự lấy frame đầu tiên bằng MediaMetadataRetriever
+                // Nếu không có, tự lấy frame đầu tiên bằng MediaMetadataRetriever
                 new Thread(() -> {
                     try {
                         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
@@ -105,7 +105,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             }
 
         } else {
-            // 👉 Nếu là IMAGE
+            // Nếu là IMAGE
             holder.playerView.setVisibility(View.GONE);
             holder.imageView.setVisibility(View.VISIBLE);
 
@@ -115,14 +115,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                     .into(holder.imageView);
         }
 
-        // 🖱️ Click để chọn
+        // Click để chọn
         holder.itemView.setOnClickListener(v -> {
             post.setSelected(!post.isSelected());
             notifyItemChanged(position);
             if (selectionListener != null) selectionListener.onSelectionChanged();
         });
 
-        // 🔥 Long click → mở chi tiết video / ảnh
+        // Long click → mở chi tiết video / ảnh
         holder.itemView.setOnLongClickListener(v -> {
             Intent intent = new Intent(context, PostDetailActivity.class);
             intent.putExtra("mediaUrl", post.getMediaUrl());

@@ -148,7 +148,7 @@ public class PostFeedFragment extends Fragment implements ScrollAwareFragment{
                             adapter.notifyDataSetChanged();
                             updateTotalStats();
                             Toast.makeText(getContext(),
-                                    "Đã tải " + postList.size() + " bài viết (ảnh)",
+                                    "Uploaded " + postList.size() + " posts(pictures)",
                                     Toast.LENGTH_SHORT).show();
                         });
                     }
