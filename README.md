@@ -32,3 +32,8 @@ Our project demonstrates how Instagram-like features can be built using modern w
 # Informations about project
 - Programming language: Java and kotlin
 - Members: Duc Dat, Quang Tung, Hung Anh, Duc Anh, Nhat Anh, Nam Anh
+
+# Technology
+* Source control: [![Git/Github][Github-logo]][Github-url]
+[Github-logo]: https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white
+[Github-url]: https://github.com/
