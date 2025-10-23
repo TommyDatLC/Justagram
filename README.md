@@ -1,6 +1,7 @@
 # Justagram
 Welcome to the **Justagram Project** — a social media platform designed for you to manage accounts' activities like sharing photos, videos and exploring visual content from around the world.
 Our project demonstrates how Instagram-like features can be built using modern web technologies, APIs, and best practices in UI/UX design.
+<iframe width="1326" height="746" src="https://www.youtube.com/embed/DjQcqzngzcY" title="Justagram" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 # Features
 ## Login screen
