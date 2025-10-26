@@ -1,4 +1,4 @@
- <img width="600" height="200" alt="justagram_logo" src="https://github.com/user-attachments/assets/787be030-9b10-4e98-881f-601af23b3d2b" />
+ <img width="600" height="200" alt="justagram_logo" src="https://github.com/user-attachments/assets/787be030-9b10-4e98-881f-601af23b3d2b" /><br>
 # Justagram
 Welcome to the **Justagram Project** — a social media platform designed for you to manage accounts' activities like sharing photos, videos and exploring visual content from around the world.
 Our project demonstrates how Instagram-like features can be built using modern web technologies, APIs, and best practices in UI/UX design.
