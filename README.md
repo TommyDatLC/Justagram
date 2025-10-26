@@ -32,6 +32,6 @@ Watch the demo video
 - Take a look at the log out button on the top right of screen, just log you out of our app
 
 # Informations about project
-- Programming language: Java and kotlin
+- Programming language: Java
 - Members: Duc Dat, Quang Tung, Hung Anh, Duc Anh, Nhat Anh, Nam Anh
 
