@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  Welcome to <b>Justagram</b> — a social media platform that lets you share moments, explore visual content, and manage your Instagram-like account activities in one place.
+  Welcome to <b>Justagram</b> — Instagram account management app
 </p>
 
 ---
@@ -25,7 +25,7 @@ Watch the full demo video on YouTube:
 
 ## 🚀 Overview
 
-**Justagram** demonstrates how a photo- and video-sharing social platform can be built using **modern web technologies, APIs**, and **clean UI/UX principles**.  
+**Justagram** demonstrates how a photo- and video-sharing social platform account can be manage using **modern web technologies, APIs**, and **clean UI/UX principles**.  
 It provides a real-world example of integrating with the **Instagram Graph API** to manage user data, posts, and analytics — all through a single, intuitive interface.
 
 ---
