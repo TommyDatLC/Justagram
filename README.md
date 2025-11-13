@@ -1,38 +1,87 @@
- <img width="832" height="302" alt="justagram_logo" src="https://github.com/user-attachments/assets/787be030-9b10-4e98-881f-601af23b3d2b" /><br>
-# Justagram
-Welcome to the **Justagram Project** — a social media platform designed for you to manage accounts' activities like sharing photos, videos and exploring visual content from around the world.
-Our project demonstrates how Instagram-like features can be built using modern web technologies, APIs, and best practices in UI/UX design.
-# Demo
-Watch the demo video https://www.youtube.com/watch?v=7cWY0DA_LJ0
-[![Video Title](https://img.youtube.com/vi/7cWY0DA_LJ0/maxresdefault.jpg)](https://www.youtube.com/watch?v=7cWY0DA_LJ0)
-# Features
-## Login screen
-- Secure login and sign-up, use access tokens to login.
-- You can still login through Instagram or Facebook account and our app will get the access token through that way
+<h1 align="center">📸 Justagram</h1>
 
-## Home page
-- After login, you will see a screen that show some public informations about your account: numbers of followers, numbers of follows, and medias
-- It also shows account's biography and website which is added in Instagram
+<p align="center">
+  <img width="832" height="302" alt="Justagram Logo" src="https://github.com/user-attachments/assets/787be030-9b10-4e98-881f-601af23b3d2b" />
+</p>
 
-## Statistic
-- Show all informations about your account like comments,  posts, replies, reacts, ...
-- You can choose date and time to show total value
+<p align="center">
+  Welcome to <b>Justagram</b> — a social media platform that lets you share moments, explore visual content, and manage your Instagram-like account activities in one place.
+</p>
 
-## Posts and Reels Creator
-- You can upload posts and reels through the icon "+" in the middle
-- Can publish posts and reels by the time you upload or can schedule time to upload later
+---
 
-## Manage Reels
-- Show all the reels you uploaded to Instagram with captions
-- Also show likes, shares and comments of each reels
+## 🎥 Demo
 
-## Manage Posts
-- Same as Manage Reels, show your posts' informations
+Watch the full demo video on YouTube:  
+👉 [https://www.youtube.com/watch?v=7cWY0DA_LJ0](https://www.youtube.com/watch?v=7cWY0DA_LJ0)
 
-## Log out button
-- Take a look at the log out button on the top right of screen, just log you out of our app
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=7cWY0DA_LJ0">
+    <img src="https://img.youtube.com/vi/7cWY0DA_LJ0/maxresdefault.jpg" width="720" alt="Justagram Demo Video"/>
+  </a>
+</p>
 
-# Informations about project
-- Programming language: Java
-- Members: Duc Dat, Quang Tung, Hung Anh, Duc Anh, Nhat Anh, Nam Anh
+---
 
+## 🚀 Overview
+
+**Justagram** demonstrates how a photo- and video-sharing social platform can be built using **modern web technologies, APIs**, and **clean UI/UX principles**.  
+It provides a real-world example of integrating with the **Instagram Graph API** to manage user data, posts, and analytics — all through a single, intuitive interface.
+
+---
+
+## 💡 Key Features
+
+### 🔐 Login Screen
+- Secure login and sign-up using **access tokens**
+- Support for **Instagram and Facebook** authentication
+- Token-based authorization ensures privacy and security
+
+---
+
+### 🏠 Home Page
+- Displays public information about your account:  
+  followers, following, and total media count
+- Shows your account **bio** and **linked website**
+
+---
+
+### 📊 Statistics Dashboard
+- Visualizes key account metrics:
+  - Comments, posts, replies, reactions, and engagement
+- Filter results by **custom date and time ranges**
+
+---
+
+### ➕ Post & Reel Creator
+- Upload **posts** and **reels** directly through the "+" icon
+- Option to **publish immediately** or **schedule for later**
+- Supports caption editing and preview
+
+---
+
+### 🎬 Manage Reels
+- View all uploaded reels with their **captions**
+- Track **likes, shares, and comments** per reel
+
+---
+
+### 🖼 Manage Posts
+- Similar to Reels management — view all post details and statistics
+
+---
+
+### 🚪 Log Out
+- One-click **log out button** at the top-right corner  
+  Securely ends your session and clears credentials
+
+---
+
+## 🧠 Tech Stack
+
+```text
+Language:        Java
+Platform:        Android (Built in Android Studio)
+API Integration: Instagram Graph API
+Database:        Local data caching for speed
+Version Control: Git & GitHub
